@@ -1,84 +1,121 @@
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory = $false)]
-    [String]$CustomerId,
+    [Parameter(Mandatory = $true)]
+    [String]$WorkspaceId,
 
-    [Parameter(Mandatory = $false)]
-    [String]$SharedKey,
+    [Parameter(Mandatory = $true)]
+    [SecureString]$WorkspaceKey,
 
     [Parameter(Mandatory = $true)]
     [String]$FilesPath
 )
 
 # Specify the name of the record type that you'll be creating
-$LogType = "SecureHats"
+$LogType     = "SecureHats"
+$rfc1123date = [DateTime]::UtcNow.ToString("r")
 
-Function Build-Signature ($customerId, $sharedKey, $date, $contentLength, $method, $contentType, $resource)
-{
-    $xHeaders = "x-ms-date:" + $date
-    $stringToHash = $method + "`n" + $contentLength + "`n" + $contentType + "`n" + $xHeaders + "`n" + $resource
+Function Build-Signature {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [String]$workspaceId,
 
-    $bytesToHash = [Text.Encoding]::UTF8.GetBytes($stringToHash)
-    $keyBytes = [Convert]::FromBase64String($sharedKey)
+        [Parameter(Mandatory = $true)]
+        [SecureString]$workspaceKey,
 
+        [Parameter(Mandatory = $true)]
+        [Int32]$contentLength
+
+    )
+
+    $xHeaders     = "x-ms-date:" + $rfc1123date
+    $stringToHash = "POST" + "`n" + $contentLength + "`n" + "application/json" + "`n" + $xHeaders + "`n" + "/api/logs"
+    $bytesToHash    = [Text.Encoding]::UTF8.GetBytes($stringToHash)
+    $keyBytes       = [Convert]::FromBase64String((ConvertFrom-SecureString -SecureString $workspaceKey -AsPlainText))
     $sha256         = New-Object System.Security.Cryptography.HMACSHA256
     $sha256.Key     = $keyBytes
     $calculatedHash = $sha256.ComputeHash($bytesToHash)
     $encodedHash    = [Convert]::ToBase64String($calculatedHash)
-    $authorization  = 'SharedKey {0}:{1}' -f $customerId,$encodedHash
+    $authorization  = 'SharedKey {0}:{1}' -f $workspaceId, $encodedHash
 
     return $authorization
 }
 
 
 # Create the function to create and post the request
-Function Post-LogAnalyticsData($customerId, $sharedKey, $body, $logType)
-{
-    $method = "POST"
-    $contentType = "application/json"
-    $resource = "/api/logs"
-    $rfc1123date = [DateTime]::UtcNow.ToString("r")
-    $contentLength = $body.Length
-    $signature = Build-Signature `
-        -customerId $customerId `
-        -sharedKey $sharedKey `
-        -date $rfc1123date `
-        -contentLength $contentLength `
-        -method $method `
-        -contentType $contentType `
-        -resource $resource
-    $uri = "https://" + $customerId + ".ods.opinsights.azure.com" + $resource + "?api-version=2016-04-01"
+Function Set-LogAnalyticsData {
 
-    $headers = @{
-        "Authorization" = $signature;
-        "Log-Type" = $logType;
-        "x-ms-date" = $rfc1123date;
-        "time-generated-field" = $TimeStampField;
+    param (
+        [Parameter(Mandatory = $true)]
+        [String]$WorkspaceId,
+
+        [Parameter(Mandatory = $true)]
+        [securestring]$WorkspaceKey,
+
+        [Parameter(Mandatory = $true)]
+        [Array]$body,
+
+        [Parameter(Mandatory = $true)]
+        [String]$logType
+
+    )
+
+    $parameters = @{
+        "WorkspaceId"    = $WorkspaceId
+        "WorkspaceKey"   = $WorkspaceKey
+        "contentLength" = $body.Length
     }
 
-    $response = Invoke-WebRequest `
-        -Uri $uri `
-        -Method $method `
-        -ContentType $contentType `
-        -Headers $headers `
-        -Body $body `
-        -UseBasicParsing
+    #$signature = Build-Signature @parameters
+
+    $payload = @{
+        "Headers"     = @{
+            "Authorization" = Build-Signature @parameters;
+            "Log-Type"      = $logType;
+            "x-ms-date"     = $rfc1123date;
+        }
+        "method"      = "POST"
+        "contentType" = "application/json"
+        "uri"         = "https://{0}.ods.opinsights.azure.com/api/logs?api-version=2016-04-01" -f $WorkspaceId
+        "body"        = $body
+    }
+
+    $response = Invoke-WebRequest @payload -UseBasicParsing
 
     return $response.StatusCode
-
 }
 
-$Files = @(Get-ChildItem -Path "$FilesPath" -File -Recurse -Filter "*.json")
-Write-Output "Found $($Files.Count) data files."
+$Files = @(Get-ChildItem `
+        -Path "$($FilesPath)" `
+        -File `
+        -Recurse `
+        -Include "*.json", "*.csv")
 
-  foreach ($File in $Files) {
-    Write-Output "Retrieving content from data file '$File'."
-    $json = Get-Content -Path $File.FullName -Raw
+foreach ($File in $Files) {
+    switch ($File.extension) {
+        ".json" {
+            Write-Output "Retrieving content from data file [$File]"
+            $content = Get-Content `
+                -Path $File.FullName -Raw
+        }
+        ".csv" {
+            Write-Output "Retrieving content from data file [$File]"
+            $content = Get-Content `
+                -Path $File.FullName `
+                -Raw `
+            | ConvertFrom-Csv `
+            | ConvertTo-Json
+        }
+        default {
+            Write-Output "No valid file type found"
+        }
+    }
 
     # Submit the data to the API endpoint
-    Post-LogAnalyticsData `
-        -customerId $customerId `
-        -sharedKey $sharedKey `
-        -body ([System.Text.Encoding]::UTF8.GetBytes($json)) `
+    Write-Output "Sending data to Log Analytics workspace"
+    Set-LogAnalyticsData `
+        -WorkspaceId $WorkspaceId `
+        -WorkspaceKey $WorkspaceKey `
+        -body ([System.Text.Encoding]::UTF8.GetBytes($content)) `
         -logType $logType
 }
