@@ -43,7 +43,7 @@ Function Build-Signature {
 
 
 # Create the function to create and post the request
-Function Set-LogAnalyticsData {
+Function Set-AzureMonitorLogs {
 
     param (
         [Parameter(Mandatory = $true)]
@@ -110,7 +110,7 @@ foreach ($File in $Files) {
 
     # Submit the data to the API endpoint
     Write-Output "Sending data to Log Analytics workspace..."
-    Set-LogAnalyticsData `
+    Set-AzureMonitorLogs `
         -WorkspaceId $WorkspaceId `
         -WorkspaceKey $WorkspaceKey `
         -body ([System.Text.Encoding]::UTF8.GetBytes($content)) `
