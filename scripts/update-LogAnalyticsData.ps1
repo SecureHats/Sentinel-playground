@@ -28,8 +28,8 @@ Function Build-Signature {
 
     )
 
-    $xHeaders     = "x-ms-date:" + $rfc1123date
-    $stringToHash = "POST" + "`n" + $contentLength + "`n" + "application/json" + "`n" + $xHeaders + "`n" + "/api/logs"
+    $xHeaders       = "x-ms-date:" + $rfc1123date
+    $stringToHash   = "POST" + "`n" + $contentLength + "`n" + "application/json" + "`n" + $xHeaders + "`n" + "/api/logs"
     $bytesToHash    = [Text.Encoding]::UTF8.GetBytes($stringToHash)
     $keyBytes       = [Convert]::FromBase64String((ConvertFrom-SecureString -SecureString $workspaceKey -AsPlainText))
     $sha256         = New-Object System.Security.Cryptography.HMACSHA256
@@ -47,10 +47,10 @@ Function Set-LogAnalyticsData {
 
     param (
         [Parameter(Mandatory = $true)]
-        [String]$WorkspaceId,
+        [String]$workspaceId,
 
         [Parameter(Mandatory = $true)]
-        [securestring]$WorkspaceKey,
+        [securestring]$workspaceKey,
 
         [Parameter(Mandatory = $true)]
         [Array]$body,
@@ -61,50 +61,47 @@ Function Set-LogAnalyticsData {
     )
 
     $parameters = @{
-        "WorkspaceId"    = $WorkspaceId
-        "WorkspaceKey"   = $WorkspaceKey
-        "contentLength" = $body.Length
+        "WorkspaceId"    = $workspaceId
+        "WorkspaceKey"   = $workspaceKey
+        "contentLength"  = $body.Length
     }
 
     #$signature = Build-Signature @parameters
 
     $payload = @{
-        "Headers"     = @{
-            "Authorization" = Build-Signature @parameters;
-            "Log-Type"      = $logType;
-            "x-ms-date"     = $rfc1123date;
+        "Headers" = @{
+            "Authorization" = Build-Signature @parameters
+            "Log-Type"      = $logType
+            "x-ms-date"     = $rfc1123date
         }
         "method"      = "POST"
         "contentType" = "application/json"
-        "uri"         = "https://{0}.ods.opinsights.azure.com/api/logs?api-version=2016-04-01" -f $WorkspaceId
+        "uri"         = "https://{0}.ods.opinsights.azure.com/api/logs?api-version=2016-04-01" -f $workspaceId
         "body"        = $body
     }
 
     $response = Invoke-WebRequest @payload -UseBasicParsing
-
+    
     return $response.StatusCode
 }
 
 $Files = @(Get-ChildItem `
-        -Path "$($FilesPath)" `
-        -File `
-        -Recurse `
-        -Include "*.json", "*.csv")
+    -Path "$($FilesPath)" `
+    -File `
+    -Recurse `
+    -Include "*.json", "*.csv")
 
 foreach ($File in $Files) {
     switch ($File.extension) {
         ".json" {
             Write-Output "Retrieving content from data file [$File]"
-            $content = Get-Content `
-                -Path $File.FullName -Raw
+            $content = Get-Content -Path $File.FullName -Raw
         }
         ".csv" {
             Write-Output "Retrieving content from data file [$File]"
-            $content = Get-Content `
-                -Path $File.FullName `
-                -Raw `
-            | ConvertFrom-Csv `
-            | ConvertTo-Json
+            $content = Get-Content -Path $File.FullName -Raw `
+                | ConvertFrom-Csv `
+                | ConvertTo-Json
         }
         default {
             Write-Output "No valid file type found"
@@ -112,7 +109,7 @@ foreach ($File in $Files) {
     }
 
     # Submit the data to the API endpoint
-    Write-Output "Sending data to Log Analytics workspace"
+    Write-Output "Sending data to Log Analytics workspace..."
     Set-LogAnalyticsData `
         -WorkspaceId $WorkspaceId `
         -WorkspaceKey $WorkspaceKey `
