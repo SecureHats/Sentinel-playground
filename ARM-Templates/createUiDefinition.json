@@ -1,0 +1,60 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/0.1.2-preview/CreateUIDefinition.MultiVm.json#",
+    "handler": "Microsoft.Azure.CreateUIDef",
+    "version": "0.1.2-preview",
+    "parameters": {
+        "config": {
+            "isWizard": true,
+            "basics": {
+                "description": "**Azure Sentinel Playground** deployment, see more information about this project [here](https://github.com/SecureHats/Sentinel-playground/).",
+                "location": {
+                    "label": "Location",
+                    "toolTip": "Location for all resources",
+                    "resourceTypes": [
+                        "Microsoft.OperationalInsights"
+                    ]
+                }
+            }
+        },
+        "basics": [
+            {
+                "name": "logAnalyticsWorkspaceName",
+                "type": "Microsoft.Common.TextBox",
+                "label": "Workspace Name",
+                "placeholder": "",
+                "defaultValue": "",
+                "toolTip": "The workspace name should include 4-63 letters, digits or '-'. The '-' shouldn't be the first or the last symbol.",
+                "constraints": {
+                    "required": true,
+                    "regex": "^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$",
+                    "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-30 characters long."
+                },
+                "visible": true
+            }
+        ],
+        "steps": [
+            {
+                "name": "storageAccount",
+                "label": "Storage Account",
+                "elements": [
+                    {
+                        "name": "storageAccount",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "Storage Account",
+                        "toolTip": "The workspace name should include 4-63 letters.",
+                        "constraints": {
+                            "required": true,
+                            "regex": "^[A-Za-z0-9]$",
+                            "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-30 characters long."
+                        },
+                        "visible": true
+                    }
+                ]
+            }
+        ],
+        "outputs": {
+            "workspaceName": "[basics('logAnalyticsWorkspaceName')]",
+            "storageAccount": "[steps('storageAccount').storageAccount]"
+        }
+    }
+}
