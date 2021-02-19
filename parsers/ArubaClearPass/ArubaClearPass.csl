@@ -1,5 +1,5 @@
 // Parse all tableNames so they reflect the imported data
-let LogHeader = SecureHats_CL
+let LogHeader = CommonSecurityLog_CL
     | extend DeviceVendor           = DeviceVendor_s, 
         DeviceProduct               = DeviceProduct_s,
         AdditionalExtensions        = AdditionalExtensions_s,
@@ -24,8 +24,8 @@ let LogHeader = SecureHats_CL
     | extend Category = extract(@'cat=([^;]+)(\;|$)', 1, AdditionalExtensions),
         Outcome = extract(@'outcome=([^;]+)\;', 1, AdditionalExtensions)
     | project-rename DvcIpAddr = DeviceAddress,
-        DvcVersion = DeviceVersion,
-        SrcIpAddr = SourceIP;
+        DvcVersion  = DeviceVersion,
+        SrcIpAddr   = SourceIP;
 let InsightLogs = LogHeader
     | where Activity == "Insight Logs" or Category == "Insight Logs"
     // Version 6.5
@@ -56,9 +56,9 @@ let InsightLogs = LogHeader
         EndpointDvcName     = iif(DeviceCustomString5Label == "Endpoint.Device-Name", DeviceCustomString5, ""),
         EndpointMacVendor   = iif(DeviceCustomString6Label == "Endpoint.MAC-Vendor", DeviceCustomString6, ""),        
         EndpointAddedDate   = iif(DeviceCustomDate1Label == "Endpoint.Added-At", todatetime(DeviceCustomDate1), todatetime(""))
-    | extend Category       = iif(isempty(Category), "Insight Logs", Category);
+    | extend Category       = iif(isempty(Category), "Insight Logs", Category); 
 let AuditRecords = LogHeader
-    | where Activity            == "Audit Records" or Category == "Audit Records"
+    | where Activity == "Audit Records" or Category == "Audit Records"
     | extend TimestampFormat    = extract(@'timeFormat=([^;]+)\;', 1, AdditionalExtensions),
         UserName                = extract(@'usrName=([^;]+)(\;|$)', 1, AdditionalExtensions)
     | extend Category           = iif(isempty(Category), "Audit Records", Category);
