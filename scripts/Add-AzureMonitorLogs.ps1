@@ -1,17 +1,18 @@
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory = $true)]
-    [String]$WorkspaceId,
 
     [Parameter(Mandatory = $true)]
-    [SecureString]$WorkspaceKey,
+    [String]$WorkspaceName,
+
+    [Parameter(Mandatory = $true)]
+    [String]$LogType = 'SecureHats',
 
     [Parameter(Mandatory = $true)]
     [String]$FilesPath
 )
 
-# Specify the name of the record type that you'll be creating
-$LogType     = "SecureHats"
+
+Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
 $rfc1123date = [DateTime]::UtcNow.ToString("r")
 
 Function Build-Signature {
@@ -28,22 +29,21 @@ Function Build-Signature {
 
     )
 
-    $xHeaders       = "x-ms-date:" + $rfc1123date
-    $stringToHash   = "POST" + "`n" + $contentLength + "`n" + "application/json" + "`n" + $xHeaders + "`n" + "/api/logs"
-    $bytesToHash    = [Text.Encoding]::UTF8.GetBytes($stringToHash)
-    $keyBytes       = [Convert]::FromBase64String((ConvertFrom-SecureString -SecureString $workspaceKey -AsPlainText))
-    $sha256         = New-Object System.Security.Cryptography.HMACSHA256
-    $sha256.Key     = $keyBytes
+    $xHeaders = "x-ms-date:" + $rfc1123date
+    $stringToHash = "POST" + "`n" + $contentLength + "`n" + "application/json" + "`n" + $xHeaders + "`n" + "/api/logs"
+    $bytesToHash = [Text.Encoding]::UTF8.GetBytes($stringToHash)
+    $keyBytes = [Convert]::FromBase64String((ConvertFrom-SecureString -SecureString $workspaceKey -AsPlainText))
+    $sha256 = New-Object System.Security.Cryptography.HMACSHA256
+    $sha256.Key = $keyBytes
     $calculatedHash = $sha256.ComputeHash($bytesToHash)
-    $encodedHash    = [Convert]::ToBase64String($calculatedHash)
-    $authorization  = 'SharedKey {0}:{1}' -f $workspaceId, $encodedHash
+    $encodedHash = [Convert]::ToBase64String($calculatedHash)
+    $authorization = 'SharedKey {0}:{1}' -f $workspaceId, $encodedHash
 
     return $authorization
 }
 
-
 # Create the function to create and post the request
-Function Set-AzureMonitorLogs {
+Function Set-LogAnalyticsData {
 
     param (
         [Parameter(Mandatory = $true)]
@@ -61,15 +61,15 @@ Function Set-AzureMonitorLogs {
     )
 
     $parameters = @{
-        "WorkspaceId"    = $workspaceId
-        "WorkspaceKey"   = $workspaceKey
-        "contentLength"  = $body.Length
+        "WorkspaceId"   = $workspaceId
+        "WorkspaceKey"  = $workspaceKey
+        "contentLength" = $body.Length
     }
 
     #$signature = Build-Signature @parameters
 
     $payload = @{
-        "Headers" = @{
+        "Headers"     = @{
             "Authorization" = Build-Signature @parameters
             "Log-Type"      = $logType
             "x-ms-date"     = $rfc1123date
@@ -81,27 +81,51 @@ Function Set-AzureMonitorLogs {
     }
 
     $response = Invoke-WebRequest @payload -UseBasicParsing
-    
+
     return $response.StatusCode
 }
 
-$Files = @(Get-ChildItem `
-    -Path "$($FilesPath)" `
-    -File `
-    -Recurse `
-    -Include "*.json", "*.csv")
+try {
+    Write-Output "Looking for requested workspace [$($WorkspaceName)]"
+    $workspaceParams = @{
+        Method               = 'GET'
+        ApiVersion           = '2020-08-01'
+        ResourceProviderName = 'Microsoft.OperationalInsights/workspaces'
+    }
 
-foreach ($File in $Files) {
-    switch ($File.extension) {
+    $workspace = ((Invoke-AzRestMethod @workspaceParams).Content `
+        | ConvertFrom-Json).value | Where-Object Name -eq $WorkspaceName
+
+    $splitArray = $workspace.id -split '/'
+    $ResourceGroupName  = $splitArray[4]
+    $WorkspaceName      = $splitArray[8]
+    $workspaceId        = $workspace.properties.customerId
+
+}
+catch {
+    Write-Warning -Message "Log Analytics workspace [$($WorkspaceName)] not found in the current context"
+    break
+}
+
+$workspaceKey = (Get-AzOperationalInsightsWorkspaceSharedKeys `
+    -ResourceGroupName $ResourceGroupName `
+    -Name $WorkspaceName).PrimarySharedKey `
+    | ConvertTo-SecureString -AsPlainText -Force
+
+$files = @(Get-ChildItem -Path "$($FilesPath)" `
+        -File -Recurse -Include "*.json", "*.csv")
+
+foreach ($file in $files) {
+    switch ($file.extension) {
         ".json" {
-            Write-Output "Retrieving content from data file [$File]"
-            $content = Get-Content -Path $File.FullName -Raw
+            Write-Output "Processing [$file]"
+            $content = Get-Content -Path $file.FullName -Raw
         }
         ".csv" {
-            Write-Output "Retrieving content from data file [$File]"
-            $content = Get-Content -Path $File.FullName -Raw `
-                | ConvertFrom-Csv `
-                | ConvertTo-Json
+            Write-Output "Processing [$file]"
+            $content = Get-Content -Path $file.FullName -Raw `
+            | ConvertFrom-Csv `
+            | ConvertTo-Json
         }
         default {
             Write-Output "No valid file type found"
@@ -109,10 +133,14 @@ foreach ($File in $Files) {
     }
 
     # Submit the data to the API endpoint
-    Write-Output "Sending data to Log Analytics workspace..."
-    Set-AzureMonitorLogs `
-        -WorkspaceId $WorkspaceId `
-        -WorkspaceKey $WorkspaceKey `
-        -body ([System.Text.Encoding]::UTF8.GetBytes($content)) `
-        -logType $logType
+    Write-Output "Sending data to Data Log Collector table [$($logType)]"
+    $result = Set-LogAnalyticsData `
+            -WorkspaceId $workspaceId -WorkspaceKey $workspaceKey `
+            -body ([System.Text.Encoding]::UTF8.GetBytes($content)) `
+            -logType $logType
+
+    if(-not($result -eq 200)) {
+        Write-Warning: "Unable to send data to Data Log Collector table"
+        break
+    }
 }
