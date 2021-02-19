@@ -5,7 +5,7 @@ param (
     [String]$WorkspaceName,
 
     [Parameter(Mandatory = $true)]
-    [String]$LogType = 'SecureHats',
+    [String]$LogType
 
     [Parameter(Mandatory = $true)]
     [String]$FilesPath
@@ -29,6 +29,7 @@ Function Build-Signature {
 
     )
 
+    #building the signature
     $xHeaders = "x-ms-date:" + $rfc1123date
     $stringToHash = "POST" + "`n" + $contentLength + "`n" + "application/json" + "`n" + $xHeaders + "`n" + "/api/logs"
     $bytesToHash = [Text.Encoding]::UTF8.GetBytes($stringToHash)
@@ -42,7 +43,7 @@ Function Build-Signature {
     return $authorization
 }
 
-# Create the function to create and post the request
+# Function to send data to the custom table
 Function Set-LogAnalyticsData {
 
     param (
@@ -69,7 +70,7 @@ Function Set-LogAnalyticsData {
     #$signature = Build-Signature @parameters
 
     $payload = @{
-        "Headers"     = @{
+        "Headers" = @{
             "Authorization" = Build-Signature @parameters
             "Log-Type"      = $logType
             "x-ms-date"     = $rfc1123date
@@ -81,7 +82,6 @@ Function Set-LogAnalyticsData {
     }
 
     $response = Invoke-WebRequest @payload -UseBasicParsing
-
     return $response.StatusCode
 }
 
