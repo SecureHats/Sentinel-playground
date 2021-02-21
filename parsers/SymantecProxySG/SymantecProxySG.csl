@@ -26,7 +26,7 @@
 //      2020-05-01 23:07:33 2765 10.1.1.1 user9 - - OBSERVED "WhiteList;Web Ads/Analytics" -  200 TCP_TUNNELED CONNECT - tcp pagead2.googlesyndication.com 443 / - - "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36" 10.10.10.10 4269 1474 - "none" "none" 3128 Ambiguous%20-%20Special%20Use 2
 //
 //
-Syslog_CL
+SecureHats_CL
 | where Computer in ("datasource") and Facility_s == "local0"
 // Parse 1/3 of SyslogMessage. Seperated due to extract_all() operator limited to 16 regex groups
 | extend Parser = extract_all(@'^(\d{4}\-\d{2}-\d{2})\s+(\d{2}\:\d{2}:\d{2})\s+(\d+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+\"([\w\s\)\(;\/_-]+)\"\s+(\S+)\s+(\d+)\s+([\S\s]+)',dynamic([1,2,3,4,5,6,7,8,9,10,11,12]), SyslogMessage_s)
