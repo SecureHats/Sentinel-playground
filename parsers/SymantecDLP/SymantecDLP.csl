@@ -22,7 +22,7 @@
 //<13>Sep 5 08:22:01 data.example.com CEF:0|Symantec|DLP|12.5.0|ruleID|Policy|5|BLOCKED=Passed INCIDENT_ID=204529 INCIDENT_SNAPSHOT=https://main.example.com/Path/Address MATCH_COUNT=3 PROTOCOL=SMTP RECIPIENTS=email@example.com SENDER=sender@example.com SUBJECT=Sensitive Data (attachment included) SEVERITY=1:High FILE_NAME=myfile.xml
 //
 //
-CommonSecurityLog_CL
+SecureHats_CL
 | extend DeviceVendor           = DeviceVendor_s
 | extend DeviceProduct          = DeviceProduct_s
 | extend AdditionalExtensions   = AdditionalExtensions_s
