@@ -2,7 +2,7 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "logAnalyticsWorkspaceName": {
+        "workspaceName": {
             "type": "string",
             "metadata": {
                 "description": "Name for the Log Analytics workspace"
@@ -29,7 +29,7 @@
     },
     "resources": [
         {
-            "name": "[parameters('logAnalyticsWorkspaceName')]",
+            "name": "[parameters('workspaceName')]",
             "type": "Microsoft.OperationalInsights/workspaces",
             "apiVersion": "2015-11-01-preview",
             "location": "[parameters('location')]",
@@ -45,18 +45,18 @@
             }
         },
         {
-            "name": "[concat('SecurityInsights','(', parameters('logAnalyticsWorkspaceName'),')')]",
+            "name": "[concat('SecurityInsights','(', parameters('workspaceName'),')')]",
             "type": "Microsoft.OperationsManagement/solutions",
             "apiVersion": "2015-11-01-preview",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsWorkspaceName'))]"
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
             ],
             "properties": {
-                "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
+                "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('workspaceName'))]"
             },
             "plan": {
-                "name": "[concat('SecurityInsights','(', parameters('logAnalyticsWorkspaceName'),')')]",
+                "name": "[concat('SecurityInsights','(', parameters('workspaceName'),')')]",
                 "product": "OMSGallery/SecurityInsights",
                 "publisher": "Microsoft",
                 "promotionCode": ""
@@ -115,7 +115,7 @@
             "properties": {
                 "forceUpdateTag": "1",
                 "azPowerShellVersion": "3.0",
-                "arguments": "[concat('-Workspace ', parameters('logAnalyticsWorkspaceName'), ' -LogType ', 'ScriptTest', ' -repoUri ', parameters('CloudRepo'))]",
+                "arguments": "[concat('-WorkspaceName ', parameters('workspaceName'), ' -LogType ', 'ScriptTest', ' -repoUri ', parameters('CloudRepo'))]",
                 "primaryScriptUri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/feature/scripts/PowerShell/Add-AzureMonitorLogs/Add-AzureMonitorLogs.ps1",
                 "supportingScriptUris": [],
                 "timeout": "PT30M",
