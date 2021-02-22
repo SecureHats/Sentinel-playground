@@ -10,7 +10,7 @@
         },
         "CloudRepo": {
             "type": "string",
-            "defaultValue": "https://github.com/SecureHats/Sentinel-playground/tree/main/samples"
+            "defaultValue": "https://github.com/SecureHats/Sentinel-playground/tree/main/parsers"
         },
         "roleGuid": {
             "type": "string",
@@ -93,7 +93,7 @@
             "dependsOn": ["[concat('Microsoft.Authorization/roleAssignments/', parameters('roleGuid'))]"],
             "type": "Microsoft.Resources/deploymentScripts",
             "apiVersion": "2020-10-01",
-            "name": "runPowerShellInline",
+            "name": "addData",
             "location": "[resourceGroup().location]",
             "kind": "AzurePowerShell",
             "identity": {
@@ -107,6 +107,30 @@
                 "azPowerShellVersion": "3.0",
                 "arguments": "[concat('-WorkspaceName ', parameters('workspaceName'), ' -LogType ', 'ScriptTest', ' -repoUri ', parameters('CloudRepo'))]",
                 "primaryScriptUri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/feature/scripts/PowerShell/Add-AzureMonitorLogs/Add-AzureMonitorLogs.ps1",
+                "supportingScriptUris": [],
+                "timeout": "PT30M",
+                "cleanupPreference": "OnSuccess",
+                "retentionInterval": "P1D"
+            }
+        },
+        {
+            "dependsOn": ["[concat('Microsoft.Authorization/roleAssignments/', parameters('roleGuid'))]"],
+            "type": "Microsoft.Resources/deploymentScripts",
+            "apiVersion": "2020-10-01",
+            "name": "addParser",
+            "location": "[resourceGroup().location]",
+            "kind": "AzurePowerShell",
+            "identity": {
+                "type": "userAssigned",
+                "userAssignedIdentities": {
+                    "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities/',variables('identityName'))]": {}
+                }
+            },
+            "properties": {
+                "forceUpdateTag": "1",
+                "azPowerShellVersion": "3.0",
+                "arguments": "[concat('-WorkspaceName ', parameters('workspaceName'), ' -repoUri ', parameters('CloudRepo'))]",
+                "primaryScriptUri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/PowerShell/Add-AzMonitorFunction/Add-AzMonitorFunction.ps1",
                 "supportingScriptUris": [],
                 "timeout": "PT30M",
                 "cleanupPreference": "OnSuccess",
