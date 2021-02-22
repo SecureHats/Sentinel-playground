@@ -44,7 +44,7 @@
                         "toolTip": "The workspace name should include 4-63 letters.",
                         "constraints": {
                             "required": true,
-                            "regex": "^[A-Za-z0-9]$",
+                            "regex": "^[a-z][[a-z0-9]{2,23}$",
                             "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-30 characters long."
                         },
                         "visible": true
