@@ -71,7 +71,8 @@ function Set-AzMonitorFunction {
         -SavedSearchId (New-Guid).Guid `
         -DisplayName $DisplayName `
         -Category $Category `
-        -Query "$KqlQuery"
+        -Query "$KqlQuery" `
+        -FunctionAlias $DisplayName
 }
 
 Write-Output "Retrieving Log Analytics workspace [$($WorkspaceName)]"
