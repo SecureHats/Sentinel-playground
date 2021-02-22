@@ -29,6 +29,40 @@
     },
     "resources": [
         {
+            "name": "[parameters('logAnalyticsWorkspaceName')]",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "apiVersion": "2015-11-01-preview",
+            "location": "[parameters('location')]",
+            "properties": {
+                "retentionInDays": "[parameters('dataRetention')]",
+                "workspaceCapping": "[if(equals(parameters('dailyQuota'),0), json('null'), variables('quoatSetting'))]",
+                "features": {
+                    "immediatePurgeDataOn30Days": "[parameters('immediatePurgeDataOn30Days')]"
+                },
+                "sku": {
+                    "name": "[parameters('pricingTier')]"
+                }
+            }
+        },
+        {
+            "name": "[concat('SecurityInsights','(', parameters('logAnalyticsWorkspaceName'),')')]",
+            "type": "Microsoft.OperationsManagement/solutions",
+            "apiVersion": "2015-11-01-preview",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsWorkspaceName'))]"
+            ],
+            "properties": {
+                "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
+            },
+            "plan": {
+                "name": "[concat('SecurityInsights','(', parameters('logAnalyticsWorkspaceName'),')')]",
+                "product": "OMSGallery/SecurityInsights",
+                "publisher": "Microsoft",
+                "promotionCode": ""
+            }
+        },
+        {
             "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
             "name": "[variables('identityName')]",
             "apiVersion": "2018-11-30",
