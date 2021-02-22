@@ -1,6 +1,6 @@
-# Check if the Az module is installed, if not install it
+#Check if the Az module is installed, if not install it
 # This will auto install the Az.Accounts module if it is not installed
-# Requires -Module Az.Resources
+#Requires -Module Az.Resources
 
 [CmdletBinding(DefaultParameterSetName = "CloudRepo")]
 param (
@@ -62,22 +62,22 @@ function Set-AzMonitorFunction {
 
         [Parameter(Mandatory = $false)]
         [String]$Category = 'SecureHats'
-   
+
     )
-    
+
     New-AzOperationalInsightsSavedSearch `
         -ResourceGroupName $workspace.ResourceGroupName `
         -WorkspaceName $workspace.ResourceName `
         -SavedSearchId (New-Guid).Guid `
-        -DisplayName "$DisplayName" `
-        -Query "$KqlQuery" `
+        -DisplayName $DisplayName `
         -Category $Category `
-        -FunctionAlias "$DisplayName"
+        -Query "$KqlQuery" `
+        -FunctionAlias $DisplayName
 }
 
 Write-Output "Retrieving Log Analytics workspace [$($WorkspaceName)]"
 $workspace = Get-AzResource `
-    -Name $WorkspaceName `
+    -Name "$WorkspaceName" `
     -ResourceType 'Microsoft.OperationalInsights/workspaces'
 
 if ($null -eq $workspace) {
