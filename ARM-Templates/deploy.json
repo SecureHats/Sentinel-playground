@@ -9,7 +9,7 @@
             }
         },
         "CloudRepo": {
-            "type": "string"
+            "type": "string",
             "defaultValue": "https://github.com/SecureHats/Sentinel-playground/tree/main/samples"
         },
         "dataConnectorsList": {
