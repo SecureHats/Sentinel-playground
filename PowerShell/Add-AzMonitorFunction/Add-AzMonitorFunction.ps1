@@ -52,6 +52,29 @@ if ($subscriptionId) {
     }
 }
 
+function Set-AzMonitorFunction {
+    param (
+        [Parameter(Mandatory = $true)]
+        [String]$DisplayName,
+
+        [Parameter(Mandatory = $true)]
+        [String]$KqlQuery,
+
+        [Parameter(Mandatory = $false)]
+        [String]$Category = 'SecureHats'
+   
+    )
+    
+    New-AzOperationalInsightsSavedSearch `
+        -ResourceGroupName $workspace.ResourceGroupName `
+        -WorkspaceName $workspace.ResourceName `
+        -SavedSearchId (New-Guid).Guid `
+        -DisplayName "$DisplayName" `
+        -Query "$KqlQuery" `
+        -Category $Category `
+        -FunctionAlias "$DisplayName"
+}
+
 Write-Output "Retrieving Log Analytics workspace [$($WorkspaceName)]"
 $workspace = Get-AzResource `
     -Name $WorkspaceName `
@@ -103,26 +126,4 @@ elseif ($PSCmdlet.ParameterSetName -eq "LocalRepo") {
             $kqlQuery = Get-Content $file.FullName -Raw
             Set-AzMonitorFunction -DisplayName $file.BaseName -KqlQuery "$($kqlQuery)"
         }
-}
-function Set-AzMonitorFunction {
-    param (
-        [Parameter(Mandatory = $true)]
-        [String]$DisplayName,
-
-        [Parameter(Mandatory = $true)]
-        [String]$KqlQuery,
-
-        [Parameter(Mandatory = $false)]
-        [String]$Category = 'SecureHats'
-   
-    )
-    
-    New-AzOperationalInsightsSavedSearch `
-        -ResourceGroupName $workspace.ResourceGroupName `
-        -WorkspaceName $workspace.ResourceName `
-        -SavedSearchId (New-Guid).Guid `
-        -DisplayName "$DisplayName" `
-        -Query "$KqlQuery" `
-        -Category $Category `
-        -FunctionAlias "$DisplayName"
 }
