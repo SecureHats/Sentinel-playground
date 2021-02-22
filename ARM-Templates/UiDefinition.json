@@ -52,7 +52,7 @@
             }
         ],
         "outputs": {
-            "workspaceName": "[basics('logAnalyticsWorkspaceName')]",
+            "logAnalyticsWorkspaceName": "[basics('logAnalyticsWorkspaceName')]",
             "storageAccount": "[steps('storageAccount').storageAccount]"
         }
     }
