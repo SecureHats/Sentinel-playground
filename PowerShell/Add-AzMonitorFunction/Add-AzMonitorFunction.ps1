@@ -20,6 +20,9 @@ param (
 Write-Output "Validating if required module is installed"
 $AzModule = Get-InstalledModule -Name Az -ErrorAction SilentlyContinue
 
+Write-Output 'Installing Operation Insights module'
+Install-Module Az.OperationalInsights -RequiredVersion 2.3.0
+
 if ($null -eq $AzModule) {
     Write-Warning "The Az PowerShell module is not found"
     #check for Admin Privleges
