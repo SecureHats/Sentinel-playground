@@ -81,7 +81,7 @@
             "properties": {
                 "forceUpdateTag": "1",
                 "azPowerShellVersion": "3.0",
-                "arguments": "[concat('-Workspace ', parameters('logAnalyticsWorkspaceName'), ' -repoUri ', parameters('CloudRepo'))]",
+                "arguments": "[concat('-Workspace ', parameters('logAnalyticsWorkspaceName'), ' -LogType ScriptTest', ' -repoUri ', parameters('CloudRepo'))]",
                 "primaryScriptUri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/feature/scripts/PowerShell/Add-AzureMonitorLogs/Add-AzureMonitorLogs.ps1",
                 "supportingScriptUris": [],
                 "timeout": "PT30M",
