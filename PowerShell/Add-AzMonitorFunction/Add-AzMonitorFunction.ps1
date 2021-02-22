@@ -22,8 +22,8 @@ $AzModule = Get-InstalledModule -Name Az -ErrorAction SilentlyContinue
 
 $PSVersionTable
 
-Write-Output 'Installing Operation Insights module 2.3.0'
-Install-Module Az.OperationalInsights -RequiredVersion 2.3.0 -Repository PSGallery -Force | Out-Null
+#Write-Output 'Installing Operation Insights module 2.3.0'
+#Install-Module Az.OperationalInsights -RequiredVersion 2.3.0 -Repository PSGallery -Force | Out-Null
 
 if ($null -eq $AzModule) {
     Write-Warning "The Az PowerShell module is not found"
