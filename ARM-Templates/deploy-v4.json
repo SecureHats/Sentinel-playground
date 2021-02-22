@@ -104,7 +104,7 @@
             },
             "properties": {
                 "forceUpdateTag": "1",
-                "azPowerShellVersion": "4.0",
+                "azPowerShellVersion": "5.4",
                 "arguments": "[concat('-WorkspaceName ', parameters('workspaceName'), ' -LogType ', 'ScriptTest', ' -repoUri ', parameters('CloudRepo'))]",
                 "primaryScriptUri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/feature/scripts/PowerShell/Add-AzureMonitorLogs/Add-AzureMonitorLogs.ps1",
                 "supportingScriptUris": [],
@@ -128,7 +128,7 @@
             },
             "properties": {
                 "forceUpdateTag": "1",
-                "azPowerShellVersion": "4.0",
+                "azPowerShellVersion": "5.4",
                 "arguments": "[concat('-WorkspaceName ', parameters('workspaceName'), ' -repoUri ', parameters('CloudRepo'))]",
                 "primaryScriptUri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/PowerShell/Add-AzMonitorFunction/Add-AzMonitorFunction.ps1",
                 "supportingScriptUris": [],
