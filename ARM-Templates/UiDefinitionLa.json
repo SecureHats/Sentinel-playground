@@ -18,7 +18,7 @@
         },
         "basics": [
             {
-                "name": "logAnalyticsWorkspaceName",
+                "name": "workspaceName",
                 "type": "Microsoft.Common.TextBox",
                 "label": "Workspace Name",
                 "placeholder": "",
@@ -52,7 +52,7 @@
             }
         ],
         "outputs": {
-            "logAnalyticsWorkspaceName": "[basics('logAnalyticsWorkspaceName')]",
+            "workspaceName": "[basics('workspaceName')]",
             "storageAccount": "[steps('storageAccount').storageAccount]"
         }
     }
