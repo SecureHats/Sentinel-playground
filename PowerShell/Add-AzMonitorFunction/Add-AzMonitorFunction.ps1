@@ -116,9 +116,7 @@ if ($PSCmdlet.ParameterSetName -eq "CloudRepo") {
         $templateUris = ($webResponse | Where-Object { $_.download_url -like "*.*" }).download_url
         
         foreach ($templateUri in $templateUris) {
-            $kqlQuery = Invoke-RestMethod -Method Get -Uri $templateUri
-            if ($LogType) {
-                $kqlQuery = $kqlQuery -replace '<CustomLog>', ($CustomTableName + '_CL')
+            $kqlQuery = (Invoke-RestMethod -Method Get -Uri $templateUri) -replace '<CustomLog>', ($CustomTableName + '_CL')
         }
 
         Set-AzMonitorFunction -DisplayName (($webResponse.name) -split "\.")[0] -KqlQuery "$($kqlQuery)"
