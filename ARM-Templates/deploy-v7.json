@@ -15,6 +15,10 @@
         "roleGuid": {
             "type": "string",
             "defaultValue": "[newGuid()]"
+        },
+        "customTableName": {
+            "type": "string",
+            "defaultValue": "SecureHats"
         }
     },
     "functions": [],
@@ -129,7 +133,7 @@
             "properties": {
                 "forceUpdateTag": "1",
                 "azPowerShellVersion": "5.4",
-                "arguments": "[concat('-WorkspaceName ', parameters('workspaceName'), ' -repoUri ', parameters('CloudRepo'))]",
+                "arguments": "[concat('-WorkspaceName ', parameters('workspaceName'), ' -repoUri ', parameters('CloudRepo'), ' -CustomTableName ', parameters('CustomTableName'))]",
                 "primaryScriptUri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/PowerShell/Add-AzMonitorFunction/Add-AzMonitorFunction.ps1",
                 "supportingScriptUris": [],
                 "timeout": "PT30M",
