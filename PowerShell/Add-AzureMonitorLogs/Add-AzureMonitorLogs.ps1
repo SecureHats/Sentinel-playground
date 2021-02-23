@@ -10,7 +10,7 @@ param (
     [String]$FilesPath,
 
     [Parameter(Mandatory = $true)]
-    [String]$LogType = "SecureHats"
+    [String]$CustomTableName = "SecureHats"
 )
 
 $rfc1123date = [DateTime]::UtcNow.ToString("r")
@@ -56,7 +56,7 @@ Function Set-LogAnalyticsData {
         [Array]$body,
 
         [Parameter(Mandatory = $true)]
-        [String]$logType
+        [String]$customTableName
 
     )
 
@@ -114,5 +114,5 @@ foreach ($File in $Files) {
         -WorkspaceId $WorkspaceId `
         -WorkspaceKey $WorkspaceKey `
         -body ([System.Text.Encoding]::UTF8.GetBytes($content)) `
-        -logType $logType
+        -customTableName $CustomTableName
 }
