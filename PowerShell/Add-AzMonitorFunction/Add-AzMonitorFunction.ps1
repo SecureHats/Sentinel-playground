@@ -17,7 +17,7 @@ param (
     [String]$subscriptionId,
     
     [Parameter(Mandatory = $false)]
-    [String]$LogType = 'SecureHats'
+    [String]$CustomTableName = 'SecureHats'
 )
 
 Write-Output "Validating if required module is installed"
@@ -118,7 +118,7 @@ if ($PSCmdlet.ParameterSetName -eq "CloudRepo") {
         foreach ($templateUri in $templateUris) {
             $kqlQuery = Invoke-RestMethod -Method Get -Uri $templateUri
             if ($LogType) {
-                $kqlQuery = $kqlQuery -replace '<CustomLog>', ($LogType + '_CL')
+                $kqlQuery = $kqlQuery -replace '<CustomLog>', ($CustomTableName + '_CL')
         }
 
         Set-AzMonitorFunction -DisplayName (($webResponse.name) -split "\.")[0] -KqlQuery "$($kqlQuery)"
