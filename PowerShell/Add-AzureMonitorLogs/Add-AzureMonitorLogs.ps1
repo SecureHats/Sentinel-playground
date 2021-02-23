@@ -71,7 +71,7 @@ Function Set-LogAnalyticsData {
     $payload = @{
         "Headers"     = @{
             "Authorization" = Build-Signature @parameters
-            "Log-Type"      = $logType
+            "Log-Type"      = $customTableName
             "x-ms-date"     = $rfc1123date
         }
         "method"      = "POST"
