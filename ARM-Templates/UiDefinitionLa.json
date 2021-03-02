@@ -34,26 +34,66 @@
         ],
         "steps": [
             {
-                "name": "storageAccount",
-                "label": "Storage Account",
+                "name": "dataProviders",
+                "label": "Data providers",
                 "elements": [
                     {
-                        "name": "storageAccount",
-                        "type": "Microsoft.Common.TextBox",
-                        "label": "Storage Account",
-                        "toolTip": "The workspace name should include 4-63 letters.",
+                        "name": "textBlock1",
+                        "type": "Microsoft.Common.TextBlock",
+                        "visible": true,
+                        "options": {
+                            "text": "Please select which data providers you want to onboard into your Azure Sentinel playground",
+                            "link": {
+                                "label": "Learn more",
+                                "uri": "https://www.microsoft.com"
+                            }
+                        }
+                    },
+                    {
+                        "name": "enableDataProviders",
+                        "type": "Microsoft.Common.DropDown",
+                        "label": "Select data providers to onboard",
+                        "placeholder": "",
+                        "multiselect": true,
+                        "defaultValue": "",
+                        "toolTip": "Select the data providers that you would like to enable",
                         "constraints": {
-                            "required": true,
-                            "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-30 characters long."
+                            "allowedValues": [
+                                {
+                                    "label": "Aruba ClearPass",
+                                    "value": "ArubaClearPass"
+                                },
+                                {
+                                    "label": "Broadcom Symantec DLP",
+                                    "value": "SymantecDLP"
+                                },
+                                {
+                                    "label": "Symantec ProxySG",
+                                    "value": "SymantecProxySG"
+                                },
+                                {
+                                    "label": "Symantec VIP",
+                                    "value": "SymantecVIP"
+                                },
+                                {
+                                    "label": "Symantec DLP",
+                                    "value": "SymantecDLP"
+                                },
+                                {
+                                    "label": "Carbon Black Endpoint",
+                                    "value": "CarbonBlack"
+                                }
+                            ],
+                            "required": true
                         },
                         "visible": true
-                    }
+                    },
                 ]
             }
         ],
         "outputs": {
             "workspaceName": "[basics('workspaceName')]",
-            "storageAccount": "[steps('storageAccount').storageAccount]"
+            "storageAccount": "[steps('dataProviders').enableDataProviders]"
         }
     }
 }
