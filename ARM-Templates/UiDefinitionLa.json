@@ -50,7 +50,7 @@
                         }
                     },
                     {
-                        "name": "enableDataProviders",
+                        "name": "enabledDataProviders",
                         "type": "Microsoft.Common.DropDown",
                         "label": "Select data providers to onboard",
                         "placeholder": "",
@@ -93,7 +93,7 @@
         ],
         "outputs": {
             "workspaceName": "[basics('workspaceName')]",
-            "storageAccount": "[steps('dataProviders').enableDataProviders]"
+            "dataProviders": "[steps('dataProviders').enabledDataProviders]"
         }
     }
 }
