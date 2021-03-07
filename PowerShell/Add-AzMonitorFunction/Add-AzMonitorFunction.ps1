@@ -97,8 +97,12 @@ if ($PSCmdlet.ParameterSetName -eq "CloudRepo") {
     $uriArray = $repoUri.Split("/")
     $gitOwner = $uriArray[3]
     $gitRepo = $uriArray[4]
-    $gitPath = $uriArray[7]
+    $gitPath = $uriArray[6]
 
+    if ($uriArray[7]) {
+        $gitPath = $uriArray[6] + "/" + $uriArray[7]
+    }
+    
     $apiUri = "https://api.github.com/repos/$gitOwner/$gitRepo/contents/$gitPath"
 
     $response = (Invoke-WebRequest $apiUri).Content `
