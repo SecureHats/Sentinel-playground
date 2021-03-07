@@ -1,5 +1,5 @@
 // Parse all tableNames so they reflect the imported data
-let LogHeader = SecureHats_CL
+let LogHeader = <CustomLog>
     | extend DeviceVendor           = DeviceVendor_s, 
         DeviceProduct               = DeviceProduct_s,
         AdditionalExtensions        = AdditionalExtensions_s,
