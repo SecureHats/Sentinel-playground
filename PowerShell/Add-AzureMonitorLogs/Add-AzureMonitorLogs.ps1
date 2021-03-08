@@ -1,18 +1,21 @@
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory = $true)]
-    [String]$WorkspaceId,
 
     [Parameter(Mandatory = $true)]
-    [SecureString]$WorkspaceKey,
+    [String]$WorkspaceName,
 
     [Parameter(Mandatory = $true)]
-    [String]$FilesPath,
+    [String]$CustomTableName,
 
-    [Parameter(Mandatory = $true)]
-    [String]$CustomTableName = "SecureHats"
+    [Parameter(ParameterSetName = "CloudRepo")]
+    [String]$repoUri,
+
+    [Parameter(ParameterSetName = "LocalRepo")]
+    [String]$repoDirectory
 )
 
+
+Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
 $rfc1123date = [DateTime]::UtcNow.ToString("r")
 
 Function Build-Signature {
@@ -29,15 +32,15 @@ Function Build-Signature {
 
     )
 
-    $xHeaders = "x-ms-date:" + $rfc1123date
-    $stringToHash = "POST" + "`n" + $contentLength + "`n" + "application/json" + "`n" + $xHeaders + "`n" + "/api/logs"
-    $bytesToHash = [Text.Encoding]::UTF8.GetBytes($stringToHash)
-    $keyBytes = [Convert]::FromBase64String((ConvertFrom-SecureString -SecureString $workspaceKey -AsPlainText))
-    $sha256 = New-Object System.Security.Cryptography.HMACSHA256
-    $sha256.Key = $keyBytes
+    $xHeaders       = "x-ms-date:" + $rfc1123date
+    $stringToHash   = "POST" + "`n" + $contentLength + "`n" + "application/json" + "`n" + $xHeaders + "`n" + "/api/logs"
+    $bytesToHash    = [Text.Encoding]::UTF8.GetBytes($stringToHash)
+    $keyBytes       = [Convert]::FromBase64String((ConvertFrom-SecureString -SecureString $workspaceKey -AsPlainText))
+    $sha256         = New-Object System.Security.Cryptography.HMACSHA256
+    $sha256.Key     = $keyBytes
     $calculatedHash = $sha256.ComputeHash($bytesToHash)
-    $encodedHash = [Convert]::ToBase64String($calculatedHash)
-    $authorization = 'SharedKey {0}:{1}' -f $workspaceId, $encodedHash
+    $encodedHash    = [Convert]::ToBase64String($calculatedHash)
+    $authorization  = 'SharedKey {0}:{1}' -f $workspaceId, $encodedHash
 
     return $authorization
 }
@@ -56,7 +59,7 @@ Function Set-LogAnalyticsData {
         [Array]$body,
 
         [Parameter(Mandatory = $true)]
-        [String]$customTableName
+        [String]$logType
 
     )
 
@@ -66,12 +69,10 @@ Function Set-LogAnalyticsData {
         "contentLength" = $body.Length
     }
 
-    #$signature = Build-Signature @parameters
-
     $payload = @{
-        "Headers"     = @{
+        "Headers" = @{
             "Authorization" = Build-Signature @parameters
-            "Log-Type"      = $customTableName
+            "Log-Type"      = $logType
             "x-ms-date"     = $rfc1123date
         }
         "method"      = "POST"
@@ -82,37 +83,113 @@ Function Set-LogAnalyticsData {
 
     $response = Invoke-WebRequest @payload -UseBasicParsing
 
-    return $response.StatusCode
+    if(-not($response.StatusCode -eq 200)) {
+        Write-Warning "Unable to send data to Data Log Collector table"
+        break
+    }
+    else {
+        Write-Output "Uploaded to Data Log Collector table [$($logType + '_CL')] at [$rfc1123date]"
+    }
 }
 
-$Files = @(Get-ChildItem `
-        -Path "$($FilesPath)" `
+try {
+    Write-Output "Looking for requested workspace [$($WorkspaceName)]"
+    $workspaceParams = @{
+        Method               = 'GET'
+        ApiVersion           = '2020-08-01'
+        ResourceProviderName = 'Microsoft.OperationalInsights/workspaces'
+    }
+
+    $workspace = ((Invoke-AzRestMethod @workspaceParams).Content `
+        | ConvertFrom-Json).value | Where-Object Name -eq $WorkspaceName
+
+    $splitArray         = $workspace.id -split '/'
+    $ResourceGroupName  = $splitArray[4]
+    $WorkspaceName      = $splitArray[8]
+    $workspaceId        = $workspace.properties.customerId
+
+}
+catch {
+    Write-Warning -Message "Log Analytics workspace [$($WorkspaceName)] not found in the current context"
+    break
+}
+
+$workspaceKey = (Get-AzOperationalInsightsWorkspaceSharedKeys `
+    -ResourceGroupName $ResourceGroupName `
+    -Name $WorkspaceName).PrimarySharedKey `
+    | ConvertTo-SecureString -AsPlainText -Force
+
+
+####################################################################################
+
+if ($PSCmdlet.ParameterSetName -eq "CloudRepo") {
+    $uriArray = $repoUri.Split("/")
+    $gitOwner = $uriArray[3]
+    $gitRepo = $uriArray[4]
+    $gitPath = $uriArray[7]
+
+    if ($uriArray[7]) {
+        $gitPath = $uriArray[7] + "/" + $uriArray[8]
+    }
+
+    $apiUri = "https://api.github.com/repos/$gitOwner/$gitRepo/contents/$gitPath"
+
+    $response = (Invoke-WebRequest $apiUri).Content `
+    | ConvertFrom-Json `
+    | Where-Object { $_.Name -notlike "*.*" -and $_.type -eq 'dir' }
+
+    $dataFiles = $response `
+    | Where-Object { $_.Name -notlike "*.*" } `
+    | Select-Object Name
+
+    foreach ($subfolder in $dataFiles.Name) {
+        $apiUri = "https://api.github.com/repos/$gitOwner/$gitRepo/contents/$gitPath/$subfolder"
+        Write-Host "New URL: [$apiUri]"
+
+        $webResponse = (Invoke-WebRequest $apiUri).Content | ConvertFrom-Json
+        $dataUris = ($webResponse `
+            | Where-Object { $_.download_url -like "*.json" -or `
+                             $_.download_url -like "*.csv"}`
+            ).download_url
+
+        foreach ($uri in $dataUris) {
+            $dataFile = Invoke-RestMethod -Method Get -Uri $uri | ConvertTo-Json
+
+            Set-LogAnalyticsData `
+                -WorkspaceId $workspaceId -WorkspaceKey $workspaceKey `
+                -body ([System.Text.Encoding]::UTF8.GetBytes($dataFile)) `
+                -logType $CustomTableName
+        }
+    }
+}
+elseif ($PSCmdlet.ParameterSetName -eq "LocalRepo") {
+    $dataFiles = @(Get-ChildItem `
+        -Path $repoDirectory `
         -File `
         -Recurse `
         -Include "*.json", "*.csv")
 
-foreach ($File in $Files) {
-    switch ($File.extension) {
-        ".json" {
-            Write-Output "Retrieving content from data file [$File]"
-            $content = Get-Content -Path $File.FullName -Raw
-        }
-        ".csv" {
-            Write-Output "Retrieving content from data file [$File]"
-            $content = Get-Content -Path $File.FullName -Raw `
-            | ConvertFrom-Csv `
-            | ConvertTo-Json
-        }
-        default {
-            Write-Output "No valid file type found"
-        }
-    }
+        foreach ($dataFile in $dataFiles) {
+            Write-Output "Retrieving content from data file [$dataFile]"
+            switch ($dataFile.extension) {
+                ".json" {
+                    Write-Output "Processing [$dataFile]"
+                    $content = Get-Content -Path $dataFile.FullName -Raw
+                }
+                ".csv" {
+                    Write-Output "Processing [$dataFile]"
+                    $content = Get-Content -Path $dataFile.FullName -Raw `
+                    | ConvertFrom-Csv `
+                    | ConvertTo-Json
+                }
+                default {
+                    Write-Output "No valid file type found"
+                }
+            }
 
-    # Submit the data to the API endpoint
-    Write-Output "Sending data to Log Analytics workspace..."
-    Set-LogAnalyticsData `
-        -WorkspaceId $WorkspaceId `
-        -WorkspaceKey $WorkspaceKey `
-        -body ([System.Text.Encoding]::UTF8.GetBytes($content)) `
-        -customTableName $CustomTableName
+            Set-LogAnalyticsData `
+                -WorkspaceId $workspaceId -WorkspaceKey $workspaceKey `
+                -body ([System.Text.Encoding]::UTF8.GetBytes($content)) `
+                -logType $CustomTableName
+        }
 }
