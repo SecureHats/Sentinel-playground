@@ -1,11 +1,11 @@
-# Check if the Az module is installed, if not install it
+#Check if the Az module is installed, if not install it
 # This will auto install the Az.Accounts module if it is not installed
-# Requires -Module Az.Resources
+#Requires -Module Az.Resources
 
 [CmdletBinding(DefaultParameterSetName = "CloudRepo")]
 param (
     [Parameter(ParameterSetName = "CloudRepo")]
-    [String]$repoUri = "https://github.com/SecureHats/Sentinel-playground/tree/main/parsers",
+    [String]$repoUri,
 
     [Parameter(ParameterSetName = "LocalRepo")]
     [String]$repoDirectory,
@@ -14,11 +14,19 @@ param (
     [String]$WorkspaceName,
 
     [Parameter(Mandatory = $false)]
-    [String]$subscriptionId
+    [String]$subscriptionId,
+    
+    [Parameter(Mandatory = $false)]
+    [String]$CustomTableName = 'SecureHats'
 )
 
 Write-Output "Validating if required module is installed"
 $AzModule = Get-InstalledModule -Name Az -ErrorAction SilentlyContinue
+
+$PSVersionTable
+
+#Write-Output 'Installing Operation Insights module 2.3.0'
+#Install-Module Az.OperationalInsights -RequiredVersion 2.3.0 -Repository PSGallery -Force | Out-Null
 
 if ($null -eq $AzModule) {
     Write-Warning "The Az PowerShell module is not found"
@@ -52,9 +60,32 @@ if ($subscriptionId) {
     }
 }
 
+function Set-AzMonitorFunction {
+    param (
+        [Parameter(Mandatory = $true)]
+        [String]$DisplayName,
+
+        [Parameter(Mandatory = $true)]
+        [String]$KqlQuery,
+
+        [Parameter(Mandatory = $false)]
+        [String]$Category = 'SecureHats'
+
+    )
+
+    New-AzOperationalInsightsSavedSearch `
+        -ResourceGroupName $workspace.ResourceGroupName `
+        -WorkspaceName $workspace.ResourceName `
+        -SavedSearchId (New-Guid).Guid `
+        -DisplayName $DisplayName `
+        -Category $Category `
+        -Query "$KqlQuery" `
+        -FunctionAlias $DisplayName
+}
+
 Write-Output "Retrieving Log Analytics workspace [$($WorkspaceName)]"
 $workspace = Get-AzResource `
-    -Name $WorkspaceName `
+    -Name "$WorkspaceName" `
     -ResourceType 'Microsoft.OperationalInsights/workspaces'
 
 if ($null -eq $workspace) {
@@ -67,16 +98,18 @@ if ($PSCmdlet.ParameterSetName -eq "CloudRepo") {
     $gitOwner = $uriArray[3]
     $gitRepo = $uriArray[4]
     $gitPath = $uriArray[7]
-
+    
     $apiUri = "https://api.github.com/repos/$gitOwner/$gitRepo/contents/$gitPath"
 
     $response = (Invoke-WebRequest $apiUri).Content `
-    | ConvertFrom-Json `
-    | Where-Object { $_.Name -notlike "*.*" -and $_.type -eq 'dir' }
-    
+        | ConvertFrom-Json `
+        | Where-Object { $_.Name -like "*$($uriArray[8])*" -and $_.type -eq 'dir' }
+
     $parsers = $response `
-    | Where-Object { $_.Name -notlike "*.*" } `
-    | Select-Object Name
+        | Where-Object { $_.Name -notlike "*.*" } `
+        | Select-Object Name
+
+    Write-Output "Parsers: $parsers"
     
     foreach ($folder in $parsers.Name) {
         $apiUri = "https://api.github.com/repos/$gitOwner/$gitRepo/contents/$gitPath/$folder"
@@ -85,7 +118,7 @@ if ($PSCmdlet.ParameterSetName -eq "CloudRepo") {
         $templateUris = ($webResponse | Where-Object { $_.download_url -like "*.*" }).download_url
         
         foreach ($templateUri in $templateUris) {
-            $kqlQuery = Invoke-RestMethod -Method Get -Uri $templateUri
+            $kqlQuery = (Invoke-RestMethod -Method Get -Uri $templateUri) -replace '<CustomLog>', ($CustomTableName + '_CL')
         }
 
         Set-AzMonitorFunction -DisplayName (($webResponse.name) -split "\.")[0] -KqlQuery "$($kqlQuery)"
@@ -103,26 +136,4 @@ elseif ($PSCmdlet.ParameterSetName -eq "LocalRepo") {
             $kqlQuery = Get-Content $file.FullName -Raw
             Set-AzMonitorFunction -DisplayName $file.BaseName -KqlQuery "$($kqlQuery)"
         }
-}
-function Set-AzMonitorFunction {
-    param (
-        [Parameter(Mandatory = $true)]
-        [String]$DisplayName,
-
-        [Parameter(Mandatory = $true)]
-        [String]$KqlQuery,
-
-        [Parameter(Mandatory = $false)]
-        [String]$Category = 'SecureHats'
-   
-    )
-    
-    New-AzOperationalInsightsSavedSearch `
-        -ResourceGroupName $workspace.ResourceGroupName `
-        -WorkspaceName $workspace.ResourceName `
-        -SavedSearchId (New-Guid).Guid `
-        -DisplayName "$DisplayName" `
-        -Query "$KqlQuery" `
-        -Category $Category `
-        -FunctionAlias "$DisplayName"
 }
