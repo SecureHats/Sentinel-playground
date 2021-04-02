@@ -5,7 +5,7 @@
 [CmdletBinding(DefaultParameterSetName = "CloudRepo")]
 param (
     [Parameter(ParameterSetName = "CloudRepo")]
-    [String]$repoUri = "https://github.com/SecureHats/Sentinel-playground/tree/main/parsers",
+    [String]$repoUri,
 
     [Parameter(ParameterSetName = "LocalRepo")]
     [String]$repoDirectory,
@@ -98,20 +98,18 @@ if ($PSCmdlet.ParameterSetName -eq "CloudRepo") {
     $gitOwner = $uriArray[3]
     $gitRepo = $uriArray[4]
     $gitPath = $uriArray[7]
-
-    if ($uriArray[7]) {
-        $gitPath = $uriArray[7] + "/" + $uriArray[8]
-    }
     
     $apiUri = "https://api.github.com/repos/$gitOwner/$gitRepo/contents/$gitPath"
 
     $response = (Invoke-WebRequest $apiUri).Content `
-    | ConvertFrom-Json `
-    | Where-Object { $_.Name -notlike "*.*" -and $_.type -eq 'dir' }
-    
+        | ConvertFrom-Json `
+        | Where-Object { $_.Name -like "*$($uriArray[8])*" -and $_.type -eq 'dir' }
+
     $parsers = $response `
-    | Where-Object { $_.Name -notlike "*.*" } `
-    | Select-Object Name
+        | Where-Object { $_.Name -notlike "*.*" } `
+        | Select-Object Name
+
+    Write-Output "Parsers: $parsers"
     
     foreach ($folder in $parsers.Name) {
         $apiUri = "https://api.github.com/repos/$gitOwner/$gitRepo/contents/$gitPath/$folder"
