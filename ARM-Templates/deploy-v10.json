@@ -8,7 +8,7 @@
                 "description": "Name for the Log Analytics workspace"
             }
         },
-        "dataProviders" {
+        "dataProviders": {
             "type": "array",
             "metadata": {
                 "description": "Array of supported data providers"
@@ -27,10 +27,10 @@
             "defaultValue": "ScriptTest"
         }
     },
-    "functions": [],
     "variables": {
         "identityName": "[concat('userIdentity',uniqueString(resourceGroup().id))]"
     },
+    "functions":[],
     "resources": [
         {
             "name": "[parameters('workspaceName')]",
@@ -104,10 +104,6 @@
             "type": "Microsoft.Resources/deploymentScripts",
             "apiVersion": "2020-10-01",
             "name": "[concat(copyIndex(), 'addData', parameters('dataProviders'[copyIndex('dataProvidersArray')]))]",
-            "copy: {
-                "name": "dataProvidersArray",
-                "count": "[length(parameters('dataProviders'))]"
-            }
             "location": "[resourceGroup().location]",
             "kind": "AzurePowerShell",
             "identity": {
@@ -119,12 +115,16 @@
             "properties": {
                 "forceUpdateTag": "1",
                 "azPowerShellVersion": "5.4",
-                "arguments": "[concat('-WorkspaceName ', parameters('workspaceName'), ' -CustomTableName ', parameters('CustomTableName'), ' -repoUri ', concat('https://github.com/SecureHats/Sentinel-playground/tree/main/samples/', parameters('dataProviders'[copyIndex('dataProvidersArray')]))]",
+                "arguments": "[concat('-WorkspaceName ', parameters('workspaceName'), ' -CustomTableName ', parameters('CustomTableName'), ' -repoUri ', concat('https://github.com/SecureHats/Sentinel-playground/tree/main/samples/', parameters('dataProviders' [copyIndex('dataProvidersArray')])))]",
                 "primaryScriptUri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/PowerShell/Add-AzureMonitorLogs/Add-AzureMonitorLogs.ps1",
                 "supportingScriptUris": [],
                 "timeout": "PT30M",
                 "cleanupPreference": "OnSuccess",
                 "retentionInterval": "P1D"
+            },
+            "copy": {
+                "name": "dataProvidersArray",
+                "count": "[length(parameters('dataProviders'))]"
             }
         },
         {
