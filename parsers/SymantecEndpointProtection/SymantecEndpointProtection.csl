@@ -29,7 +29,8 @@
 //
 //
 let LogHeader = <CustomLog>
-| where Computer in ("server1", "server2") // server1 and server2 are examples, replace this list with your SEP device names
+| where Computer in ("SERVER0001", "SERVER0002", "SERVER0003", "SERVER0004", "SERVER0005", "SERVER0006", "SERVER0007", "SERVER0008") // server1 and server2 are examples, replace this list with your SEP device names
+| extend SyslogMessage = SyslogMessage_s
 | extend ServerName = extract(@"^([\w\-\_]+)?(,|\Site:)",1,SyslogMessage)
 // Agent System Log Header
 | extend AgentSystemLogsParser = extract_all(@'^([^,]+)\,Category:\s([\d]+)\,([^,]+)\,\"?Event\sDescription:\s([^,]+\"?)(\,Event time:\s([^,]+)\,Group Name:\s([^,]+)$?)?',dynamic([1,2,3,4,6,7]), SyslogMessage)
