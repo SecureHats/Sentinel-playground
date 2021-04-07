@@ -30,7 +30,8 @@
 // 1380653443.857790533 MS220_8P events type=8021x_eap_success port='' identity='employee@ikarem.com'
 //
 //
-let LogHeader = Syslog
+let LogHeader = <CustomLog>
+| extend SyslogMessage = SyslogMessage_s
 | where Computer in ("server1", "server2") // server1 and server2 are examples, replace this list with your Cisco Meraki device(s)
 | extend Parser = extract_all(@"(\d+.\d+)\s([\w\-\_]+)\s([\w\-\_]+)\s([\S\s]+)$",dynamic([1,2,3,4]),SyslogMessage)
 | mv-expand Parser
