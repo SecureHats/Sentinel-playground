@@ -4,7 +4,7 @@ param (
     [Parameter(Mandatory = $true)]
     [String]$WorkspaceName,
 
-    [Parameter(Mandatory = $true)]
+    [Parameter(Mandatory = $false)]
     [String]$CustomTableName,
 
     [Parameter(ParameterSetName = "CloudRepo")]
@@ -119,9 +119,6 @@ $workspaceKey = (Get-AzOperationalInsightsWorkspaceSharedKeys `
     -Name $WorkspaceName).PrimarySharedKey `
     | ConvertTo-SecureString -AsPlainText -Force
 
-
-####################################################################################
-
 if ($PSCmdlet.ParameterSetName -eq "CloudRepo") {
     $uriArray = $repoUri.Split("/")
     $gitOwner = $uriArray[3]
@@ -135,27 +132,43 @@ if ($PSCmdlet.ParameterSetName -eq "CloudRepo") {
         | Where-Object { $_.Name -like "*$($uriArray[8])*" -and $_.type -eq 'dir' }
 
 
-    $dataFiles = $response `
+    $folders = $response `
     | Where-Object { $_.Name -notlike "*.*" } `
     | Select-Object Name
 
-    foreach ($subfolder in $dataFiles.Name) {
+    foreach ($subfolder in $folders.Name) {
         $apiUri = "https://api.github.com/repos/$gitOwner/$gitRepo/contents/$gitPath/$subfolder"
         Write-Host "New URL: [$apiUri]"
 
         $webResponse = (Invoke-WebRequest $apiUri).Content | ConvertFrom-Json
         $dataUris = ($webResponse `
             | Where-Object { $_.download_url -like "*.json" -or `
-                             $_.download_url -like "*.csv"}`
+                             $_.download_url -like "*.csv"
+                            }`
             ).download_url
 
         foreach ($uri in $dataUris) {
+            write-output "uri: [$($uri)]"
+
             $dataFile = Invoke-RestMethod -Method Get -Uri $uri | ConvertTo-Json
+            $namedTable = ($uri -split '/')[-1]
+            if ($namedTable -like "*_CL*") {
+
+                #temporarly store initial custom table name
+                $_customTableName = $CustomTableName
+                $CustomTableName = ($namedTable -replace "_CL.json")
+            }
 
             Set-LogAnalyticsData `
-                -WorkspaceId $workspaceId -WorkspaceKey $workspaceKey `
+                -WorkspaceId $workspaceId `
+                -WorkspaceKey $workspaceKey `
                 -body ([System.Text.Encoding]::UTF8.GetBytes($dataFile)) `
                 -logType $CustomTableName
+
+            #reset to initial value
+            if ($_customTableName) {
+                $CustomTableName = $_customTableName
+            }
         }
     }
 }
@@ -184,9 +197,24 @@ elseif ($PSCmdlet.ParameterSetName -eq "LocalRepo") {
                 }
             }
 
-            Set-LogAnalyticsData `
+            $paramObject = @{
+                "WorkspaceId" = $workspaceId
+                "WorkspaceKey" = $workspaceKey
+                "body" = ([System.Text.Encoding]::UTF8.GetBytes($content))
+            }
+
+            if ($dataFile.Name -like "*_CL") {
+                $paramObject.logType = $dataFile.Name
+            }
+            else {
+                $paramObject.logType = $CustomTableName
+            }
+
+            Set-LogAnalyticsData @paramObject
+            <#`
                 -WorkspaceId $workspaceId -WorkspaceKey $workspaceKey `
                 -body ([System.Text.Encoding]::UTF8.GetBytes($content)) `
                 -logType $CustomTableName
-        }
+            #>
+            }
 }
