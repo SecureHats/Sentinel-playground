@@ -16,7 +16,7 @@
         },
         "CloudRepo": {
             "type": "string",
-            "defaultValue": "https://github.com/SecureHats/Sentinel-playground/tree/main/parsers"
+            "defaultValue": "https://github.com/SecureHats/Sentinel-playground"
         },
         "roleGuid": {
             "type": "string",
@@ -25,12 +25,23 @@
         "customTableName": {
             "type": "string",
             "defaultValue": "ScriptTest"
+        },
+        "newManagedIdentity": {
+            "type": "bool",
+            "defaultValue": false
+        },
+        "ManagedIdentity": {
+            "type": "string",
+            "defaultValue": ""
         }
     },
+    "functions": [],
     "variables": {
-        "identityName": "[concat('userIdentity',uniqueString(resourceGroup().id))]"
+        //"Owner": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
+        "Contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+        //"Reader": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]"
+        "identityName": "[concat(parameters('ManagedIdentity'), '-', uniqueString(resourceGroup().id))]"
     },
-    "functions":[],
     "resources": [
         {
             "name": "[parameters('workspaceName')]",
@@ -38,7 +49,7 @@
             "apiVersion": "2015-11-01-preview",
             "location": "[resourceGroup().location]",
             "properties": {
-                "retentionInDays": "30",
+                "retentionInDays": 30,
                 "sku": {
                     "name": "PerGB2018"
                 }
@@ -69,7 +80,80 @@
             "location": "[resourceGroup().location]"
         },
         {
-            "dependsOn": ["[concat('Microsoft.ManagedIdentity/userAssignedIdentities/', variables('identityName'))]"],
+            "condition": "[if(parameters('newManagedIdentity'), bool('true'), bool('false'))]",
+            "apiVersion": "2020-04-01-preview",
+            "type": "Microsoft.Authorization/roleAssignments",
+            "name": "[parameters('roleGuid')]",
+            "properties": {
+                "roleDefinitionId": "[variables('Contributor')]",
+                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), '2018-11-30', 'Full').properties.principalId]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Resources/deploymentScripts/', 'sleep')]"
+            ]
+        },
+        {
+            "type": "Microsoft.Resources/deploymentScripts",
+            "apiVersion": "2020-10-01",
+            "name": "[toLower(concat('data-', parameters('dataProviders')[copyIndex()]))]",
+            "copy": {
+                "name": "datacopy",
+                "count": "[length(parameters('dataProviders'))]"
+            },
+            "location": "[resourceGroup().location]",
+            "kind": "AzurePowerShell",
+            "identity": {
+                "type": "userAssigned",
+                "userAssignedIdentities": {
+                    "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities/', variables('identityName'))]": {}
+                }
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Authorization/roleAssignments/', parameters('roleGuid'))]"
+            ],
+            "properties": {
+                "forceUpdateTag": "1",
+                "azPowerShellVersion": "5.4",
+                "arguments": "[concat('-WorkspaceName ', parameters('workspaceName'), ' -CustomTableName ', parameters('CustomTableName'), ' -repoUri ', concat(parameters('CloudRepo'), '/tree/main/samples/',parameters('dataProviders')[copyIndex()]))]",
+                "primaryScriptUri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/PowerShell/Add-AzureMonitorLogs/Add-AzureMonitorLogs.ps1",
+                "supportingScriptUris": [],
+                "timeout": "PT30M",
+                "cleanupPreference": "OnSuccess",
+                "retentionInterval": "P1D"
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deploymentScripts",
+            "apiVersion": "2020-10-01",
+            "name": "[toLower(concat('parser-', parameters('dataProviders')[copyIndex()]))]",
+            "copy": {
+                "name": "parsercopy",
+                "count": "[length(parameters('dataProviders'))]"
+            },
+            "location": "[resourceGroup().location]",
+            "kind": "AzurePowerShell",
+            "identity": {
+                "type": "userAssigned",
+                "userAssignedIdentities": {
+                    "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities/', variables('identityName'))]": {}
+                }
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Authorization/roleAssignments/', parameters('roleGuid'))]"
+            ],
+            "properties": {
+                "forceUpdateTag": "1",
+                "azPowerShellVersion": "5.4",
+                "arguments": "[concat('-WorkspaceName ', parameters('workspaceName'), ' -CustomTableName ', parameters('CustomTableName'), ' -repoUri ', concat(parameters('CloudRepo'), '/tree/main/parsers/', parameters('dataProviders')[copyIndex()]))]",
+                "primaryScriptUri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/PowerShell/Add-AzMonitorFunction/Add-AzMonitorFunction.ps1",
+                "supportingScriptUris": [],
+                "timeout": "PT30M",
+                "cleanupPreference": "OnSuccess",
+                "retentionInterval": "P1D"
+            }
+        },
+        {
+            "condition": "[if(parameters('newManagedIdentity'), bool('true'), bool('false'))]",
             "type": "Microsoft.Resources/deploymentScripts",
             "apiVersion": "2020-10-01",
             "name": "sleep",
@@ -79,78 +163,13 @@
                 "forceUpdateTag": "1",
                 "azPowerShellVersion": "3.0",
                 "arguments": "",
-                "scriptContent": "Start-Sleep -Seconds 120",
+                "scriptContent": "Start-Sleep -Seconds 15",
                 "supportingScriptUris": [],
                 "timeout": "PT30M",
                 "cleanupPreference": "Always",
                 "retentionInterval": "P1D"
-            }
-        },
-        {
-            "apiVersion": "2017-09-01",
-            "type": "Microsoft.Authorization/roleAssignments",
-            "name": "[parameters('roleGuid')]",
-            "properties": {
-                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
-                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), '2018-11-30', 'Full').properties.principalId]",
-                "scope": "[resourceGroup().id]"
             },
-            "dependsOn": [
-                "[concat('Microsoft.Resources/deploymentScripts/', 'sleep')]"
-            ]
-        },
-        {
-            "dependsOn": ["[concat('Microsoft.Authorization/roleAssignments/', parameters('roleGuid'))]"],
-            "type": "Microsoft.Resources/deploymentScripts",
-            "apiVersion": "2020-10-01",
-            "name": "[concat(copyIndex(), 'addData', parameters('dataProviders'[copyIndex('dataProvidersArray')]))]",
-            "location": "[resourceGroup().location]",
-            "kind": "AzurePowerShell",
-            "identity": {
-                "type": "userAssigned",
-                "userAssignedIdentities": {
-                    "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities/',variables('identityName'))]": {}
-                }
-            },
-            "properties": {
-                "forceUpdateTag": "1",
-                "azPowerShellVersion": "5.4",
-                "arguments": "[concat('-WorkspaceName ', parameters('workspaceName'), ' -CustomTableName ', parameters('CustomTableName'), ' -repoUri ', concat('https://github.com/SecureHats/Sentinel-playground/tree/main/samples/', parameters('dataProviders' [copyIndex('dataProvidersArray')])))]",
-                "primaryScriptUri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/PowerShell/Add-AzureMonitorLogs/Add-AzureMonitorLogs.ps1",
-                "supportingScriptUris": [],
-                "timeout": "PT30M",
-                "cleanupPreference": "OnSuccess",
-                "retentionInterval": "P1D"
-            },
-            "copy": {
-                "name": "dataProvidersArray",
-                "count": "[length(parameters('dataProviders'))]"
-            }
-        },
-        {
-            "dependsOn": ["[concat('Microsoft.Authorization/roleAssignments/', parameters('roleGuid'))]"],
-            "type": "Microsoft.Resources/deploymentScripts",
-            "apiVersion": "2020-10-01",
-            "name": "addParser",
-            "location": "[resourceGroup().location]",
-            "kind": "AzurePowerShell",
-            "identity": {
-                "type": "userAssigned",
-                "userAssignedIdentities": {
-                    "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities/',variables('identityName'))]": {}
-                }
-            },
-            "properties": {
-                "forceUpdateTag": "1",
-                "azPowerShellVersion": "5.4",
-                "arguments": "[concat('-WorkspaceName ', parameters('workspaceName'), ' -repoUri ', parameters('CloudRepo'), ' -CustomTableName ', parameters('CustomTableName'))]",
-                "primaryScriptUri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/PowerShell/Add-AzMonitorFunction/Add-AzMonitorFunction.ps1",
-                "supportingScriptUris": [],
-                "timeout": "PT30M",
-                "cleanupPreference": "OnSuccess",
-                "retentionInterval": "P1D"
-            }
+            "dependsOn": [ "[concat('Microsoft.ManagedIdentity/userAssignedIdentities/', variables('identityName'))]" ]
         }
-    ],
-    "outputs": {}
+    ]
 }
