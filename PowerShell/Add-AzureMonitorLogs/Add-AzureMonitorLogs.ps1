@@ -4,11 +4,7 @@ param (
     [Parameter(Mandatory = $true)]
     [String]$WorkspaceName,
 
-    [Parameter(Mandatory = $true)]
-    [String]$CustomTableName,
-
-    [Parameter(ParameterSetName = "CloudRepo")]
-    [String]$repoUri,
+    [Parameter(Mandatory = $false)]
 
     [Parameter(ParameterSetName = "LocalRepo")]
     [String]$repoDirectory
@@ -32,15 +28,15 @@ Function Build-Signature {
 
     )
 
-    $xHeaders       = "x-ms-date:" + $rfc1123date
-    $stringToHash   = "POST" + "`n" + $contentLength + "`n" + "application/json" + "`n" + $xHeaders + "`n" + "/api/logs"
-    $bytesToHash    = [Text.Encoding]::UTF8.GetBytes($stringToHash)
-    $keyBytes       = [Convert]::FromBase64String((ConvertFrom-SecureString -SecureString $workspaceKey -AsPlainText))
-    $sha256         = New-Object System.Security.Cryptography.HMACSHA256
-    $sha256.Key     = $keyBytes
+    $xHeaders = "x-ms-date:" + $rfc1123date
+    $stringToHash = "POST" + "`n" + $contentLength + "`n" + "application/json" + "`n" + $xHeaders + "`n" + "/api/logs"
+    $bytesToHash = [Text.Encoding]::UTF8.GetBytes($stringToHash)
+    $keyBytes = [Convert]::FromBase64String((ConvertFrom-SecureString -SecureString $workspaceKey -AsPlainText))
+    $sha256 = New-Object System.Security.Cryptography.HMACSHA256
+    $sha256.Key = $keyBytes
     $calculatedHash = $sha256.ComputeHash($bytesToHash)
-    $encodedHash    = [Convert]::ToBase64String($calculatedHash)
-    $authorization  = 'SharedKey {0}:{1}' -f $workspaceId, $encodedHash
+    $encodedHash = [Convert]::ToBase64String($calculatedHash)
+    $authorization = 'SharedKey {0}:{1}' -f $workspaceId, $encodedHash
 
     return $authorization
 }
@@ -70,7 +66,7 @@ Function Set-LogAnalyticsData {
     }
 
     $payload = @{
-        "Headers" = @{
+        "Headers"     = @{
             "Authorization" = Build-Signature @parameters
             "Log-Type"      = $logType
             "x-ms-date"     = $rfc1123date
@@ -83,7 +79,7 @@ Function Set-LogAnalyticsData {
 
     $response = Invoke-WebRequest @payload -UseBasicParsing
 
-    if(-not($response.StatusCode -eq 200)) {
+    if (-not($response.StatusCode -eq 200)) {
         Write-Warning "Unable to send data to Data Log Collector table"
         break
     }
@@ -103,10 +99,10 @@ try {
     $workspace = ((Invoke-AzRestMethod @workspaceParams).Content `
         | ConvertFrom-Json).value | Where-Object Name -eq $WorkspaceName
 
-    $splitArray         = $workspace.id -split '/'
-    $ResourceGroupName  = $splitArray[4]
-    $WorkspaceName      = $splitArray[8]
-    $workspaceId        = $workspace.properties.customerId
+    $splitArray = $workspace.id -split '/'
+    $ResourceGroupName = $splitArray[4]
+    $WorkspaceName = $splitArray[8]
+    $workspaceId = $workspace.properties.customerId
 
 }
 catch {
@@ -115,65 +111,82 @@ catch {
 }
 
 $workspaceKey = (Get-AzOperationalInsightsWorkspaceSharedKeys `
-    -ResourceGroupName $ResourceGroupName `
-    -Name $WorkspaceName).PrimarySharedKey `
-    | ConvertTo-SecureString -AsPlainText -Force
-
-
-####################################################################################
+        -ResourceGroupName $ResourceGroupName `
+        -Name $WorkspaceName).PrimarySharedKey `
+| ConvertTo-SecureString -AsPlainText -Force
 
 if ($PSCmdlet.ParameterSetName -eq "CloudRepo") {
     $uriArray = $repoUri.Split("/")
     $gitOwner = $uriArray[3]
     $gitRepo = $uriArray[4]
-    $gitPath = $uriArray[7]
-
-    $apiUri = "https://api.github.com/repos/$gitOwner/$gitRepo/contents/$gitPath"
-
-    $response = (Invoke-WebRequest $apiUri).Content `
-        | ConvertFrom-Json `
-        | Where-Object { $_.Name -like "*$($uriArray[8])*" -and $_.type -eq 'dir' }
+    | Where-Object { $_.Name -like "*$($uriArray[8])*" -and $_.type -eq 'dir' }
 
 
-    $dataFiles = $response `
+    $folders = $response `
     | Where-Object { $_.Name -notlike "*.*" } `
     | Select-Object Name
 
-    foreach ($subfolder in $dataFiles.Name) {
+    foreach ($subfolder in $folders.Name) {
         $apiUri = "https://api.github.com/repos/$gitOwner/$gitRepo/contents/$gitPath/$subfolder"
         Write-Host "New URL: [$apiUri]"
 
         $webResponse = (Invoke-WebRequest $apiUri).Content | ConvertFrom-Json
         $dataUris = ($webResponse `
-            | Where-Object { $_.download_url -like "*.json" -or `
-                             $_.download_url -like "*.csv"}`
-            ).download_url
+                $folders = $response `
+            | Where-Object { $_.Name -notlike "*.*" } `
+            | Select-Object Name
 
-        foreach ($uri in $dataUris) {
-            $dataFile = Invoke-RestMethod -Method Get -Uri $uri | ConvertTo-Json
+            foreach ($subfolder in $folders.Name) {
+                $_customTableName = $CustomTableName
+                $CustomTableName = ($namedTable -replace "_CL.json")
+            }
 
             Set-LogAnalyticsData `
-                -WorkspaceId $workspaceId -WorkspaceKey $workspaceKey `
-                -body ([System.Text.Encoding]::UTF8.GetBytes($dataFile)) `
-                -logType $CustomTableName
-        }
-    }
-}
-elseif ($PSCmdlet.ParameterSetName -eq "LocalRepo") {
-    $dataFiles = @(Get-ChildItem `
-        -Path $repoDirectory `
-        -File `
-        -Recurse `
-        -Include "*.json", "*.csv")
+                -WorkspaceId $workspaceId `
+                $_.download_url -like "*.csv"
+        }`
+    ).download_url
 
-        foreach ($dataFile in $dataFiles) {
-            Write-Output "Retrieving content from data file [$dataFile]"
-            switch ($dataFile.extension) {
-                ".json" {
-                    Write-Output "Processing [$dataFile]"
-                    $content = Get-Content -Path $dataFile.FullName -Raw
-                }
-                ".csv" {
+    foreach ($uri in $dataUris) {
+        write-output "uri: [$($uri)]"
+
+        $dataFile = Invoke-RestMethod -Method Get -Uri $uri | ConvertTo-Json
+        $namedTable = ($uri -split '/')[-1]
+        if ($namedTable -like "*_CL*") {
+
+            #temporarly store initial custom table name
+            $_customTableName = $CustomTableName
+            $CustomTableName = ($namedTable -replace "_CL.json")
+        }
+
+        Set-LogAnalyticsData `
+            -WorkspaceId $workspaceId `
+            -WorkspaceKey $workspaceKey `
+            -body ([System.Text.Encoding]::UTF8.GetBytes($dataFile)) `
+            -logType $CustomTableName
+
+        #reset to initial value
+        if ($_customTableName) {
+            $CustomTableName = $_customTableName
+        }
+        "body" = ([System.Text.Encoding]::UTF8.GetBytes($content))
+    }
+
+    if ($dataFile.Name -like "*_CL") {
+        $paramObject.logType = $dataFile.Name
+    }
+    else {
+        $paramObject.logType = $CustomTableName
+    }
+
+    Set-LogAnalyticsData @paramObject
+    <#`
+                -WorkspaceId $workspaceId -WorkspaceKey $workspaceKey `
+                -body ([System.Text.Encoding]::UTF8.GetBytes($content)) `
+                -logType $CustomTableName
+            #>
+}
+}
                     Write-Output "Processing [$dataFile]"
                     $content = Get-Content -Path $dataFile.FullName -Raw `
                     | ConvertFrom-Csv `
@@ -184,9 +197,24 @@ elseif ($PSCmdlet.ParameterSetName -eq "LocalRepo") {
                 }
             }
 
-            Set-LogAnalyticsData `
+            $paramObject = @{
+                "WorkspaceId" = $workspaceId
+                "WorkspaceKey" = $workspaceKey
+                "body" = ([System.Text.Encoding]::UTF8.GetBytes($content))
+            }
+
+            if ($dataFile.Name -like "*_CL") {
+                $paramObject.logType = $dataFile.Name
+            }
+            else {
+                $paramObject.logType = $CustomTableName
+            }
+
+            Set-LogAnalyticsData @paramObject
+            <#`
                 -WorkspaceId $workspaceId -WorkspaceKey $workspaceKey `
                 -body ([System.Text.Encoding]::UTF8.GetBytes($content)) `
                 -logType $CustomTableName
-        }
+            #>
+            }
 }
