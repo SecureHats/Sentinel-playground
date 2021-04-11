@@ -7,6 +7,9 @@ param (
     [Parameter(Mandatory = $true)]
     [String]$CustomTableName,
 
+    [Parameter(ParameterSetName = "CloudRepo")]
+    [String]$repoUri,
+
     [Parameter(ParameterSetName = "LocalRepo")]
     [String]$repoDirectory
 )
