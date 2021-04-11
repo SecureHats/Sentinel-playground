@@ -72,6 +72,7 @@
             }
         },
         {
+            "condition": "[if(parameters('newManagedIdentity'), bool('true'), bool('false'))]",
             "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
             "name": "[variables('identityName')]",
             "apiVersion": "2018-11-30",
