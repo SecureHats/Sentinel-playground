@@ -1,0 +1,199 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/0.1.2-preview/CreateUIDefinition.MultiVm.json#",
+    "handler": "Microsoft.Azure.CreateUIDef",
+    "version": "0.1.2-preview",
+    "parameters": {
+        "config": {
+            "isWizard": true,
+            "basics": {
+                "description": "**Azure Sentinel Playground** deployment, see more information about this project [here](https://github.com/SecureHats/Sentinel-playground/).",
+                "location": {
+                    "label": "Location",
+                    "toolTip": "Location for all resources",
+                    "resourceTypes": [
+                        "Microsoft.OperationalInsights"
+                    ]
+                }
+            }
+        },
+        "basics": [
+            {
+                "name": "newWorkspace",
+                "type": "Microsoft.Common.OptionsGroup",
+                "label": "New Log Analytics workspace",
+                "defaultValue": "No (use existing)",
+                "toolTip": "",
+                "constraints": {
+                    "allowedValues": [
+                        {
+                            "label": "No (use existing)",
+                            "value": false
+                        },
+                        {
+                            "label": "Yes",
+                            "value": true
+                        }
+                    ],
+                    "required": true
+                },
+                "visible": true
+            },
+            {
+                "name": "workspaceSelector",
+                "type": "Microsoft.Solutions.ResourceSelector",
+                "label": "Select an existing workspace",
+                "resourceType": "Microsoft.OperationalInsights/workspaces",
+                "options": {
+                    "filter": {
+                        "subscription": "onBasics",
+                        "location": "onBasics"
+                    }
+                },
+                "visible": "[bool(not(steps('basics').newWorkspace))]"
+            },
+            {
+                "name": "workspaceName",
+                "type": "Microsoft.Common.TextBox",
+                "label": "Workspace Name",
+                "placeholder": "",
+                "defaultValue": "",
+                "toolTip": "The workspace name should include 4-63 letters, digits or '-'. The '-' shouldn't be the first or the last symbol.",
+                "constraints": {
+                    "required": true,
+                    "regex": "^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$",
+                    "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-30 characters long."
+                },
+                "visible": "[bool(steps('basics').newWorkspace)]"
+            }
+        ],
+        "steps": [
+            {
+                "name": "dataProviders",
+                "label": "Data providers",
+                "elements": [
+                    {
+                        "name": "textBlock1",
+                        "type": "Microsoft.Common.TextBlock",
+                        "visible": true,
+                        "options": {
+                            "text": "Please select which data providers you want to onboard into your Azure Sentinel playground",
+                            "link": {
+                                "label": "Learn more",
+                                "uri": "https://www.microsoft.com"
+                            }
+                        }
+                    },
+                    {
+                        "name": "enabledDataProviders",
+                        "type": "Microsoft.Common.DropDown",
+                        "label": "Select data providers to onboard",
+                        "filter": true,
+                        "filterPlaceholder": "Filter items ...",
+                        "multiselect": true,
+                        "selectAll": true,
+                        "defaultValue": "Make a selection",
+                        "toolTip": "Select Providers",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Cisco ISE Event",
+                                    "value": "CiscoISEEvent"
+                                },
+                                {
+                                    "label": "Cisco Meraki",
+                                    "value": "CiscoMeraki"
+                                },
+                                {
+                                    "label": "Cisco UCS",
+                                    "value": "CiscoUCS"
+                                },
+                                {
+                                    "label": "Cisco Umbrella",
+                                    "value": "CiscoUmbrella"
+                                },
+                                {
+                                    "label": "Symantec DLP",
+                                    "value": "SymantecDLP"
+                                },
+                                {
+                                    "label": "Symantec Endpoint Protection",
+                                    "value": "SymantecEndpointProtection"
+                                },
+                                {
+                                    "label": "Symantec Proxy SG",
+                                    "value": "SymantecProxySG"
+                                },
+                                {
+                                    "label": "Symantec VIP",
+                                    "value": "SymantecVIP"
+                                }
+                            ],
+                            "required": true
+                        },
+                        "visible": true
+                    }
+                ]
+            },
+            {
+                "name": "deployment",
+                "label": "Permissions",
+                "elements": [
+                    {
+                        "name": "newManagedIdentity",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Create new managed identity?",
+                        "defaultValue": "No (use existing)",
+                        "toolTip": "",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "No (use existing)",
+                                    "value": false
+                                },
+                                {
+                                    "label": "Yes",
+                                    "value": true
+                                }
+                            ],
+                            "required": true
+                        },
+                        "visible": true
+                    },
+                    {
+                        "name": "identitySelector",
+                        "type": "Microsoft.Solutions.ResourceSelector",
+                        "label": "Select a user assigned identity",
+                        "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                        "options": {
+                            "filter": {
+                                "subscription": "onBasics",
+                                "location": "onBasics"
+                            }
+                        },
+                        "visible": "[bool(not(steps('deployment').newManagedIdentity))]"
+                    },
+                    {
+                        "name": "managedIdentityName",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "Managed Identity Name",
+                        "placeholder": "",
+                        "defaultValue": "",
+                        "toolTip": "The workspace name should include 3-128 letters, digits or '-'. The '-' shouldn't be the first or the last symbol.",
+                        "constraints": {
+                            "required": true,
+                            "regex": "^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$",
+                            "validationMessage": "Only alphanumeric characters are allowed, and the value must be 3-128 characters long."
+                        },
+                        "visible": "[bool(steps('deployment').newManagedIdentity)]"
+                    }
+                ]
+            }
+        ],
+        "outputs": {
+            "workspaceName": "[if(equals(steps('basics').newWorkspace, true), steps('basics').workspaceName, steps('basics').workspaceSelector.name)]",
+            "managedIdentityName": "[if(equals(steps('deployment').newManagedIdentity, true), steps('deployment').managedIdentityName, steps('deployment').identitySelector.name)]",
+            "newManagedIdentity": "[steps('deployment').newManagedIdentity]",
+            "dataProviders": "[steps('dataProviders').enabledDataProviders]"
+        }
+    }
+}
