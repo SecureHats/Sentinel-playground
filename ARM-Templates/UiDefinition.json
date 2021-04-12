@@ -96,6 +96,10 @@
                         "constraints": {
                             "allowedValues": [
                                 {
+                                    "label": "Aruba ClearPass",
+                                    "value": "ArubaClearPass"
+                                },
+                                {
                                     "label": "Cisco ISE Event",
                                     "value": "CiscoISEEvent"
                                 },
