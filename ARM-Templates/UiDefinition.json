@@ -120,6 +120,14 @@
                                     "value": "CiscoUmbrella"
                                 },
                                 {
+                                    "label": "Qualys Vulnerability Management (Preview)",
+                                    "value": "Qualys"
+                                },
+                                 {
+                                    "label": "Qualys Vulnerability Management (Preview)",
+                                    "value": "Qualys"
+                                },
+                                {
                                     "label": "Symantec DLP",
                                     "value": "SymantecDLP"
                                 },
