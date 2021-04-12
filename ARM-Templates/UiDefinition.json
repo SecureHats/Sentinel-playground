@@ -96,7 +96,11 @@
                         "constraints": {
                             "allowedValues": [
                                 {
-                                    "label": "Aruba ClearPass",
+                                    "label": "Akamai Security Events (Preview)",
+                                    "value": "AkamaiSIEMEvent"
+                                },
+                                {
+                                    "label": "Aruba ClearPass (Preview)",
                                     "value": "ArubaClearPass"
                                 },
                                 {
@@ -104,15 +108,15 @@
                                     "value": "CiscoISEEvent"
                                 },
                                 {
-                                    "label": "Cisco Meraki",
+                                    "label": "Cisco Meraki (Preview)",
                                     "value": "CiscoMeraki"
                                 },
                                 {
-                                    "label": "Cisco UCS",
+                                    "label": "Cisco UCS (Preview)",
                                     "value": "CiscoUCS"
                                 },
                                 {
-                                    "label": "Cisco Umbrella",
+                                    "label": "Cisco Umbrella (Preview)",
                                     "value": "CiscoUmbrella"
                                 },
                                 {
