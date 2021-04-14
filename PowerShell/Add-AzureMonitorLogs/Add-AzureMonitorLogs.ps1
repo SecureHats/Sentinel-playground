@@ -11,7 +11,7 @@ param (
     [String]$repoUri,
 
     [Parameter(Mandatory = $false)]
-    [Array]$DataArray,
+    [String]$DataArray,
 
     [Parameter(ParameterSetName = "LocalRepo")]
     [String]$repoDirectory
@@ -128,7 +128,7 @@ Function PathBuilder {
         [string]$BaseUri,
 
         [Parameter(Mandatory = $false)]
-        [array]$dataArray
+        [string]$dataArray
     )
 
     $uriArray = $repoUri.Split("/")
@@ -136,8 +136,10 @@ Function PathBuilder {
     $gitRepo = $uriArray[4]
     $gitPath = $uriArray[7]
     
-    if ($DataArray) {
-        foreach ($object in $DataArray) {
+    $dataObject = ($dataArray | ConvertFrom-Json)
+    
+    if ($dataObject) {
+        foreach ($object in $dataObject) {
             $_apiUri = "https://api.github.com/repos/$gitOwner/$gitRepo/contents/$gitPath/$object"
         }
     }
