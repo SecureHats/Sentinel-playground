@@ -112,7 +112,7 @@ Function PathBuilder {
     
     $dataObject = ($dataArray | ConvertFrom-Json)
     
-    if ($DataArray) {
+    if ($dataObject) {
         foreach ($object in $dataObject) {
             $_apiUri = "https://api.github.com/repos/$gitOwner/$gitRepo/contents/$gitPath/$object"
         }
