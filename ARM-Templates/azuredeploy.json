@@ -111,7 +111,7 @@
             "properties": {
                 "forceUpdateTag": "1",
                 "azPowerShellVersion": "5.4",
-                "arguments": "[concat('-WorkspaceName ', parameters('workspaceName'), ' -CustomTableName ', parameters('CustomTableName'), ' -repoUri ', concat(parameters('CloudRepo'), '/tree/main/samples/',parameters('dataProviders')[copyIndex()]))]",
+                "arguments": "[concat('-WorkspaceName ', parameters('workspaceName'), ' -CustomTableName ', parameters('CustomTableName'), ' -repoUri ', concat(parameters('CloudRepo'), '/tree/main/samples/'), ' -dataArray ', parameters('dataProviders')[copyIndex()]))]",
                 "primaryScriptUri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/PowerShell/Add-AzureMonitorLogs/Add-AzureMonitorLogs.ps1",
                 "supportingScriptUris": [],
                 "timeout": "PT30M",
@@ -141,7 +141,7 @@
             "properties": {
                 "forceUpdateTag": "1",
                 "azPowerShellVersion": "5.4",
-                "arguments": "[concat('-WorkspaceName ', parameters('workspaceName'), ' -CustomTableName ', parameters('CustomTableName'), ' -repoUri ', concat(parameters('CloudRepo'), '/tree/main/parsers/', parameters('dataProviders')[copyIndex()]))]",
+                "arguments": "[concat('-WorkspaceName ', parameters('workspaceName'), ' -CustomTableName ', parameters('CustomTableName'), ' -repoUri ', concat(parameters('CloudRepo'), '/tree/main/parsers/'), ' -dataArray ', parameters('dataProviders')[copyIndex()]))]",
                 "primaryScriptUri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/PowerShell/Add-AzMonitorFunction/Add-AzMonitorFunction.ps1",
                 "supportingScriptUris": [],
                 "timeout": "PT30M",
