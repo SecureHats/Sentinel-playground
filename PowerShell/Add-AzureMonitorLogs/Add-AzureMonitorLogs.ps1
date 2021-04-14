@@ -11,7 +11,7 @@ param (
     [String]$repoUri,
 
     [Parameter(Mandatory = $false)]
-    [String]$DataArray,
+    [array]$DataArray,
 
     [Parameter(ParameterSetName = "LocalRepo")]
     [String]$repoDirectory
@@ -128,7 +128,7 @@ Function PathBuilder {
         [string]$BaseUri,
 
         [Parameter(Mandatory = $false)]
-        [string]$dataArray
+        [array]$dataArray
     )
 
     $uriArray = $repoUri.Split("/")
