@@ -14,7 +14,7 @@ param (
     [String]$WorkspaceName,
     
     [Parameter(Mandatory = $true)]
-    [Array]$DataArray,
+    [string]$DataArray,
 
     [Parameter(Mandatory = $false)]
     [String]$subscriptionId,
@@ -102,7 +102,7 @@ Function PathBuilder {
         [string]$BaseUri,
 
         [Parameter(Mandatory = $false)]
-        [array]$dataArray
+        [string]$dataArray
     )
 
     $uriArray = $repoUri.Split("/")
@@ -110,8 +110,10 @@ Function PathBuilder {
     $gitRepo = $uriArray[4]
     $gitPath = $uriArray[7]
     
+    $dataObject = ($dataArray | ConvertFrom-Json)
+    
     if ($DataArray) {
-        foreach ($object in $DataArray) {
+        foreach ($object in $dataObject) {
             $_apiUri = "https://api.github.com/repos/$gitOwner/$gitRepo/contents/$gitPath/$object"
         }
     }
