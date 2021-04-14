@@ -14,7 +14,7 @@ param (
     [String]$WorkspaceName,
     
     [Parameter(Mandatory = $true)]
-    [string]$DataArray,
+    [array]$DataArray,
 
     [Parameter(Mandatory = $false)]
     [String]$subscriptionId,
@@ -102,7 +102,7 @@ Function PathBuilder {
         [string]$BaseUri,
 
         [Parameter(Mandatory = $false)]
-        [string]$dataArray
+        [array]$dataArray
     )
 
     $uriArray = $repoUri.Split("/")
