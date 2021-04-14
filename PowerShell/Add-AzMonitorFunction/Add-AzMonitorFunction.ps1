@@ -12,9 +12,6 @@ param (
 
     [Parameter(Mandatory = $true)]
     [String]$WorkspaceName,
-    
-    [Parameter(Mandatory = $true)]
-    [array]$DataArray,
 
     [Parameter(Mandatory = $false)]
     [String]$subscriptionId,
@@ -96,45 +93,14 @@ if ($null -eq $workspace) {
     break
 }
 
-Function PathBuilder {
-    param (
-        [Parameter(Mandatory = $true)]
-        [string]$BaseUri,
-
-        [Parameter(Mandatory = $false)]
-        [array]$dataArray
-    )
-
-    $uriArray = $repoUri.Split("/")
-    $gitOwner = $uriArray[3]
-    $gitRepo = $uriArray[4]
-    $gitPath = $uriArray[7]
-    
-    $dataObject = ($dataArray | ConvertFrom-Json)
-    
-    if ($dataObject) {
-        foreach ($object in $dataObject) {
-            $_apiUri = "https://api.github.com/repos/$gitOwner/$gitRepo/contents/$gitPath/$object"
-        }
-    }
-    else {
-        $_apiUri = "https://api.github.com/repos/$gitOwner/$gitRepo/contents/$gitPath"
-    }
-    
-    return $_apiUri
-}
-
     if ($PSCmdlet.ParameterSetName -eq "CloudRepo") {
-    <#
+    
     $uriArray = $repoUri.Split("/")
     $gitOwner = $uriArray[3]
     $gitRepo = $uriArray[4]
     $gitPath = $uriArray[7]
-    #>
     
-    $apiUri = PathBuilder -BaseUri $repoUri -dataArray $DataArray
-
-    #$apiUri = "https://api.github.com/repos/$gitOwner/$gitRepo/contents/$gitPath"
+    $apiUri = "https://api.github.com/repos/$gitOwner/$gitRepo/contents/$gitPath"
     
     $response = (Invoke-WebRequest $apiUri).Content `
         | ConvertFrom-Json `
