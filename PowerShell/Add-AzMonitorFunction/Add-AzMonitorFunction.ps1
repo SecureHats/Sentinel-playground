@@ -36,11 +36,11 @@ function Set-AzMonitorFunction {
     )
 
     $payload = @{
-        ResourceGroupName    = $resourceGroupName
+        ResourceGroupName    = "$resourceGroupName"
         ResourceProviderName = 'Microsoft.OperationalInsights'
         ResourceType         = "workspaces/$($workspace.ResourceName)/savedSearches"
         ApiVersion           = '2020-08-01'
-        Name                 = $displayName
+        Name                 = "$displayName"
         Method               = 'DELETE'
     }
 
@@ -48,7 +48,7 @@ function Set-AzMonitorFunction {
 
     if(-not($existing.StatusCode -eq '200')){
         New-AzOperationalInsightsSavedSearch `
-            -ResourceGroupName $workspace.ResourceGroupName `
+            -ResourceGroupName $resourceGroupName `
             -WorkspaceName $workspace.ResourceName `
             -SavedSearchId $displayName `
             -DisplayName $displayName `
