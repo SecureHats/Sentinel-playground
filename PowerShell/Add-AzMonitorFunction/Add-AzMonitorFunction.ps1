@@ -19,43 +19,11 @@ param (
     [String]$CustomTableName = 'SecureHats'
 )
 
-Write-Output "Validating if required module is installed"
-$AzModule = Get-InstalledModule -Name Az -ErrorAction SilentlyContinue
-
-if ($null -eq $AzModule) {
-    Write-Warning "The Az PowerShell module is not found"
-    #check for Admin Privleges
-    $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
-
-    if (-not ($currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))) {
-        #Not an Admin, install to current user
-        Write-Warning -Message "Can not install the Az module. You are not running as Administrator"
-        Write-Warning -Message "Installing Az module to current user Scope"
-        Install-Module Az -Scope CurrentUser -Force -Repository PSGallery
-    }
-    else {
-        #Admin, install to all users
-        Write-Warning -Message "Installing the Az module to all users"
-        Install-Module -Name Az -Force -Repository PSGallery
-        Import-Module -Name Az -Force
-    }
-}
-
-#Check the Azure subscription context
-if ($subscriptionId) {
-    $subIdContext = (Get-AzContext).Subscription.Id 
-    if ($subIdContext -ne $subscriptionId) {
-        $setSub = Set-AzContext -SubscriptionName $subscriptionId -ErrorAction SilentlyContinue
-        if ($null -eq $setSub) {
-            Write-Warning "$subscriptionId is not set, please login and run this script again"
-            Login-AzAccount
-            break
-        }
-    }
-}
-
 function Set-AzMonitorFunction {
     param (
+        [Parameter(Mandatory = $true)]
+        [String]$ResourceGroupName,
+
         [Parameter(Mandatory = $true)]
         [String]$DisplayName,
 
@@ -112,8 +80,8 @@ function pathBuilder {
 
     $uriArray = $_path.Split("/")
     $gitOwner = $uriArray[3]
-    $gitRepo = $uriArray[4]
-    $gitPath = $uriArray[7]
+    $gitRepo  = $uriArray[4]
+    $gitPath  = $uriArray[7]
     $solution = $uriArray[8]
 
     $apiUri = "https://api.github.com/repos/$gitOwner/$gitRepo/contents/$gitPath/$solution"
@@ -123,37 +91,71 @@ function pathBuilder {
 function processResponse {
     param (
         [Parameter(Mandatory = $true)]
+        [string]$resourceGroupName,
+
+        [Parameter(Mandatory = $true)]
         [object]$responseBody
     )
 
-    foreach ($responseobject in $responseBody) {
-        if ($responseobject.type -eq 'dir') {
-            $responseobject = (Invoke-WebRequest (PathBuilder -uri $responseobject.html_url)).Content | ConvertFrom-Json
-            Write-Output $responseobject
+    foreach ($responseObject in $responseBody) {
+        if ($responseObject.type -eq 'dir') {
+            $responseObject = (Invoke-WebRequest (PathBuilder -uri $responseObject.html_url)).Content | ConvertFrom-Json
+            Write-Output $responseObject
             pause
         }
     
-        foreach ($fileObject in $responseobject) {
+        foreach ($fileObject in $responseObject) {
             if ($fileObject.name -like "*.csl") {
                 $kqlQuery = (Invoke-RestMethod -Method Get -Uri $fileObject.download_url) -replace '<CustomLog>', ($CustomTableName + '_CL')
-                Set-AzMonitorFunction -DisplayName (($fileObject.name) -split "\.")[0] -KqlQuery "$($kqlQuery)"
+                Set-AzMonitorFunction - ResourceGroupName $resourceGroupName -DisplayName (($fileObject.name) -split "\.")[0] -KqlQuery "$($kqlQuery)"
             }
             else {
                 Write-Output "Nothing to progress"
             }       
         }
     }
-    
+}
+
+Write-Output "Validating if required module is installed"
+$AzModule = Get-InstalledModule -Name Az -ErrorAction SilentlyContinue
+
+if ($null -eq $AzModule) {
+    Write-Warning "The Az PowerShell module is not found"
+    #check for Admin Privleges
+    $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+
+    if (-not ($currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))) {
+        #Not an Admin, install to current user
+        Write-Warning -Message "Can not install the Az module. You are not running as Administrator"
+        Write-Warning -Message "Installing Az module to current user Scope"
+        Install-Module Az -Scope CurrentUser -Force -Repository PSGallery
+    }
+    else {
+        #Admin, install to all users
+        Write-Warning -Message "Installing the Az module to all users"
+        Install-Module -Name Az -Force -Repository PSGallery
+        Import-Module -Name Az -Force
+    }
+}
+
+#Check the Azure subscription context
+if ($subscriptionId) {
+    $subIdContext = (Get-AzContext).Subscription.Id 
+    if ($subIdContext -ne $subscriptionId) {
+        $setSub = Set-AzContext -SubscriptionName $subscriptionId -ErrorAction SilentlyContinue
+        if ($null -eq $setSub) {
+            Write-Warning "$subscriptionId is not set, please login and run this script again"
+            Login-AzAccount
+            break
+        }
+    }
 }
 
 Write-Output "Retrieving Log Analytics workspace [$($WorkspaceName)]"
-$workspace = @{
-        ResourceGroupName    = $workspace.ResourceGroupName
-        ResourceProviderName = 'Microsoft.OperationalInsights'
-        ResourceType         = "workspaces"
-        ApiVersion           = '2020-08-01'
-        Method               = 'GET'
-    }
+
+$workspace = Get-AzResource `
+    -Name "$WorkspaceName" `
+    -ResourceType 'Microsoft.OperationalInsights/workspaces'
 
 if ($null -eq $workspace) {
     Write-Warning "Log Analytics workspace [$($WorkspaceName)] could not be found in this subscription"
@@ -168,12 +170,12 @@ if ($DataProvidersArray) {
         $returnUri = PathBuilder -uri $RepoUri -provider $provider 
         
         $response = (Invoke-WebRequest $returnUri).Content | ConvertFrom-Json
-        processResponse -responseBody $response
+        processResponse -resourceGroupName $workspace.ResourceGroupName -responseBody $response
     }
 }
 else {
     $returnUri = PathBuilder -uri $RepoUri -provider $provider
     
     $response = (Invoke-WebRequest $returnUri).Content | ConvertFrom-Json
-    processResponse -responseBody $response
+    processResponse -resourceGroupName $workspace.ResourceGroupName -responseBody $response
 }
