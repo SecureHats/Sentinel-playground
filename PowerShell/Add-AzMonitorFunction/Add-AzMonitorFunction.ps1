@@ -147,9 +147,13 @@ function processResponse {
 }
 
 Write-Output "Retrieving Log Analytics workspace [$($WorkspaceName)]"
-$workspace = Get-AzResource `
-    -Name "$WorkspaceName" `
-    -ResourceType 'Microsoft.OperationalInsights/workspaces'
+$workspace = @{
+        ResourceGroupName    = $workspace.ResourceGroupName
+        ResourceProviderName = 'Microsoft.OperationalInsights'
+        ResourceType         = "workspaces"
+        ApiVersion           = '2020-08-01'
+        Method               = 'GET'
+    }
 
 if ($null -eq $workspace) {
     Write-Warning "Log Analytics workspace [$($WorkspaceName)] could not be found in this subscription"
