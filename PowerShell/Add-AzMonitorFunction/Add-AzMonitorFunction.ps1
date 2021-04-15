@@ -22,25 +22,25 @@ param (
 function Set-AzMonitorFunction {
     param (
         [Parameter(Mandatory = $true)]
-        [String]$ResourceGroupName,
+        [String]$resourceGroupName,
 
         [Parameter(Mandatory = $true)]
-        [String]$DisplayName,
+        [String]$displayName,
 
         [Parameter(Mandatory = $true)]
-        [String]$KqlQuery,
+        [String]$kqlQuery,
 
         [Parameter(Mandatory = $false)]
-        [String]$Category = 'SecureHats'
+        [String]$category = 'SecureHats'
 
     )
 
     $payload = @{
-        ResourceGroupName    = $workspace.ResourceGroupName
+        ResourceGroupName    = $resourceGroupName
         ResourceProviderName = 'Microsoft.OperationalInsights'
         ResourceType         = "workspaces/$($workspace.ResourceName)/savedSearches"
         ApiVersion           = '2020-08-01'
-        Name                 = $DisplayName
+        Name                 = $displayName
         Method               = 'DELETE'
     }
 
@@ -50,11 +50,11 @@ function Set-AzMonitorFunction {
         New-AzOperationalInsightsSavedSearch `
             -ResourceGroupName $workspace.ResourceGroupName `
             -WorkspaceName $workspace.ResourceName `
-            -SavedSearchId $DisplayName `
-            -DisplayName $DisplayName `
-            -Category $Category `
-            -Query "$KqlQuery" `
-            -FunctionAlias $DisplayName
+            -SavedSearchId $displayName `
+            -DisplayName $displayName `
+            -Category $category `
+            -Query "$kqlQuery" `
+            -FunctionAlias $displayName
     }
 }
 
@@ -107,7 +107,11 @@ function processResponse {
         foreach ($fileObject in $responseObject) {
             if ($fileObject.name -like "*.csl") {
                 $kqlQuery = (Invoke-RestMethod -Method Get -Uri $fileObject.download_url) -replace '<CustomLog>', ($CustomTableName + '_CL')
-                Set-AzMonitorFunction - ResourceGroupName $resourceGroupName -DisplayName (($fileObject.name) -split "\.")[0] -KqlQuery "$($kqlQuery)"
+                
+                Set-AzMonitorFunction `
+                    -resourceGroupName $resourceGroupName `
+                    -displayName (($fileObject.name) -split "\.")[0] `
+                    -kqlQuery "$($kqlQuery)"
             }
             else {
                 Write-Output "Nothing to progress"
