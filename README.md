@@ -15,17 +15,18 @@ This to speed up the deployment for Proof of Concept and demo scenarios.
 
 The following table summarizes permissions, licenses needed and cost to enable each Data Connector:
 
-| Provider                                       | Connector       |  Custom Table                  | Tested    |
-| ---------------------------------------------- | --------------------------------- |--------------------------------|-----------|
-| Aruba                                          | Akamai Security Events (Preview)  |SecureHats_CL | [X]       |
-| Akamai                                         | ASC Standard    |Security Reader                 | Free      |
-| Azure Active Directory                         | Any AAD license |Global Admin or Security Admin  | Billed    |
-| Azure Active Directory Identity Protection     | AAD Premium 2   |Global Admin or Security Admin  | Free      |
-| Office 365                                     | None            |Global Admin or Security Admin  | Free      |
-| Microsoft Cloud App Security                   | MCAS            |Global Admin or Security Admin  | Free      |
-| Microsoft Defender for Identity                | AATP            |Global Admin or Security Admin  | Free      |
-| Microsoft Defender for Endpoint			     | MDATP           |Global Admin or Security Admin  | Free      |
-| Threat Intelligence Platforms                  | None            |Global Admin or Security Admin  | Billed    |
+| Provider   | Connector                        | Custom Table                    | Tested  |
+| ---------- | -------------------------------- | ------------------------------- | ------- |
+| Akamai     | Akamai Security Events (Preview) | SecureHats_CL                   |  [X]    |
+| Aruba      | Aruba ClearPass (Preview)        | SecureHats_CL                   |  [ ]    |
+| Cisco      | Cisco ISE Event                  | SecureHats_CL                   |  [ ]    |
+| Cisco      | Cisco Meraki (Preview)           | SecureHats_CL                   |  [ ]    |
+| Cisco      | Cisco UCS (Preview)              | SecureHats_CL                   |  [ ]    |
+| Cisco      | Cisco Umbrella (Preview)         | Cisco_Umbrella_cloudfirewall_CL |  [X]    |
+| Cisco      |                                  | Cisco_Umbrella_dns_CL           |  [X]    |
+| Cisco      |                                  | Cisco_Umbrella_ip_CL            |  [X]    |
+| Cisco      |                                  | Cisco_Umbrella_proxy_CL         |  [X]    |
+
 
 ## ARM template instructions
 
