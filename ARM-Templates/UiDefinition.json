@@ -96,6 +96,10 @@
                         "constraints": {
                             "allowedValues": [
                                 {
+                                    "label": "Agari Phishing Defense and Brand Protection (Preview)",
+                                    "value": "Agari"
+                                },
+                                {
                                     "label": "Akamai Security Events (Preview)",
                                     "value": "AkamaiSIEMEvent"
                                 },
