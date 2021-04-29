@@ -1,4 +1,4 @@
-SecureHats_CL
+<CustomLog>
 | extend DeviceVendor           = DeviceVendor_s,
     DeviceProduct               = DeviceProduct_s,
     DeviceEventClassID          = DeviceEventClassID_s,
