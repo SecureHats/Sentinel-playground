@@ -9,7 +9,7 @@
     "RawData": "",
     "created_at_t [UTC]": "11/17/2020, 10:01:21.000 PM",
     "id_d": 541047785,
-    "alert_definition_name_s": "Policy 1",
+    "alert_definition_name": "Policy 1",
     "Type": "agari_apdpolicy_log_CL",
     "_ResourceId": ""
   },
@@ -23,7 +23,7 @@
     "RawData": "",
     "created_at_t [UTC]": "11/17/2020, 10:06:32.000 PM",
     "id_d": 541051040,
-    "alert_definition_name_s": "Policy 2",
+    "alert_definition_name": "Policy 2",
     "Type": "agari_apdpolicy_log_CL",
     "_ResourceId": ""
   },
@@ -37,7 +37,7 @@
     "RawData": "",
     "created_at_t [UTC]": "11/18/2020, 12:08:08.000 AM",
     "id_d": 541098663,
-    "alert_definition_name_s": "Policy 3",
+    "alert_definition_name": "Policy 3",
     "Type": "agari_apdpolicy_log_CL",
     "_ResourceId": ""
   }
