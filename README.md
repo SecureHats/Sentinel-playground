@@ -21,20 +21,20 @@ The following table summarizes permissions, licenses needed and cost to enable e
 | Agari      | Agari Phishing Defense and Brand Protection (Preview) | agari_apdpolicy_log_CL          |  [ ]   |   [ ]   |
 | Agari      |                                                       | agari_apdtc_log_CL              |  [ ]   |   [ ]   |
 | Agari      |                                                       | agari_bpalerts_log_CL           |  [ ]   |   [ ]   |
-| Akamai     | Akamai Security Events (Preview)                      | SecureHats_CL                   |  [X]   |   [ ]   |
-| Aruba      | Aruba ClearPass (Preview)                             | SecureHats_CL                   |  [ ]   |   [ ]   |
-| Cisco      | Cisco ISE Event                                       | SecureHats_CL                   |  [ ]   |   [ ]   |
-| Cisco      | Cisco Meraki (Preview)                                | SecureHats_CL                   |  [ ]   |   [ ]   |
-| Cisco      | Cisco UCS (Preview)                                   | SecureHats_CL                   |  [ ]   |   [ ]   |
-| Cisco      | Cisco Umbrella (Preview)                              | Cisco_Umbrella_cloudfirewall_CL |  [X]   |   [ ]   |
+| Akamai     | Akamai Security Events (Preview)                      | SecureHats_CL                   |  [X]   |   [X]   |
+| Aruba      | Aruba ClearPass (Preview)                             | SecureHats_CL                   |  [ ]   |   [X]   |
+| Cisco      | Cisco ISE Event                                       | SecureHats_CL                   |  [ ]   |   [X]   |
+| Cisco      | Cisco Meraki (Preview)                                | SecureHats_CL                   |  [ ]   |   [X]   |
+| Cisco      | Cisco UCS (Preview)                                   | SecureHats_CL                   |  [ ]   |   [X]   |
+| Cisco      | Cisco Umbrella (Preview)                              | Cisco_Umbrella_cloudfirewall_CL |  [X]   |   [X]   |
 |            |                                                       | Cisco_Umbrella_dns_CL           |  [X]   |   [ ]   |
 |            |                                                       | Cisco_Umbrella_ip_CL            |  [X]   |   [ ]   |
 |            |                                                       | Cisco_Umbrella_proxy_CL         |  [X]   |   [ ]   |
-| Qualys     | Qualys VM KnowledgeBase (Preview)                     | QualysKB_CL                     |  [X]   |   [ ]   |
+| Qualys     | Qualys VM KnowledgeBase (Preview)                     | QualysKB_CL                     |  [X]   |   [X]   |
 | Qualys     | Qualys Vulnerability Management (Preview)             | QualysHostDetection_CL          |  [X]   |   [ ]   |
-| Symantec   | Broadcom Symantec DLP (Preview)                       | SecureHats_CL                   |  [X]   |   [ ]   |
-| Symantec   | Symantec ProxySG (Preview)                            | SecureHats_CL                   |  [X]   |   [ ]   |
-| Symantec   | Symantec VIP (Preview)                                | SecureHats_CL                   |  [X]   |   [ ]   |
+| Symantec   | Broadcom Symantec DLP (Preview)                       | SecureHats_CL                   |  [X]   |   [X]   |
+| Symantec   | Symantec ProxySG (Preview)                            | SecureHats_CL                   |  [X]   |   [x]   |
+| Symantec   | Symantec VIP (Preview)                                | SecureHats_CL                   |  [X]   |   [x]   |
 
 
 ## ARM template instructions
