@@ -1,6 +1,6 @@
 ![logo](./media/securehats-200x.png)
 =========
-[![GitHub release](https://img.shields.io/github/v/release/SecureHats/Sentinel-playground.svg?style=flat-square)](https://github.com/SecureHats/Sentinel-playground/releases)
+[![GitHub release](https://img.shields.io/github/release/SecureHats/Sentinel-playground.svg?style=flat-square)](https://github.com/SecureHats/Sentinel-playground/releases)
 [![Maintenance](https://img.shields.io/maintenance/yes/2021.svg?style=flat-square)]()
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
