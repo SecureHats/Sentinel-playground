@@ -177,7 +177,6 @@ function processResponse {
         if ($responseObject.type -eq 'dir') {
             $responseObject = (Invoke-WebRequest (PathBuilder -uri $responseObject.html_url)).Content | ConvertFrom-Json
             Write-Output $responseObject
-            pause
         }
 
         foreach ($fileObject in $responseObject) {
@@ -303,7 +302,7 @@ if ($DataProvidersArray) {
             processResponse -resourceGroupName $ResourceGroupName -responseBody $response
         }
         catch {
-            Write-Verbose "No data found to process"
+            Write-Output "No data found to process"
         }
     }
 }
