@@ -1,8 +1,27 @@
-// Usage Instruction : 
-// Paste below query in log analytics, click on Save button and select as Function from drop down by specifying function name and alias as AkamaiSIEMEvent.
-// Function usually takes 10-15 minutes to activate. You can then use function alias from any other queries (e.g. AkamaiSIEMEvent | take 10).
-// Reference : Using functions in Azure monitor log queries : https://docs.microsoft.com/azure/azure-monitor/log-query/functions
-<CustomLog> 
+SecureHats_CL
+| extend DeviceVendor           = DeviceVendor_s,
+    DeviceProduct               = DeviceProduct_s,
+    DeviceEventClassID          = DeviceEventClassID_s,
+    Activity                    = Activity_s,
+    LogSeverity                 = LogSeverity_s,
+    DeviceAction                = DeviceAction_s,
+    ApplicationProtocol         = ApplicationProtocol_s,
+    DeviceCustomIPv6Address2    = DeviceCustomIPv6Address2_s,
+    DeviceCustomString1         = DeviceCustomString1_s,
+    DeviceCustomString2         = DeviceCustomString2_s,
+    DeviceCustomString3         = DeviceCustomString3_s,
+    DeviceCustomString4         = DeviceCustomString4_s,
+    DeviceCustomString5         = DeviceCustomString5_s,
+    DeviceCustomString6         = DeviceCustomString6_s,
+    DevicePayloadId             = DevicePayloadId_s,
+    DestinationHostName         = DestinationHostName_s,
+    DestinationPort             = DestinationPort_s,
+    FlexString1                 = FlexString1_s,
+    FlexString2                 = FlexString2_s,
+    SentBytes                   = SentBytes_s,
+    RequestURL                  = RequestURL_s,
+    RequestMethod               = RequestMethod_s,
+    AdditionalExtensions        = AdditionalExtensions_s
 | where DeviceVendor == 'Akamai'
 | where DeviceProduct == 'akamai_siem'
 | extend EventVendor = 'Akamai'
