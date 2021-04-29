@@ -298,8 +298,13 @@ if ($DataProvidersArray) {
         Write-Output "Provider: $provider"
         $returnUri = PathBuilder -uri $RepoUri -provider $provider
 
-        $response = (Invoke-WebRequest $returnUri).Content | ConvertFrom-Json
-        processResponse -resourceGroupName $ResourceGroupName -responseBody $response
+        try {
+            $response = (Invoke-WebRequest $returnUri).Content | ConvertFrom-Json
+            processResponse -resourceGroupName $ResourceGroupName -responseBody $response
+        }
+        catch {
+            Write-Verbose "No data found to process"
+        }
     }
 }
 else {
