@@ -1,6 +1,10 @@
-# Sentinel Playground
-
 ![logo](./media/securehats-200x.png)
+=========
+[![GitHub release](https://img.shields.io/github/release/BlueTeamLabs/sentinel-attack.svg?style=flat-square)](https://github.com/SecureHats/Sentinel-playground/releases)
+[![Maintenance](https://img.shields.io/maintenance/yes/2021.svg?style=flat-square)]()
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+
+# Sentinel Playground
 
 The Sentinel playground is a project to deploy an initial Azure Sentinel environment pre-provisioned with sample data. 
 This to speed up the deployment for Proof of Concept and demo scenarios.
