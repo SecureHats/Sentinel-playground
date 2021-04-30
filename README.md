@@ -18,10 +18,10 @@ The following table summarizes permissions, licenses needed and cost to enable e
 
 | Provider   | Connector                                             | Custom Table                    | Parser | Tested  |
 | ---------- | ----------------------------------------------------- | ------------------------------- | ------ | ------- |
-| Agari      | Agari Phishing Defense and Brand Protection (Preview) | agari_apdpolicy_log_CL          |  [ ]   |   [ ]   |
-| Agari      |                                                       | agari_apdtc_log_CL              |  [ ]   |   [ ]   |
+| Agari      | Agari Phishing Defense and Brand Protection (Preview) | agari_apdpolicy_log_CL          |  [ ]   |   [x]   |
+| Agari      |                                                       | agari_apdtc_log_CL              |  [ ]   |   [x]   |
 | Agari      |                                                       | agari_bpalerts_log_CL           |  [ ]   |   [ ]   |
-| Akamai     | Akamai Security Events (Preview)                      | SecureHats_CL                   |  [X]   |   [X]   |
+| Akamai     | Akamai Security Events (Preview)                      | SecureHats_CL                   |  [x]   |   [x]   |
 | Aruba      | Aruba ClearPass (Preview)                             | SecureHats_CL                   |  [ ]   |   [X]   |
 | Cisco      | Cisco ISE Event                                       | SecureHats_CL                   |  [ ]   |   [X]   |
 | Cisco      | Cisco Meraki (Preview)                                | SecureHats_CL                   |  [ ]   |   [X]   |
