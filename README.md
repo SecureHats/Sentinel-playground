@@ -16,26 +16,26 @@ This to speed up the deployment for Proof of Concept and demo scenarios.
 
 The following table summarizes permissions, licenses needed and cost to enable each Data Connector:
 
-| Provider   | Connector                                             | Custom Table                    | Parser | Tested  |
-| ---------- | ----------------------------------------------------- | ------------------------------- | ------ | ------- |
-| Agari      | Agari Phishing Defense and Brand Protection (Preview) | agari_apdpolicy_log_CL          |  [ ]   |   [x]   |
-| Agari      |                                                       | agari_apdtc_log_CL              |  [ ]   |   [x]   |
-| Agari      |                                                       | agari_bpalerts_log_CL           |  [ ]   |   [ ]   |
-| Akamai     | Akamai Security Events (Preview)                      | SecureHats_CL                   |  [x]   |   [x]   |
-| Aruba      | Aruba ClearPass (Preview)                             | SecureHats_CL                   |  [ ]   |   [X]   |
-| Cisco      | Cisco ISE Event                                       | SecureHats_CL                   |  [ ]   |   [X]   |
-| Cisco      | Cisco Meraki (Preview)                                | SecureHats_CL                   |  [ ]   |   [X]   |
-| Cisco      | Cisco UCS (Preview)                                   | SecureHats_CL                   |  [ ]   |   [X]   |
-| Cisco      | Cisco Umbrella (Preview)                              | Cisco_Umbrella_cloudfirewall_CL |  [X]   |   [X]   |
-|            |                                                       | Cisco_Umbrella_dns_CL           |  [X]   |   [ ]   |
-|            |                                                       | Cisco_Umbrella_ip_CL            |  [X]   |   [ ]   |
-|            |                                                       | Cisco_Umbrella_proxy_CL         |  [X]   |   [ ]   |
-| Qualys     | Qualys VM KnowledgeBase (Preview)                     | QualysKB_CL                     |  [X]   |   [X]   |
-| Qualys     | Qualys Vulnerability Management (Preview)             | QualysHostDetection_CL          |  [X]   |   [ ]   |
-| Symantec   | Broadcom Symantec DLP (Preview)                       | SecureHats_CL                   |  [X]   |   [X]   |
-| Symantec   | Symantec ProxySG (Preview)                            | SecureHats_CL                   |  [X]   |   [x]   |
-| Symantec   | Symantec VIP (Preview)                                | SecureHats_CL                   |  [X]   |   [x]   |
-
+| Provider   | Connector                                             | Custom Table                    | Parser | Workbook | Tested  |
+| ---------- | ----------------------------------------------------- | ------------------------------- | ------ | -------- | ------- |
+| Alsid      | Alsid for Active Directory (Preview)                  | AlsidForADLog_CL                |   [x]  |    [x]   |   [ ]   |
+| Agari      | Agari Phishing Defense and Brand Protection (Preview) | agari_apdpolicy_log_CL          |   [ ]  |    [ ]   |   [ ]   |
+|            |                                                       | agari_apdtc_log_CL              |   [ ]  |    [ ]   |   [ ]   |
+|            |                                                       | agari_bpalerts_log_CL           |   [ ]  |    [ ]   |   [ ]   |
+| Akamai     | Akamai Security Events (Preview)                      | SecureHats_CL                   |   [x]  |    [ ]   |   [ ]   |
+| Aruba      | Aruba ClearPass (Preview)                             | SecureHats_CL                   |   [ ]  |    [ ]   |   [ ]   |
+| Cisco      | Cisco ISE Event                                       | SecureHats_CL                   |   [ ]  |    [ ]   |   [ ]   |
+| Cisco      | Cisco Meraki (Preview)                                | SecureHats_CL                   |   [ ]  |    [ ]   |   [ ]   |
+| Cisco      | Cisco UCS (Preview)                                   | SecureHats_CL                   |   [ ]  |    [ ]   |   [ ]   |
+| Cisco      | Cisco Umbrella (Preview)                              | Cisco_Umbrella_cloudfirewall_CL |   [x]  |    [ ]   |   [ ]   |
+|            |                                                       | Cisco_Umbrella_dns_CL           |   [x]  |    [ ]   |   [ ]   |
+|            |                                                       | Cisco_Umbrella_ip_CL            |   [x]  |    [ ]   |   [ ]   |
+|            |                                                       | Cisco_Umbrella_proxy_CL         |   [x]  |    [ ]   |   [ ]   |
+| Qualys     | Qualys VM KnowledgeBase (Preview)                     | QualysKB_CL                     |   [x]  |    [ ]   |   [ ]   |
+| Qualys     | Qualys Vulnerability Management (Preview)             | QualysHostDetection_CL          |   [x]  |    [ ]   |   [ ]   |
+| Symantec   | Broadcom Symantec DLP (Preview)                       | SecureHats_CL                   |   [x]  |    [ ]   |   [ ]   |
+| Symantec   | Symantec ProxySG (Preview)                            | SecureHats_CL                   |   [x]  |    [ ]   |   [ ]   |
+| Symantec   | Symantec VIP (Preview)                                | SecureHats_CL                   |   [x]  |    [ ]   |   [ ]   |
 
 ## ARM template instructions
 
