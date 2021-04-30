@@ -15,7 +15,7 @@
             }
         },
         "CloudRepo": {
-            "defaultValue": "https://github.com/azurekid/Sentinel-playground",
+            "defaultValue": "https://github.com/SecureHats/Sentinel-playground",
             "type": "String"
         },
         "Branch": {
