@@ -132,6 +132,10 @@
                                     "value": "CiscoUmbrella"
                                 },
                                 {
+                                    "label": "Google Workspace (G Suite) (Preview)",
+                                    "value": "GWorkspace"
+                                },
+                                {
                                     "label": "Okta Single Sign-On (Preview)",
                                     "value": "Okta"
                                 },
