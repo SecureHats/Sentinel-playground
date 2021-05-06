@@ -104,6 +104,10 @@
                                     "value": "AkamaiSIEMEvent"
                                 },
                                 {
+                                    "label": "Alcide kAudit (Preview)",
+                                    "value": "Alcide"
+                                },
+                                {
                                     "label": "Alsid for Active Directory (Preview)",
                                     "value": "Alsid"
                                 },
