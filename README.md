@@ -36,6 +36,7 @@ The following table summarizes permissions, licenses needed and cost to enable e
 | Symantec   | Broadcom Symantec DLP (Preview)                       | SecureHats_CL                   |   [x]  |    [ ]   |   [ ]   |
 | Symantec   | Symantec ProxySG (Preview)                            | SecureHats_CL                   |   [x]  |    [ ]   |   [ ]   |
 | Symantec   | Symantec VIP (Preview)                                | SecureHats_CL                   |   [x]  |    [ ]   |   [ ]   |
+| Microsoft  | Sysmon Parser                                         |                                 |   [x]  |    [ ]   |   [x]   |
 
 ## ARM template instructions
 
