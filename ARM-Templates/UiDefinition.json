@@ -150,6 +150,10 @@
                                 {
                                     "label": "Symantec VIP",
                                     "value": "SymantecVIP"
+                                },
+                                {
+                                    "label": "Sysmon",
+                                    "value": "Sysmon"
                                 }
                             ],
                             "required": true
