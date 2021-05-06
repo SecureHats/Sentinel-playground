@@ -144,6 +144,10 @@
                                     "value": "Qualys"
                                 },
                                 {
+                                    "label": "Salesforce Service Cloud (Preview)",
+                                    "value": "Salesforce"
+                                },
+                                {
                                     "label": "Symantec DLP",
                                     "value": "SymantecDLP"
                                 },
