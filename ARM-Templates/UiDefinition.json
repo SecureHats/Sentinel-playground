@@ -152,7 +152,7 @@
                                     "value": "SymantecVIP"
                                 },
                                 {
-                                    "label": "Sysmon",
+                                    "label": "Sysmon Event Parser compatible with OSSEM",
                                     "value": "Sysmon"
                                 }
                             ],
