@@ -39,6 +39,7 @@ The following table summarizes permissions, licenses needed and cost to enable e
 | Ubiquiti   | Ubiquiti UniFi (Preview)                              | Ubiquiti_CL                     |   [x]  |    [x]   |   [ ]   |   [ ]   |
 | Microsoft  | Sysmon Parser                                         |                                 |   [x]  |    [ ]   |   [x]   |   [ ]   |
 
+
 ## ARM template instructions
 
 The template performs the following tasks:
