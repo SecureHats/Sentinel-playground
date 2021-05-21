@@ -79,6 +79,42 @@
             }
         },
         {
+            "type": "Microsoft.OperationalInsights/workspaces/providers/dataConnectors",
+            "apiVersion": "2020-01-01",
+            "location": "[parameters('location')]",
+            "name": "[concat(parameters('workspaceName'),'/Microsoft.SecurityInsights/',parameters('guidValue'))]",
+            "kind": "AzureSecurityCenter",
+            "properties": {
+                "subscriptionId": "[subscription().subscriptionId]",
+                "dataTypes": {
+                    "alerts": {
+                        "state": "[parameters('ascState')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/dataSources",
+            "apiVersion": "2020-03-01-preview",
+            "location": "[parameters('location')]",
+            "name": "[concat(parameters('workspaceName'), concat('/', replace(subscription().subscriptionId,'-', '')))]",
+            "kind": "AzureActivityLog",
+            "properties": {
+                "linkedResourceId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/microsoft.insights/eventtypes/management')]"
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/dataSources",
+            "apiVersion": "2020-03-01-preview",
+            "location": "[parameters('location')]",
+            "name": "[concat(parameters('workspaceName'), '/SecurityInsightsSecurityEventCollectionConfiguration')]",
+            "kind": "SecurityInsightsSecurityEventCollectionConfiguration",
+            "properties": {
+                "tier": "All",
+                "tierSetMethod": "Custom"
+            }
+        },
+        {
             "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
             "apiVersion": "2018-11-30",
             "name": "[variables('identityName')]",
