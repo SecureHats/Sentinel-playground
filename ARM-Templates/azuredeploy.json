@@ -82,7 +82,7 @@
             "type": "Microsoft.OperationalInsights/workspaces/providers/dataConnectors",
             "apiVersion": "2020-01-01",
             "location": "[parameters('location')]",
-            "name": "[concat(parameters('workspaceName'),'/Microsoft.SecurityInsights/',parameters('guidValue'))]",
+            "name": "[concat(parameters('workspaceName'),'/Microsoft.SecurityInsights/',parameters('guid'))]",
             "kind": "AzureSecurityCenter",
             "properties": {
                 "subscriptionId": "[subscription().subscriptionId]",
