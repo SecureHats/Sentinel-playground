@@ -36,8 +36,8 @@ The following table summarizes permissions, licenses needed and cost to enable e
 | Symantec   | Broadcom Symantec DLP (Preview)                       | SecureHats_CL                   |   [x]  |    [ ]   |   [ ]    |   [ ]   |
 | Symantec   | Symantec ProxySG (Preview)                            | SecureHats_CL                   |   [x]  |    [ ]   |   [ ]    |   [ ]   |
 | Symantec   | Symantec VIP (Preview)                                | SecureHats_CL                   |   [x]  |    [ ]   |   [ ]    |   [ ]   |
-| Ubiquiti   | Ubiquiti UniFi (Preview)                              | Ubiquiti_CL                     |   [x]  |    [x]   |   [ ]    |   [ ]   |
-| Microsoft  | Sysmon Parser                                         |                                 |   [x]  |    [ ]   |   [x]    |   [ ]   |
+| Ubiquiti   | Ubiquiti UniFi (Preview)                              | Ubiquiti_CL                     |   [x]  |    [x]   |   [x]    |   [ ]   |
+| Microsoft  | Sysmon Parser                                         |                                 |   [x]  |    [ ]   |   [_]    |   [ ]   |
 
 
 ## ARM template instructions
