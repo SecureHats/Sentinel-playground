@@ -179,6 +179,45 @@
                 ]
             },
             {
+                "name": "solutions",
+                "label": "Solutions (Preview)",
+                "elements": [
+                    {
+                        "name": "textBlock1",
+                        "type": "Microsoft.Common.TextBlock",
+                        "visible": true,
+                        "options": {
+                            "text": "Please select which solutions to enable in Azure Sentinel playground",
+                            "link": {
+                                "label": "Learn more",
+                                "uri": "https://techcommunity.microsoft.com/t5/azure-sentinel/introducing-azure-sentinel-solutions/ba-p/2347312"
+                            }
+                        }
+                    },
+                    {
+                        "name": "enableSolutions",
+                        "type": "Microsoft.Common.DropDown",
+                        "label": "Select solutions to onboard",
+                        "filter": true,
+                        "filterPlaceholder": "Filter items ...",
+                        "multiselect": true,
+                        "selectAll": true,
+                        "defaultValue": "Make a selection",
+                        "toolTip": "Select Solutions",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Ubiquiti UniFi (Preview)",
+                                    "value": "Ubiquiti"
+                                }
+                            ],
+                            "required": false
+                        },
+                        "visible": true
+                    }
+                ]
+            },
+            {
                 "name": "deployment",
                 "label": "Permissions",
                 "elements": [
@@ -201,7 +240,7 @@
                             ],
                             "required": true
                         },
-                        "visible": true
+                        "visible": false
                     },
                     {
                         "name": "identitySelector",
