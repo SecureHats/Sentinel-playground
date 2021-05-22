@@ -162,10 +162,6 @@
                                 {
                                     "label": "Sysmon Event Parser compatible with OSSEM",
                                     "value": "Sysmon"
-                                },
-                                {
-                                    "label": "Ubiquiti UniFi (Preview)",
-                                    "value": "Ubiquiti"
                                 }
                             ],
                             "required": true
