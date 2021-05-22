@@ -17,7 +17,7 @@
         "enabledSolutions": {
             "type": "Array",
             "metadata": {
-                "description": "Araay of supported solutions"
+                "description": "Array of supported solutions"
             }
         },
         "CloudRepo": {
@@ -25,7 +25,7 @@
             "type": "String"
         },
         "Branch": {
-            "defaultValue": "SymantecEndpointProtection",
+            "defaultValue": "main",
             "type": "String"
         },
         "roleGuid": {
