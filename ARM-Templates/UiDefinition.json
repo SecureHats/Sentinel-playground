@@ -152,10 +152,6 @@
                                     "value": "SymantecDLP"
                                 },
                                 {
-                                    "label": "Symantec Endpoint Protection",
-                                    "value": "SymantecEndpointProtection"
-                                },
-                                {
                                     "label": "Symantec Proxy SG",
                                     "value": "SymantecProxySG"
                                 },
@@ -209,6 +205,10 @@
                                 {
                                     "label": "Ubiquiti UniFi (Preview)",
                                     "value": "Ubiquite"
+                                },
+                                {
+                                    "label": "Symantec Endpoint Protection (Preview)",
+                                    "value": "SymantecEndpointProtection"
                                 }
                             ],
                             "required": false
