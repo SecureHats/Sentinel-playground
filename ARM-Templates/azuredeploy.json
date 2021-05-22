@@ -19,7 +19,7 @@
             "metadata": {
                 "description": "Araay of supported solutions"
             }
-        }
+        },
         "CloudRepo": {
             "defaultValue": "https://github.com/SecureHats/Sentinel-playground",
             "type": "String"
