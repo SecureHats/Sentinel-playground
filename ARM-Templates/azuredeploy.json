@@ -174,7 +174,8 @@
             "name": "functions",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat('Microsoft.Authorization/roleAssignments/', parameters('roleGuid'))]"
+                "[concat('Microsoft.Authorization/roleAssignments/', parameters('roleGuid'))]",
+                "[concat('Microsoft.Resources/deployments/', 'Solutions')]"
             ],
             "kind": "AzurePowerShell",
             "identity": {
@@ -219,8 +220,8 @@
             "condition": "[if(parameters('newManagedIdentity'), bool('true'), bool('false'))]"
         },
         {
-            "condition": "[contains(parameters('enabledSolutions'), 'Ubiquite')]",
-            "name": "Ubiquite",
+            "condition": "[not(empty(parameters('enabledSolutions')))]",
+            "name": "Solutions",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "dependsOn": [
@@ -229,36 +230,15 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://catalogartifact.azureedge.net/publicartifacts/azuresentinel.azure-sentinel-solution-ubiquitiunifi-96c43412-e22c-47a0-9790-fbe1c9f3baa2-azure-sentinel-solution-ubiquitiunifi/Artifacts/mainTemplate.json",
+                    "uri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/ARM-Templates/LinkedTemplates/solutions.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "workspace": {
+                    "workspaceName": {
                         "value": "[parameters('workspaceName')]"
                     },
-                    "location": {
+                    "enabledSolutions": {
                         "value": "[resourceGroup().location]"
-                    }
-                }
-            }
-        },
-        {
-            "condition": "[contains(parameters('enabledSolutions'), 'SymantecEndpointProtection')]",
-            "name": "SymantecEndpointProtection",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "dependsOn": [
-                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "https://catalogartifact.azureedge.net/publicartifacts/azuresentinel.azure-sentinel-solution-symantecendpointprotection-a28de425-6e37-4159-998b-47a176772649-azure-sentinel-solution-symantecendpointprotection/Artifacts/mainTemplate.json",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "workspace": {
-                        "value": "[parameters('workspaceName')]"
                     }
                 }
             }
