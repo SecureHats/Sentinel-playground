@@ -199,12 +199,12 @@
                         "constraints": {
                             "allowedValues": [
                                 {
-                                    "label": "Ubiquiti UniFi (Preview)",
-                                    "value": "Ubiquite"
+                                    "label": "Box (Preview)",
+                                    "value": "Box"
                                 },
                                 {
-                                    "label": "Symantec Endpoint Protection (Preview)",
-                                    "value": "SymantecEndpointProtection"
+                                    "label": "Ubiquiti UniFi (Preview)",
+                                    "value": "Ubiquite"
                                 }
                             ],
                             "required": false
