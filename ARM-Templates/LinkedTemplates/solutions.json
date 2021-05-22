@@ -30,7 +30,7 @@
         },
         {
             "condition": "[contains(parameters('enabledSolutions'), 'Ubiquite')]",
-            "name": "Ubiquite",
+            "name": "Ubiquite Solution",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "dependsOn": [
@@ -54,7 +54,7 @@
         },
         {
             "condition": "[contains(parameters('enabledSolutions'), 'Box')]",
-            "name": "SymantecEndpointProtection",
+            "name": "Box Solution",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "dependsOn": [
