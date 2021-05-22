@@ -15,7 +15,7 @@
             }
         },
         "enabledSolutions": {
-            "type": "array",
+            "type": "Array",
             "metadata": {
                 "description": "Araay of supported solutions"
             }
@@ -238,7 +238,7 @@
                         "value": "[parameters('workspaceName')]"
                     },
                     "enabledSolutions": {
-                        "value": "[resourceGroup().location]"
+                        "value": "[parameters('enabledSolutions')]"
                     }
                 }
             }
