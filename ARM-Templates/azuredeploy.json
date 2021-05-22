@@ -87,8 +87,11 @@
         {
             "type": "Microsoft.OperationalInsights/workspaces/providers/dataConnectors",
             "apiVersion": "2020-01-01",
-            "location": "[resourceGroup().location]",
             "name": "[concat(parameters('workspaceName'),'/Microsoft.SecurityInsights/', 'AzureSecurityCenter')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+            ],
             "kind": "AzureSecurityCenter",
             "properties": {
                 "subscriptionId": "[subscription().subscriptionId]",
@@ -112,8 +115,11 @@
         {
             "type": "Microsoft.OperationalInsights/workspaces/dataSources",
             "apiVersion": "2020-03-01-preview",
-            "location": "[resourceGroup().location]",
             "name": "[concat(parameters('workspaceName'), '/SecurityInsightsSecurityEventCollectionConfiguration')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+            ],
             "kind": "SecurityInsightsSecurityEventCollectionConfiguration",
             "properties": {
                 "tier": "All",
