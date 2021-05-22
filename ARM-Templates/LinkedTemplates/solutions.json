@@ -1,0 +1,77 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspaceName": {
+            "type": "String",
+            "metadata": {
+                "description": "Name for the Log Analytics workspace"
+            }
+        },
+        "enabledSolutions": {
+            "type": "array",
+            "metadata": {
+                "description": "Araay of supported solutions"
+            }
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "apiVersion": "2015-11-01-preview",
+            "name": "[parameters('workspaceName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "retentionInDays": 30,
+                "sku": {
+                    "name": "PerGB2018"
+                }
+            }
+        },
+        {
+            "condition": "[contains(parameters('enabledSolutions'), 'Ubiquite')]",
+            "name": "Ubiquite Solution",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://catalogartifact.azureedge.net/publicartifacts/azuresentinel.azure-sentinel-solution-ubiquitiunifi-96c43412-e22c-47a0-9790-fbe1c9f3baa2-azure-sentinel-solution-ubiquitiunifi/Artifacts/mainTemplate.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "workspace": {
+                        "value": "[parameters('workspaceName')]"
+                    },
+                    "location": {
+                        "value": "[resourceGroup().location]"
+                    }
+                }
+            }
+        },
+        {
+            "condition": "[contains(parameters('enabledSolutions'), 'Box')]",
+            "name": "Box Solution",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://catalogartifact.azureedge.net/publicartifacts/azuresentinel.azure-sentinel-solution-box-da5c9180-0b04-4fdd-b524-e3bdc18b9ff4-azure-sentinel-solution-box/Artifacts/mainTemplate.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "workspace": {
+                        "value": "[parameters('workspaceName')]"
+                    }
+                }
+            }
+        }
+    ]
+}

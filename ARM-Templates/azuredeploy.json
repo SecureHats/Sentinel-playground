@@ -15,9 +15,9 @@
             }
         },
         "enabledSolutions": {
-            "type": "array",
+            "type": "Array",
             "metadata": {
-                "description": "Araay of supported solutions"
+                "description": "Array of supported solutions"
             }
         },
         "CloudRepo": {
@@ -87,14 +87,17 @@
         {
             "type": "Microsoft.OperationalInsights/workspaces/providers/dataConnectors",
             "apiVersion": "2020-01-01",
-            "location": "[resourceGroup().location]",
             "name": "[concat(parameters('workspaceName'),'/Microsoft.SecurityInsights/', 'AzureSecurityCenter')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+            ],
             "kind": "AzureSecurityCenter",
             "properties": {
                 "subscriptionId": "[subscription().subscriptionId]",
                 "dataTypes": {
                     "alerts": {
-                        "state": "enabled"
+                        "state": "false"
                     }
                 }
             }
@@ -112,8 +115,11 @@
         {
             "type": "Microsoft.OperationalInsights/workspaces/dataSources",
             "apiVersion": "2020-03-01-preview",
-            "location": "[resourceGroup().location]",
             "name": "[concat(parameters('workspaceName'), '/SecurityInsightsSecurityEventCollectionConfiguration')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+            ],
             "kind": "SecurityInsightsSecurityEventCollectionConfiguration",
             "properties": {
                 "tier": "All",
@@ -157,7 +163,7 @@
             "properties": {
                 "forceUpdateTag": "[parameters('guid')]",
                 "azPowerShellVersion": "5.4",
-                "arguments": "[format(' -WorkspaceName {0} -CustomTableName {1} -repoUri {2} -DataProvidersArray \\\"{3}\\\"', parameters('workspaceName'), parameters('CustomTableName'), concat(parameters('CloudRepo'), '/tree/', parameters('Branch'), '/samples/'), parameters('dataProviders'))]",
+                "arguments": "[format(' -WorkspaceName {0} -CustomTableName {1} -repoUri {2} -DataProvidersArray \\\"{3}\\\"', parameters('workspaceName'), parameters('CustomTableName'), concat(parameters('CloudRepo'), '/tree/', parameters('Branch'), '/samples/'), union(parameters('dataProviders'), parameters('enabledSolutions')))]",
                 "primaryScriptUri": "[concat('https://raw.githubusercontent.com/SecureHats/Sentinel-playground/', parameters('Branch'), '/PowerShell/Add-AzureMonitorData/Add-AzureMonitorData.ps1')]",
                 "supportingScriptUris": [],
                 "timeout": "PT30M",
@@ -165,7 +171,8 @@
                 "retentionInterval": "P1D",
                 "containerSettings": {
                     "containerGroupName": "logscontainer"
-                }
+                },
+                "unionProviders": "[union(parameters('dataProviders'), parameters('enabledSolutions'))]"
             }
         },
         {
@@ -174,7 +181,8 @@
             "name": "functions",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat('Microsoft.Authorization/roleAssignments/', parameters('roleGuid'))]"
+                "[concat('Microsoft.Authorization/roleAssignments/', parameters('roleGuid'))]",
+                "[concat('Microsoft.Resources/deployments/', 'Solutions')]"
             ],
             "kind": "AzurePowerShell",
             "identity": {
@@ -219,8 +227,8 @@
             "condition": "[if(parameters('newManagedIdentity'), bool('true'), bool('false'))]"
         },
         {
-            "condition": "[contains(parameters('enabledSolutions'), 'Ubiquite')]",
-            "name": "enabledSolutions",
+            "condition": "[not(empty(parameters('enabledSolutions')))]",
+            "name": "Solutions",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "dependsOn": [
@@ -229,15 +237,15 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://catalogartifact.azureedge.net/publicartifacts/azuresentinel.azure-sentinel-solution-ubiquitiunifi-96c43412-e22c-47a0-9790-fbe1c9f3baa2-azure-sentinel-solution-ubiquitiunifi/Artifacts/mainTemplate.json",
+                    "uri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/SymantecEndpointProtection/ARM-Templates/LinkedTemplates/solutions.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "workspace": {
+                    "workspaceName": {
                         "value": "[parameters('workspaceName')]"
                     },
-                    "location": {
-                        "value": "[resourceGroup().location]"
+                    "enabledSolutions": {
+                        "value": "[parameters('enabledSolutions')]"
                     }
                 }
             }

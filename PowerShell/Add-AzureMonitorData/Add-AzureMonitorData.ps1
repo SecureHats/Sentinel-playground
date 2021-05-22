@@ -120,9 +120,9 @@ function Set-AzMonitorFunction {
         Method               = 'DELETE'
     }
 
-    $query = Invoke-AzRestMethod @payload
+    $existing = Invoke-AzRestMethod @payload | ConvertFrom-json
 
-    if (-not($existing.StatusCode -eq '200')) {
+    if ($null -eq $existing.Content) {
         New-AzOperationalInsightsSavedSearch `
             -ResourceGroupName $resourceGroupName `
             -WorkspaceName $workspaceName `
