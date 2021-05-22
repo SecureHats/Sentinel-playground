@@ -4,7 +4,7 @@
 [![Maintenance](https://img.shields.io/maintenance/yes/2021.svg?style=flat-square)]()
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FSecureHats%2FSentinel-playground%2FSymantecEndpointProtection%2FARM-Templates%2Fazuredeploy.json/createUIDefinitionUri/https://raw.githubusercontent.com/SecureHats/Sentinel-playground/SymantecEndpointProtection/ARM-Templates/UiDefinition.json)
+[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FSecureHats%2FSentinel-playground%2FSymantecEndpointProtection%2FARM-Templates%2Fazuredeploy.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FSecureHats%2FSentinel-playground%2FSymantecEndpointProtection%2FARM-Templates%2FUiDefinition.json)
 # Sentinel Playground
 
 The Sentinel playground is a project to deploy an initial Azure Sentinel environment pre-provisioned with sample data. 
