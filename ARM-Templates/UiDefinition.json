@@ -277,7 +277,7 @@
             "managedIdentityName": "[if(equals(steps('deployment').newManagedIdentity, true), steps('deployment').managedIdentityName, steps('deployment').identitySelector.name)]",
             "newManagedIdentity": "[steps('deployment').newManagedIdentity]",
             "dataProviders": "[steps('dataProviders').enabledDataProviders]",
-            "solutions": "[steps('solutions').enabledSolutions]"
+            "enabledSolutions": "[steps('solutions').enabledSolutions]"
         }
     }
 }
