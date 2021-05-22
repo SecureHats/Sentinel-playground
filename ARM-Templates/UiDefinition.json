@@ -195,7 +195,7 @@
                         }
                     },
                     {
-                        "name": "enableSolutions",
+                        "name": "enabledSolutions",
                         "type": "Microsoft.Common.DropDown",
                         "label": "Select solutions to onboard",
                         "filter": true,
@@ -277,6 +277,7 @@
             "managedIdentityName": "[if(equals(steps('deployment').newManagedIdentity, true), steps('deployment').managedIdentityName, steps('deployment').identitySelector.name)]",
             "newManagedIdentity": "[steps('deployment').newManagedIdentity]",
             "dataProviders": "[steps('dataProviders').enabledDataProviders]"
+            "solutions": "[steps('solutions').enabledSolutions]"
         }
     }
 }
