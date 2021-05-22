@@ -203,6 +203,10 @@
                                     "value": "Box"
                                 },
                                 {
+                                    "label": "Palo Alto Prisma Solution (Preview)",
+                                    "value": "PaloAlto"
+                                },
+                                {
                                     "label": "Ubiquiti UniFi (Preview)",
                                     "value": "Ubiquiti"
                                 }
