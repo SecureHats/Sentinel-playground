@@ -208,7 +208,7 @@
                             "allowedValues": [
                                 {
                                     "label": "Ubiquiti UniFi (Preview)",
-                                    "value": "Ubiquiti"
+                                    "value": "UbiquitiUnifi"
                                 }
                             ],
                             "required": false
