@@ -230,7 +230,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/ARM-Templates/LinkedTemplates/solutions.json",
+                    "uri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/SymantecEndpointProtection/ARM-Templates/LinkedTemplates/solutions.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
