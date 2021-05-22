@@ -94,7 +94,7 @@
                 "subscriptionId": "[subscription().subscriptionId]",
                 "dataTypes": {
                     "alerts": {
-                        "state": "enabled"
+                        "state": "false"
                     }
                 }
             }
