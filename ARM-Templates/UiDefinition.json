@@ -276,8 +276,8 @@
             "workspaceName": "[if(equals(steps('basics').newWorkspace, true), steps('basics').workspaceName, steps('basics').workspaceSelector.name)]",
             "managedIdentityName": "[if(equals(steps('deployment').newManagedIdentity, true), steps('deployment').managedIdentityName, steps('deployment').identitySelector.name)]",
             "newManagedIdentity": "[steps('deployment').newManagedIdentity]",
-            "dataProviders": "[steps('dataProviders').enabledDataProviders]"
-            "solutions": "[steps('solutions').enabledSolutions]"
+            "dataProviders": "[steps('dataProviders').enabledDataProviders]",
+            "enabledSolutions": "[steps('solutions').enabledSolutions]"
         }
     }
 }
