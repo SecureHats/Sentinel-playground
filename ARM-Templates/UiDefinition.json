@@ -160,7 +160,7 @@
                                     "value": "Sysmon"
                                 }
                             ],
-                            "required": true
+                            "required": false
                         },
                         "visible": true
                     }
