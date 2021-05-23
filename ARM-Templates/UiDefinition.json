@@ -128,10 +128,6 @@
                                     "value": "CiscoUCS"
                                 },
                                 {
-                                    "label": "Cisco Umbrella (Preview)",
-                                    "value": "CiscoUmbrella"
-                                },
-                                {
                                     "label": "Google Workspace (G Suite) (Preview)",
                                     "value": "GWorkspace"
                                 },
@@ -201,6 +197,10 @@
                                 {
                                     "label": "Box (Preview)",
                                     "value": "Box"
+                                },
+                                {
+                                    "label": "Cisco Umbrella (Preview)",
+                                    "value": "CiscoUmbrella"
                                 },
                                 {
                                     "label": "Palo Alto Prisma Solution (Preview)",
