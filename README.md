@@ -27,17 +27,19 @@ The following table summarizes permissions, licenses needed and cost to enable e
 | Cisco      | Cisco ISE Event                                       | SecureHats_CL                   |   [ ]  |    [ ]   |   [ ]    |   [ ]   |
 | Cisco      | Cisco Meraki (Preview)                                | SecureHats_CL                   |   [ ]  |    [ ]   |   [ ]    |   [ ]   |
 | Cisco      | Cisco UCS (Preview)                                   | SecureHats_CL                   |   [ ]  |    [ ]   |   [ ]    |   [ ]   |
-| Cisco      | Cisco Umbrella (Preview)                              | Cisco_Umbrella_cloudfirewall_CL |   [x]  |    [ ]   |   [ ]    |   [ ]   |
-|            |                                                       | Cisco_Umbrella_dns_CL           |   [x]  |    [ ]   |   [ ]    |   [ ]   |
-|            |                                                       | Cisco_Umbrella_ip_CL            |   [x]  |    [ ]   |   [ ]    |   [ ]   |
-|            |                                                       | Cisco_Umbrella_proxy_CL         |   [x]  |    [ ]   |   [ ]    |   [ ]   |
-| Qualys     | Qualys VM KnowledgeBase (Preview)                     | QualysKB_CL                     |   [x]  |    [ ]   |   [ ]    |   [ ]   |
+| Cisco      | Cisco Umbrella (Preview)                              | Cisco_Umbrella_cloudfirewall_CL |   [x]  |    [x]   |   [x]    |   [ ]   |
+|            |                                                       | Cisco_Umbrella_dns_CL           |   [x]  |    [x]   |   [x]    |   [ ]   |
+|            |                                                       | Cisco_Umbrella_ip_CL            |   [x]  |    [x]   |   [x]    |   [ ]   |
+|            |                                                       | Cisco_Umbrella_proxy_CL         |   [x]  |    [x]   |   [x]    |   [ ]   |
+| Qualys     | Qualys VM KnowledgeBase (Preview)                     | QualysKB_CL                     |   [x]  |    [x]   |   [x]    |   [ ]   |
 | Qualys     | Qualys Vulnerability Management (Preview)             | QualysHostDetection_CL          |   [x]  |    [ ]   |   [ ]    |   [ ]   |
 | Symantec   | Broadcom Symantec DLP (Preview)                       | SecureHats_CL                   |   [x]  |    [ ]   |   [ ]    |   [ ]   |
 | Symantec   | Symantec ProxySG (Preview)                            | SecureHats_CL                   |   [x]  |    [ ]   |   [ ]    |   [ ]   |
 | Symantec   | Symantec VIP (Preview)                                | SecureHats_CL                   |   [x]  |    [ ]   |   [ ]    |   [ ]   |
 | Ubiquiti   | Ubiquiti UniFi (Preview)                              | Ubiquiti_CL                     |   [x]  |    [x]   |   [x]    |   [ ]   |
-| Microsoft  | Sysmon Parser                                         |                                 |   [x]  |    [ ]   |   [_]    |   [ ]   |
+| Microsoft  | Sysmon Parser                                         | SecureHats_CL                   |   [x]  |    [ ]   |   [ ]    |   [ ]   |
+| Microsoft  | Palo Alto Prisma Cloud (Preview)                      | PaloAltoPrismaCloudAlert_CL     |   [x]  |    [x]   |   [x]    |   [ ]   |
+| Microsoft  | Palo Alto Prisma Cloud (Preview)                      | PaloAltoPrismaCloudAudit_CL     |   [x]  |    [x]   |   [x]    |   [ ]   |
 
 
 ## ARM template instructions
