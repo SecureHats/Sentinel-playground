@@ -213,7 +213,7 @@
       "properties": {
         "description": "Detects network ACLs with outbound rule to allow all traffic.",
         "displayName": "Palo Alto Prisma Cloud - Network ACL allow all outbound traffic",
-        "enabled": true,
+        "enabled": false,
         "query": "PaloAltoPrismaCloud\n| where Reason =~ 'NEW_ALERT'\n| where Status =~ 'open'\n| where AlertMessage has 'Network ACLs with Outbound rule to allow All Traffic'\n| extend AccountCustomEntity = UserName\n",
         "queryFrequency": "PT1H",
         "queryPeriod": "PT1H",
@@ -236,7 +236,7 @@
       "properties": {
         "description": "Detects Network ACLs allow ingress traffic to server administration ports.",
         "displayName": "Palo Alto Prisma Cloud - Network ACL allow ingress traffic to server administration ports",
-        "enabled": true,
+        "enabled": false,
         "query": "PaloAltoPrismaCloud\n| where Reason =~ 'NEW_ALERT'\n| where Status =~ 'open'\n| where AlertMessage has 'Network ACLs allow ingress traffic to server administration ports'\n| extend AccountCustomEntity = UserName\n",
         "queryFrequency": "PT1H",
         "queryPeriod": "PT1H",
@@ -259,7 +259,7 @@
       "properties": {
         "description": "Detects Network ACLs with Inbound rule to allow All Traffic.",
         "displayName": "Palo Alto Prisma Cloud - Network ACLs Inbound rule to allow All Traffic",
-        "enabled": true,
+        "enabled": false,
         "query": "PaloAltoPrismaCloud\n| where Reason =~ 'NEW_ALERT'\n| where Status =~ 'open'\n| where AlertMessage has 'Network ACLs with Inbound rule to allow All Traffic'\n| extend AccountCustomEntity = UserName\n",
         "queryFrequency": "PT1H",
         "queryPeriod": "PT1H",
@@ -305,7 +305,7 @@
       "properties": {
         "description": "Detects alerts with high risk score value.",
         "displayName": "Palo Alto Prisma Cloud - High risk score alert",
-        "enabled": true,
+        "enabled": false,
         "query": "PaloAltoPrismaCloud\n| where Reason =~ 'NEW_ALERT'\n| where Status =~ 'open'\n| extend r_score = 0.85 * toint(RiskDetailRiskScoreMaxScore)\n| extend i_RiskDetailRiskScoreScore = toint(RiskDetailRiskScoreScore)\n| where i_RiskDetailRiskScoreScore > r_score\n| extend AccountCustomEntity = UserName\n",
         "queryFrequency": "PT1H",
         "queryPeriod": "PT1H",
@@ -328,7 +328,7 @@
       "properties": {
         "description": "Detects high severity alert which is opened for several days.",
         "displayName": "Palo Alto Prisma Cloud - High severity alert opened for several days",
-        "enabled": true,
+        "enabled": false,
         "query": "PaloAltoPrismaCloud\n| where Reason =~ 'NEW_ALERT'\n| where AlertSeverity =~ 'high'\n| where Status =~ 'open'\n| extend alert_time = now() - TimeGenerated\n| where alert_time > 1d\n| extend ['Opened Days'] = strcat('Alert opened for ', strcat(toint(alert_time / 1d), ' days'))\n| project AlertMessage, AlertSeverity, ['Opened Days'], ResourceId, UserName\n| extend AccountCustomEntity = UserName\n",
         "queryFrequency": "PT1H",
         "queryPeriod": "PT1H",
@@ -351,7 +351,7 @@
       "properties": {
         "description": "Detects IAM Groups with Administrator Access Permissions.",
         "displayName": "Palo Alto Prisma Cloud - IAM Group with Administrator Access Permissions",
-        "enabled": true,
+        "enabled": false,
         "query": "PaloAltoPrismaCloud\n| where Reason =~ 'NEW_ALERT'\n| where Status =~ 'open'\n| where AlertMessage has 'IAM Groups with Administrator Access Permissions'\n| extend AccountCustomEntity = UserName\n",
         "queryFrequency": "PT1H",
         "queryPeriod": "PT1H",
@@ -374,7 +374,7 @@
       "properties": {
         "description": "Detects users inactive for 30 days.",
         "displayName": "Palo Alto Prisma Cloud - Inactive user",
-        "enabled": true,
+        "enabled": false,
         "query": "PaloAltoPrismaCloud\n| where Status =~ 'open'\n| where AlertMessage has 'Inactive users for more than 30 days'\n| extend AccountCustomEntity = ResourceId\n",
         "queryFrequency": "P1D",
         "queryPeriod": "P1D",
@@ -397,7 +397,7 @@
       "properties": {
         "description": "Detects alerts with maximum risk score value.",
         "displayName": "Palo Alto Prisma Cloud - Maximum risk score alert",
-        "enabled": true,
+        "enabled": false,
         "query": "PaloAltoPrismaCloud\n| where Reason =~ 'NEW_ALERT'\n| where Status =~ 'open'\n| where RiskDetailRiskScoreScore == RiskDetailRiskScoreMaxScore\n| extend AccountCustomEntity = UserName\n",
         "queryFrequency": "PT1H",
         "queryPeriod": "PT1H",
@@ -420,7 +420,7 @@
       "properties": {
         "description": "Detects multiple failed logins for the same user account.",
         "displayName": "Palo Alto Prisma Cloud - Multiple failed logins for user",
-        "enabled": true,
+        "enabled": false,
         "query": "let threashold = 10;\nPaloAltoPrismaCloud\n| where ResourceType =~ 'Login'\n| where EventResult =~ 'Failed'\n| where EventMessage !has 'access key'\n| summarize count() by UserName, bin(TimeGenerated, 5m)\n| where count_ > threashold\n| extend AccountCustomEntity = UserName\n",
         "queryFrequency": "PT1H",
         "queryPeriod": "PT1H",
