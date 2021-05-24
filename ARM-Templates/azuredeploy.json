@@ -10,14 +10,18 @@
         },
         "dataProviders": {
             "type": "Array",
-            "defaultValue": [],
+            "defaultValue": [
+                "None"
+            ],
             "metadata": {
                 "description": "Array of supported data providers"
             }
         },
         "enabledSolutions": {
             "type": "Array",
-            "defaultValue": [],
+            "defaultValue": [
+                "None"
+            ],
             "metadata": {
                 "description": "Array of supported solutions"
             }
