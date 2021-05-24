@@ -10,12 +10,14 @@
         },
         "dataProviders": {
             "type": "Array",
+            "defaultValue": "[]",
             "metadata": {
                 "description": "Array of supported data providers"
             }
         },
         "enabledSolutions": {
             "type": "Array",
+            "defaultValue": "[]",
             "metadata": {
                 "description": "Array of supported solutions"
             }
@@ -176,7 +178,7 @@
             "properties": {
                 "forceUpdateTag": "[parameters('guid')]",
                 "azPowerShellVersion": "5.4",
-                "arguments": "[format(' -WorkspaceName {0} -CustomTableName {1} -repoUri {2} -DataProvidersArray \\\"{3}\\\"', parameters('workspaceName'), parameters('CustomTableName'), concat(parameters('CloudRepo'), '/tree/', parameters('Branch'), '/parsers/'), parameters('dataProviders'))]",
+                "arguments": "[format(' -WorkspaceName {0} -CustomTableName {1} -repoUri {2} -DataProvidersArray \\\"{3}\\\"', parameters('workspaceName'), parameters('CustomTableName'), concat(parameters('CloudRepo'), '/tree/', parameters('Branch'), '/parsers/'), union(parameters('dataProviders'), parameters('enabledSolutions')))]",
                 "primaryScriptUri": "[concat('https://raw.githubusercontent.com/SecureHats/Sentinel-playground/', parameters('Branch'), '/PowerShell/Add-AzureMonitorData/Add-AzureMonitorData.ps1')]",
                 "supportingScriptUris": [],
                 "timeout": "PT30M",
