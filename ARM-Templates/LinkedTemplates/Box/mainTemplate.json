@@ -39,7 +39,7 @@
     },
     "workbook1-id": {
       "type": "string",
-      "defaultValue": "[uniqueString(resourceGroup().id)]",
+      "defaultValue": "[newGuid()]",
       "minLength": 1,
       "metadata": {
         "description": "Unique id for the workbook"
@@ -161,7 +161,7 @@
     },
     {
       "type": "Microsoft.Insights/workbooks",
-      "name": "[concat(parameters('workbook1-id'),'-', parameters('workbook1-name'))]",
+      "name": "[parameters('workbook1-id')]",
       "location": "[parameters('workspace-location')]",
       "kind": "shared",
       "apiVersion": "2020-02-12",
