@@ -176,7 +176,7 @@
       "properties": {
         "description": "IP addresses of broadband links that usually indicates users attempting to access their home network, for example for a remote session to a home computer.",
         "displayName": "Cisco Umbrella - Connection to non-corporate private network",
-        "enabled": false,
+        "enabled": true,
         "query": "let lbtime = 10m;\nCisco_Umbrella\n| where TimeGenerated > ago(lbtime)\n| where EventType == 'proxylogs'\n| where DvcAction =~ 'Allowed'\n| where UrlCategory contains 'Adult Themes' or\n      UrlCategory contains 'Adware' or\n      UrlCategory contains 'Alcohol' or\n      UrlCategory contains 'Illegal Downloads' or\n      UrlCategory contains 'Drugs' or\n      UrlCategory contains 'Child Abuse Content' or\n      UrlCategory contains 'Hate/Discrimination' or\n      UrlCategory contains 'Nudity' or\n      UrlCategory contains 'Pornography' or\n      UrlCategory contains 'Proxy/Anonymizer' or\n      UrlCategory contains 'Sexuality' or\n      UrlCategory contains 'Tasteless' or\n      UrlCategory contains 'Terrorism' or\n      UrlCategory contains 'Web Spam' or\n      UrlCategory contains 'German Youth Protection' or\n      UrlCategory contains 'Illegal Activities' or\n      UrlCategory contains 'Lingerie/Bikini' or\n      UrlCategory contains 'Weapons'\n| project TimeGenerated, SrcIpAddr, Identities\n| extend IPCustomEntity = SrcIpAddr\n| extend AccountCustomEntity = Identities\n",
         "queryFrequency": "PT10M",
         "queryPeriod": "PT10M",
@@ -200,7 +200,7 @@
       "properties": {
         "description": "Detects first connection to an unpopular website (possible malicious payload delivery).",
         "displayName": "Cisco Umbrella - Connection to Unpopular Website Detected",
-        "enabled": false,
+        "enabled": true,
         "query": "let domain_lookBack= 14d;\nlet timeframe = 1d;\nlet top_million_list = Cisco_Umbrella\n| where EventType == \"proxylogs\"\n| where TimeGenerated > ago(domain_lookBack) and TimeGenerated < ago(timeframe)\n| extend Hostname = parse_url(UrlOriginal)[\"Host\"]\n| summarize count() by tostring(Hostname)\n| top 1000000 by count_\n| summarize make_list(Hostname);\nCisco_Umbrella\n| where EventType == \"proxylogs\"\n| where TimeGenerated > ago(timeframe)\n| extend Hostname = parse_url(UrlOriginal)[\"Host\"]\n| where Hostname !in (top_million_list)\n| extend Message = \"Connect to unpopular website (possible malicious payload delivery)\"\n| project Message, SrcIpAddr, DstIpAddr,UrlOriginal, TimeGenerated\n| extend IpCustomEntity = SrcIpAddr, UrlCustomEntity = UrlOriginal\n",
         "queryFrequency": "P1D",
         "queryPeriod": "P14D",
@@ -223,7 +223,7 @@
       "properties": {
         "description": "Detects suspicious user agent strings used by crypto miners in proxy logs.",
         "displayName": "Cisco Umbrella - Crypto Miner User-Agent Detected",
-        "enabled": false,
+        "enabled": true,
         "query": "let timeframe = 15m;\nCisco_Umbrella\n| where EventType == \"proxylogs\"\n| where TimeGenerated > ago(timeframe)\n| where HttpUserAgentOriginal contains \"XMRig\" or HttpUserAgentOriginal contains \"ccminer\"\n| extend Message = \"Crypto Miner User Agent\"\n| project Message, SrcIpAddr, DstIpAddr, UrlOriginal, TimeGenerated,HttpUserAgentOriginal\n| extend IpCustomEntity = SrcIpAddr, UrlCustomEntity = UrlOriginal\n",
         "queryFrequency": "PT15M",
         "queryPeriod": "PT15M",
@@ -246,7 +246,7 @@
       "properties": {
         "description": "Rule helps to detect empty and unusual user agent indicating web browsing activity by an unusual process other than a web browser.",
         "displayName": "Cisco Umbrella - Empty User Agent Detected",
-        "enabled": false,
+        "enabled": true,
         "query": "let timeframe = 15m;\nCisco_Umbrella\n| where EventType == \"proxylogs\"\n| where TimeGenerated > ago(timeframe)\n| where HttpUserAgentOriginal == ''\n| extend Message = \"Empty User Agent\"\n| project Message, SrcIpAddr, DstIpAddr, UrlOriginal, TimeGenerated\n| extend IpCustomEntity = SrcIpAddr, UrlCustomEntity = UrlOriginal\n",
         "queryFrequency": "PT15M",
         "queryPeriod": "PT15M",
@@ -269,7 +269,7 @@
       "properties": {
         "description": "Detects suspicious user agent strings used by known hack tools",
         "displayName": "Cisco Umbrella - Hack Tool User-Agent Detected",
-        "enabled": false,
+        "enabled": true,
         "query": "let timeframe = 15m;\nlet user_agents=dynamic([\n                          '(hydra)',\n                          ' arachni/',\n                          ' BFAC ',\n                          ' brutus ',\n                          ' cgichk ',\n                          'core-project/1.0',\n                          ' crimscanner/',\n                          'datacha0s',\n                          'dirbuster',\n                          'domino hunter',\n                          'dotdotpwn',\n                          'FHScan Core',\n                          'floodgate',\n                          'get-minimal',\n                          'gootkit auto-rooter scanner',\n                          'grendel-scan',\n                          ' inspath ',\n                          'internet ninja',\n                          'jaascois',\n                          ' zmeu ',\n                          'masscan',\n                          ' metis ',\n                          'morfeus fucking scanner',\n                          'n-stealth',\n                          'nsauditor',\n                          'pmafind',\n                          'security scan',\n                          'springenwerk',\n                          'teh forest lobster',\n                          'toata dragostea',\n                          ' vega/',\n                          'voideye',\n                          'webshag',\n                          'webvulnscan',\n                          ' whcc/',\n                          ' Havij',\n                          'absinthe',\n                          'bsqlbf',\n                          'mysqloit',\n                          'pangolin',\n                          'sql power injector',\n                          'sqlmap',\n                          'sqlninja',\n                          'uil2pn',\n                          'ruler',\n                          'Mozilla/5.0 (Windows; U; Windows NT 5.1; pt-PT; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 (.NET CLR 3.5.30729)'\n                          ]);\nCisco_Umbrella\n| where EventType == \"proxylogs\"\n| where TimeGenerated > ago(timeframe)\n| where HttpUserAgentOriginal has_any (user_agents)\n| extend Message = \"Hack Tool User Agent\"\n| project Message, SrcIpAddr, DstIpAddr, UrlOriginal, TimeGenerated, HttpUserAgentOriginal\n| extend IpCustomEntity = SrcIpAddr, UrlCustomEntity = UrlOriginal\n",
         "queryFrequency": "PT15M",
         "queryPeriod": "PT15M",
@@ -292,7 +292,7 @@
       "properties": {
         "description": "Rule helps to detect Powershell user-agent activity by an unusual process other than a web browser.",
         "displayName": "Cisco Umbrella - Windows PowerShell User-Agent Detected",
-        "enabled": false,
+        "enabled": true,
         "query": "let timeframe = 15m;\nCisco_Umbrella\n| where EventType == \"proxylogs\"\n| where TimeGenerated > ago(timeframe)\n| where HttpUserAgentOriginal contains \"WindowsPowerShell\"\n| extend Message = \"Windows PowerShell User Agent\"\n| project Message, SrcIpAddr, DstIpAddr, UrlOriginal, TimeGenerated,HttpUserAgentOriginal\n| extend IpCustomEntity = SrcIpAddr, UrlCustomEntity = UrlOriginal\n",
         "queryFrequency": "PT15M",
         "queryPeriod": "PT15M",
@@ -316,7 +316,7 @@
       "properties": {
         "description": "Rule helps to detect a rare user-agents indicating web browsing activity by an unusual process other than a web browser.",
         "displayName": "Cisco Umbrella - Rare User Agent Detected",
-        "enabled": false,
+        "enabled": true,
         "query": "let lookBack = 14d;\nlet timeframe = 1d;\nlet user_agents_list = Cisco_Umbrella\n| where EventType == \"proxylogs\"\n| where TimeGenerated > ago(lookBack) and TimeGenerated < ago(timeframe)\n| summarize count() by HttpUserAgentOriginal\n| summarize make_list(HttpUserAgentOriginal);\nCisco_Umbrella\n| where EventType == \"proxylogs\"\n| where TimeGenerated > ago(timeframe)\n| where HttpUserAgentOriginal !in (user_agents_list)\n| extend Message = \"Rare User Agent\"\n| project Message, SrcIpAddr, DstIpAddr, UrlOriginal, TimeGenerated, HttpUserAgentOriginal\n| extend IpCustomEntity = SrcIpAddr, UrlCustomEntity = UrlOriginal\n",
         "queryFrequency": "P1D",
         "queryPeriod": "P14D",
@@ -339,7 +339,7 @@
       "properties": {
         "description": "It is reccomended that these Categories shoud be blocked by policies because they provide harmful/malicious content..",
         "displayName": "Cisco Umbrella - Request Allowed to harmful/malicious URI category",
-        "enabled": false,
+        "enabled": true,
         "query": "let lbtime = 10m;\nCisco_Umbrella\n| where TimeGenerated > ago(lbtime)\n| where EventType == 'proxylogs'\n| where DvcAction =~ 'Allowed'\n| where UrlCategory contains 'Adult Themes' or\n      UrlCategory contains 'Adware' or\n      UrlCategory contains 'Alcohol' or\n      UrlCategory contains 'Illegal Downloads' or\n      UrlCategory contains 'Drugs' or\n      UrlCategory contains 'Child Abuse Content' or\n      UrlCategory contains 'Hate/Discrimination' or\n      UrlCategory contains 'Nudity' or\n      UrlCategory contains 'Pornography' or\n      UrlCategory contains 'Proxy/Anonymizer' or\n      UrlCategory contains 'Sexuality' or\n      UrlCategory contains 'Tasteless' or\n      UrlCategory contains 'Terrorism' or\n      UrlCategory contains 'Web Spam' or\n      UrlCategory contains 'German Youth Protection' or\n      UrlCategory contains 'Illegal Activities' or\n      UrlCategory contains 'Lingerie/Bikini' or\n      UrlCategory contains 'Weapons'\n| project TimeGenerated, SrcIpAddr, Identities\n| extend IPCustomEntity = SrcIpAddr\n| extend AccountCustomEntity = Identities\n",
         "queryFrequency": "PT10M",
         "queryPeriod": "PT10M",
@@ -363,7 +363,7 @@
       "properties": {
         "description": "Detects request to potentially harmful file types (.ps1, .bat, .vbs, etc.).",
         "displayName": "Cisco Umbrella - Request to blocklisted file type",
-        "enabled": false,
+        "enabled": true,
         "query": "let file_ext_blocklist = dynamic(['.ps1', '.vbs', '.bat', '.scr']);\nlet lbtime = 10m;\nCisco_Umbrella\n| where TimeGenerated > ago(lbtime)\n| where EventType == 'proxylogs'\n| where DvcAction =~ 'Allowed'\n| extend file_ext = extract(@'.*(\\.\\w+)$', 1, UrlOriginal)\n| extend Filename = extract(@'.*\\/*\\/(.*\\.\\w+)$', 1, UrlOriginal)\n| where file_ext in (file_ext_blocklist)\n| project TimeGenerated, SrcIpAddr, Identities, Filename\n| extend IPCustomEntity = SrcIpAddr\n| extend AccountCustomEntity = Identities\n",
         "queryFrequency": "PT10M",
         "queryPeriod": "PT10M",
@@ -386,7 +386,7 @@
       "properties": {
         "description": "Malware can use IP address to communicate with C2.",
         "displayName": "Cisco Umbrella - URI contains IP address",
-        "enabled": false,
+        "enabled": true,
         "query": "let lbtime = 10m;\nCisco_Umbrella\n| where TimeGenerated > ago(lbtime)\n| where EventType == 'proxylogs'\n| where DvcAction =~ 'Allowed'\n| where UrlOriginal matches regex @'\\Ahttp:\\/\\/\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}.*'\n| project TimeGenerated, SrcIpAddr, Identities\n| extend IPCustomEntity = SrcIpAddr\n| extend AccountCustomEntity = Identities\n",
         "queryFrequency": "PT10M",
         "queryPeriod": "PT10M",
