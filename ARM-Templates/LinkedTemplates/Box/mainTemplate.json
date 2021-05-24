@@ -182,7 +182,7 @@
       "properties": {
         "description": "Detects spikes (deviations from avarage) in user activity.",
         "displayName": "Box - Abmormal user activity",
-        "enabled": false,
+        "enabled": true,
         "query": "let lbperiod_start = 14d;\nlet lbperiod_end = 24h;\nlet user_actions_1 = BoxEvents\n| where TimeGenerated between (ago(lbperiod_start) .. ago(lbperiod_end))\n| summarize TotalEvents = count() by SourceName\n| project TotalEvents, User = SourceName;\nlet user_actions_2 = BoxEvents\n| where TimeGenerated between (ago(lbperiod_start) .. ago(lbperiod_end))\n| summarize TotalEvents = count() by SrcUserName\n| project TotalEvents, User = SrcUserName;\nlet TotalActions = (union user_actions_1, user_actions_2)\n| summarize TotalEvents = count() by User\n| extend EventsPerDay = TotalEvents / 29\n| extend k = 1;\nlet actions1_last_h = BoxEvents\n| summarize TotalEventsH = count() by SourceName\n| project TotalEventsH, User = SourceName;\nlet actions2_last_h = BoxEvents\n| summarize TotalEventsH = count() by SourceName\n| project TotalEventsH, User = SourceName;\nlet TotalActionsLastHour = (union actions1_last_h, actions2_last_h)\n| summarize TotalEventsH = sum(TotalEventsH) by User\n| extend k = 1;\nTotalActions\n| join (TotalActionsLastHour) on k\n| where EventsPerDay > TotalEventsH\n| project User\n| extend AccountCustomEntity = User\n",
         "queryFrequency": "PT1H",
         "queryPeriod": "P14D",
@@ -205,7 +205,7 @@
       "properties": {
         "description": "Detects executable files in folders.",
         "displayName": "Box - Executable file in folder",
-        "enabled": false,
+        "enabled": true,
         "query": "BoxEvents\n| where SourceFileName hassuffix '.exe' or SourceItemName hassuffix '.exe'\n| extend IPCustomEntity = SrcIpAddr\n",
         "queryFrequency": "PT1H",
         "queryPeriod": "PT1H",
@@ -228,7 +228,7 @@
       "properties": {
         "description": "Detects when new user downloads forbidden file types.",
         "displayName": "Box - Forbidden file type downloaded",
-        "enabled": false,
+        "enabled": true,
         "query": "let forbidden_files = dynamic(['ps1', 'bat', 'scr', 'sh']);\nBoxEvents\n| where EventType =~ 'DOWNLOAD'\n| extend file_type = extract(@'\\.(\\w+)$', 1, SourceItemName)\n| where file_type in (forbidden_files)\n| extend AccountCustomEntity = SrcUserName\n| extend IPCustomEntity = SrcIpAddr\n",
         "queryFrequency": "PT1H",
         "queryPeriod": "PT1H",
@@ -251,7 +251,7 @@
       "properties": {
         "description": "Detects user login after long inactivity period.",
         "displayName": "Box - Inactive user login",
-        "enabled": false,
+        "enabled": true,
         "query": "let lbperiod_start = 14d;\nlet lbperiod_end = 7d;\nlet lbtime = 1h;\nlet active_users = BoxEvents\n| where TimeGenerated between (ago(lbperiod_end) .. ago(lbtime))\n| where EventType =~ 'LOGIN'\n| summarize makeset(SourceName);\nlet inactive_users = BoxEvents\n| where TimeGenerated between (ago(lbperiod_start) .. ago(lbperiod_end))\n| where EventType =~ 'LOGIN'\n| where SourceName !in (active_users)\n| summarize makeset(SourceName);\nBoxEvents\n| where EventType == 'LOGIN'\n| where SourceName in (inactive_users)\n| extend AccountCustomEntity = SourceName\n",
         "queryFrequency": "PT1H",
         "queryPeriod": "P14D",
@@ -274,7 +274,7 @@
       "properties": {
         "description": "Detects when an item was shared to external entity.",
         "displayName": "Box - Item shared to external entity",
-        "enabled": false,
+        "enabled": true,
         "query": "BoxEvents\n| where EventType =~ 'COLLABORATION_INVITE'\n| extend corp_domain = tolower(extract(@'@(.*)', 1, SrcUserUpn))\n| extend accessibleby_domain = tolower(extract(@'@(.*)', 1, AccessibleByLogin))\n| where corp_domain != accessibleby_domain\n| extend AccountCustomEntity = SrcUserUpn\n",
         "queryFrequency": "PT1H",
         "queryPeriod": "PT1H",
@@ -297,7 +297,7 @@
       "properties": {
         "description": "Detects when a user deletes many items in short period of time.",
         "displayName": "Box - Many items deleted by user",
-        "enabled": false,
+        "enabled": true,
         "query": "let threshold = 100;\nBoxEvents\n| where EventType =~ 'DELETE'\n| summarize deleted_items = dcount(SourceItemName) by SrcUserName, bin(TimeGenerated, 5m)\n| where deleted_items > threshold\n| extend AccountCustomEntity = SrcUserName\n",
         "queryFrequency": "PT1H",
         "queryPeriod": "PT1H",
@@ -320,7 +320,7 @@
       "properties": {
         "description": "Detects when new user created with SourceLogin containing non-corporate domain.",
         "displayName": "Box - New external user",
-        "enabled": false,
+        "enabled": true,
         "query": "BoxEvents\n| where EventType =~ 'NEW_USER'\n| extend corp_domain = extract(@'@(.*)', 1, SourceLogin)\n| extend new_domain = tolower(extract(@'@(.*)', 1, SourceLogin))\n| where corp_domain != new_domain\n| extend AccountCustomEntity = SourceLogin\n| extend IPCustomEntity = SrcIpAddr\n",
         "queryFrequency": "PT1H",
         "queryPeriod": "PT1H",
@@ -344,7 +344,7 @@
       "properties": {
         "description": "Detects files which potentialy may contain sensitive data such as passwords, authentication tokens, secret keys.",
         "displayName": "Box - File containing sensitive data",
-        "enabled": false,
+        "enabled": true,
         "query": "BoxEvents\n| where SourceItemName =~ 'id_rsa' or SourceItemName contains 'password' or SourceItemName contains 'key' or SourceItemName contains '_key' or SourceItemName contains '.ssh' or SourceItemName endswith '.npmrc' or SourceItemName endswith '.muttrc' or SourceItemName contains 'config.json' or SourceItemName contains '.gitconfig' or SourceItemName endswith '.netrc' or SourceItemName endswith 'package.json' or SourceItemName endswith 'Gemfile' or SourceItemName endswith 'bower.json' or SourceItemName endswith 'config.gypi' or SourceItemName endswith 'travis.yml' or SourceFileName =~ 'id_rsa' or SourceFileName contains 'password' or SourceFileName contains 'key' or SourceFileName contains '_key' or SourceFileName contains '.ssh' or SourceFileName endswith '.npmrc' or SourceFileName endswith '.muttrc' or SourceFileName contains 'config.json' or SourceFileName contains '.gitconfig' or SourceFileName endswith '.netrc' or SourceFileName endswith 'package.json' or SourceFileName endswith 'Gemfile' or SourceFileName contains 'bower.json' or SourceFileName contains 'config.gypi' or SourceFileName contains 'travis.yml'\n| extend AccountCustomEntity = SrcUserName\n| extend IPCustomEntity = SrcIpAddr\n",
         "queryFrequency": "PT1H",
         "queryPeriod": "PT1H",
@@ -367,7 +367,7 @@
       "properties": {
         "description": "Detects when user logged in as admin.",
         "displayName": "Box - User logged in as admin",
-        "enabled": false,
+        "enabled": true,
         "query": "let lbperiod_start = 14d;\nlet lbperiod_end = 1d;\nlet admins = BoxEvents\n| where TimeGenerated between (ago(lbperiod_start) .. ago(lbperiod_end))\n| where EventType =~ 'ADMIN_LOGIN'\n| summarize makeset(SourceLogin);\nBoxEvents\n| where EventType =~ 'ADMIN_LOGIN'\n| where SourceLogin !in (admins)\n| extend AccountCustomEntity = SourceLogin\n| extend IPCustomEntity = SrcIpAddr\n",
         "queryFrequency": "PT1H",
         "queryPeriod": "P14D",
@@ -390,7 +390,7 @@
       "properties": {
         "description": "Detects when user collaboration role is changed to owner.",
         "displayName": "Box - User role changed to owner",
-        "enabled": false,
+        "enabled": true,
         "query": "let lbperiod = 14d;\nlet lbtime = 1h;\nBoxEvents\n| where TimeGenerated between (ago(lbperiod) .. ago(lbtime))\n| where EventType =~ 'COLLABORATION_INVITE'\n| where AdditionalDetailsRole !~ 'Owner'\n| summarize min(TimeGenerated) by AccessibleByName, FileDirectory, AdditionalDetailsRole\n| project AccessibleByName, FileDirectory, InitialRole = AdditionalDetailsRole\n|join (BoxEvents\n          | where EventType =~ 'COLLABORATION_ROLE_CHANGE'\n          | summarize max(TimeGenerated) by AccessibleByName, FileDirectory, AdditionalDetailsRole\n          | project AccessibleByName, FileDirectory, NewRole = AdditionalDetailsRole\n          ) on FileDirectory, AccessibleByName\n| where NewRole =~ 'Owner'\n| project AccessibleByName, FileDirectory\n| extend AccountCustomEntity = AccessibleByName\n",
         "queryFrequency": "PT1H",
         "queryPeriod": "P14D",
