@@ -117,12 +117,11 @@ function Set-AzMonitorFunction {
         ResourceType         = "workspaces/$($WorkspaceName)/savedSearches"
         ApiVersion           = '2020-08-01'
         Name                 = "$displayName"
-        Method               = 'DELETE'
+        Method               = 'GET'
     }
-
-    $existing = Invoke-AzRestMethod @payload | ConvertFrom-json
-
-    if ($null -eq $existing.Content) {
+    
+    $ctx = Invoke-AzRestMethod @payload
+    if ($ctx.StatusCode -ne 200) {
         New-AzOperationalInsightsSavedSearch `
             -ResourceGroupName $resourceGroupName `
             -WorkspaceName $workspaceName `
@@ -130,8 +129,9 @@ function Set-AzMonitorFunction {
             -DisplayName $displayName `
             -Category $category `
             -Query "$kqlQuery" `
-            -FunctionAlias $displayName
+            -FunctionAlias $displayName    
     }
+
 }
 
 function pathBuilder {
