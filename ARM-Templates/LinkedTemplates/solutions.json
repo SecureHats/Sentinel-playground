@@ -39,7 +39,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://catalogartifact.azureedge.net/publicartifacts/azuresentinel.azure-sentinel-solution-box-da5c9180-0b04-4fdd-b524-e3bdc18b9ff4-azure-sentinel-solution-box/Artifacts/mainTemplate.json",
+                    "uri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/ARM-Templates/LinkedTemplates/Box/mainTemplate.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -60,7 +60,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://catalogartifact.azureedge.net/publicartifacts/azuresentinel.azure-sentinel-solution-ciscoumbrella-3bfe734b-8603-4172-b699-d3ab53220ba2-azure-sentinel-solution-ciscoumbrella/Artifacts/mainTemplate.json",
+                    "uri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/ARM-Templates/LinkedTemplates/CiscoUmbrella/mainTemplate.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -84,7 +84,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://catalogartifact.azureedge.net/publicartifacts/azuresentinel.azure-sentinel-solution-paloaltoprisma-3cbd08c3-8726-44f1-8284-5d6eef803b78-azure-sentinel-solution-paloaltoprisma/Artifacts/mainTemplate.json",
+                    "uri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/ARM-Templates/LinkedTemplates/PaloAlto/mainTemplate.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -105,7 +105,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://catalogartifact.azureedge.net/publicartifacts/azuresentinel.azure-sentinel-solution-ubiquitiunifi-96c43412-e22c-47a0-9790-fbe1c9f3baa2-azure-sentinel-solution-ubiquitiunifi/Artifacts/mainTemplate.json",
+                    "uri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/ARM-Templates/LinkedTemplates/Ubiquiti/mainTemplate.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
