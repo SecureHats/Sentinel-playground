@@ -282,7 +282,7 @@
       "properties": {
         "description": "Detects anomalous API key usage activity.",
         "displayName": "Palo Alto Prisma Cloud - Anomalous access key usage",
-        "enabled": true,
+        "enabled": false,
         "query": "let threashold = 10;\nPaloAltoPrismaCloud\n| where ResourceType =~ 'Login'\n| where EventResult =~ 'Failed'\n| where EventMessage has 'access key'\n| summarize count() by UserName, bin(TimeGenerated, 5m)\n| where count_ > threashold\n| extend AccountCustomEntity = UserName\n",
         "queryFrequency": "PT1H",
         "queryPeriod": "PT1H",
