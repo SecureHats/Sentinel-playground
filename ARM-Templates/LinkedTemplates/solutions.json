@@ -95,7 +95,7 @@
             }
         },
         {
-            "condition": "[contains(parameters('enabledSolutions'), 'Ubiquite')]",
+            "condition": "[contains(parameters('enabledSolutions'), 'Ubiquiti')]",
             "name": "Ubiquite",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
