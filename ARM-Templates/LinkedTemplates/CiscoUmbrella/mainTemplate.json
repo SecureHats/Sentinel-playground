@@ -1,0 +1,663 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "author": "Eli Forbes - v-eliforbes@microsoft.com",
+    "comments": "Solution template for Cisco Umbrella"
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Not used, but needed to pass arm-ttk test `Location-Should-Not-Be-Hardcoded`.  We instead use the `workspace-location` which is derived from the LA workspace"
+      }
+    },
+    "workspace-location": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[parameters('location')]",
+      "metadata": {
+        "description": "Region to deploy solution resources"
+      }
+    },
+    "workspace": {
+      "defaultValue": "<Enter Log Analytics Workspace>",
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Workspace name for Log Analytics where Sentinel is setup"
+      }
+    },
+    "formattedTimeNow": {
+      "type": "string",
+      "defaultValue": "[utcNow('g')]",
+      "metadata": {
+        "description": "Appended to workbook displayNames to make them unique"
+      }
+    },
+    "workbook1-id": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().id]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the workbook"
+      }
+    },
+    "workbook1-name": {
+      "type": "string",
+      "defaultValue": "Cisco Umbrella",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name for the workbook"
+      }
+    },
+    "analytic1-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic2-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic3-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic4-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic5-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic6-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic7-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic8-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic9-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic10-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    }
+  },
+  "variables": {
+    "workbook-source": "[concat(resourceGroup().id, '/providers/Microsoft.OperationalInsights/workspaces/',parameters('workspace'))]",
+    "_workbook-source": "[variables('workbook-source')]",
+    "workspace-dependency": "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]"
+  },
+  "resources": [
+    {
+      "name": "pid-c831fa37-c174-4c50-a094-e820557d868e-partnercenter",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "resources": []
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Insights/workbooks",
+      "name": "[concat(parameters('workbook1-id'), '-', parameters('workbook1-name')]",
+      "location": "[parameters('workspace-location')]",
+      "kind": "shared",
+      "apiVersion": "2020-02-12",
+      "properties": {
+        "displayName": "[concat(parameters('workbook1-name'), ' - ', parameters('formattedTimeNow'))]",
+        "serializedData": "{\"version\":\"Notebook/1.0\",\"items\":[{\"type\":1,\"content\":{\"json\":\">**NOTE:** This workbook uses a parser based on a Kusto Function to normalize fields. [Follow these steps](https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/Solutions/CiscoUmbrella/Parsers/Cisco_Umbrella) to create the Kusto function alias **Cisco_Umbrella**.\"},\"name\":\"Text\"},{\"type\":11,\"content\":{\"version\":\"LinkItem/1.0\",\"style\":\"tabs\",\"links\":[{\"id\":\"464b6899-a8de-4f01-84a6-d4e3ecc7f282\",\"cellValue\":\"Tab\",\"linkTarget\":\"parameter\",\"linkLabel\":\"Cisco Umbrella Main Dashboard\",\"subTarget\":\"cisco_umbrella_main_dashboard\",\"preText\":\"Cisco Umbrella Main Dashboard\",\"style\":\"link\"},{\"id\":\"a3798d8a-a610-475c-9cbf-7252301dab7e\",\"cellValue\":\"Tab\",\"linkTarget\":\"parameter\",\"linkLabel\":\"Cisco Umbrella Dns Dashboard\",\"subTarget\":\"cisco_umbrella_dns_dashboard\",\"style\":\"link\"},{\"id\":\"80bcf252-bcf6-4736-993d-59da0a8e4c76\",\"cellValue\":\"Tab\",\"linkTarget\":\"parameter\",\"linkLabel\":\"Cisco Umbrella Proxy Dashboard\",\"subTarget\":\"cisco_umbrella_proxy_dashboard\",\"style\":\"link\"},{\"id\":\"f536a1e9-362e-4d98-bdd1-0f7dfb23901a\",\"cellValue\":\"Tab\",\"linkTarget\":\"parameter\",\"linkLabel\":\"Cisco Umbrella Firewall Dashboard\",\"subTarget\":\"cisco_umbrella_firewall_dashboard\",\"style\":\"link\"}]},\"name\":\"Links\"},{\"type\":9,\"content\":{\"version\":\"KqlParameterItem/1.0\",\"parameters\":[{\"id\":\"37b91baf-6272-4709-a028-1370823249d4\",\"version\":\"KqlParameterItem/1.0\",\"name\":\"TimeRange\",\"type\":4,\"isRequired\":true,\"value\":{\"durationMs\":5184000000},\"typeSettings\":{\"selectableValues\":[{\"durationMs\":300000},{\"durationMs\":900000},{\"durationMs\":1800000},{\"durationMs\":3600000},{\"durationMs\":14400000},{\"durationMs\":43200000},{\"durationMs\":86400000},{\"durationMs\":172800000},{\"durationMs\":259200000},{\"durationMs\":604800000},{\"durationMs\":1209600000},{\"durationMs\":2419200000},{\"durationMs\":2592000000},{\"durationMs\":5184000000},{\"durationMs\":7776000000}],\"allowCustom\":true},\"timeContext\":{\"durationMs\":86400000}}],\"style\":\"pills\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\"},\"name\":\"Parameters1\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"Cisco_Umbrella\\n| where TimeGenerated {TimeRange} \\n| summarize Count=count() by EventType\\n| render barchart\",\"size\":3,\"title\":\"Events Count by EventType\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"piechart\",\"tileSettings\":{\"showBorder\":false,\"titleContent\":{\"columnMatch\":\"EventType\",\"formatter\":1},\"leftContent\":{\"columnMatch\":\"Count\",\"formatter\":12,\"formatOptions\":{\"palette\":\"auto\"},\"numberFormat\":{\"unit\":17,\"options\":{\"maximumSignificantDigits\":3,\"maximumFractionDigits\":2}}}},\"graphSettings\":{\"type\":0,\"topContent\":{\"columnMatch\":\"EventType\",\"formatter\":1},\"centerContent\":{\"columnMatch\":\"Count\",\"formatter\":1,\"numberFormat\":{\"unit\":17,\"options\":{\"maximumSignificantDigits\":3,\"maximumFractionDigits\":2}}}}},\"conditionalVisibility\":{\"parameterName\":\"Tab\",\"comparison\":\"isEqualTo\",\"value\":\"cisco_umbrella_main_dashboard\"},\"customWidth\":\"30\",\"name\":\"EventsCountByEventType\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"Cisco_Umbrella\\n| where TimeGenerated {TimeRange} \\n|make-series Trend = count() on TimeGenerated from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain} by EventType;\",\"size\":0,\"title\":\"Events over time\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"timechart\"},\"conditionalVisibility\":{\"parameterName\":\"Tab\",\"comparison\":\"isEqualTo\",\"value\":\"cisco_umbrella_main_dashboard\"},\"customWidth\":\"70\",\"name\":\"EventsOverTime\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"Cisco_Umbrella\\n| where DvcAction contains \\\"block\\\"\\n| where TimeGenerated {TimeRange} \\n|make-series Trend = count() on TimeGenerated from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain};\",\"size\":0,\"title\":\"Blocks over time\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"timechart\"},\"conditionalVisibility\":{\"parameterName\":\"Tab\",\"comparison\":\"isEqualTo\",\"value\":\"cisco_umbrella_main_dashboard\"},\"customWidth\":\"70\",\"name\":\"query - 4\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"let CU_Total_Requests =\\nCisco_Umbrella\\n| where TimeGenerated {TimeRange} \\n| summarize count()\\n| extend evttype=\\\"Total Requests\\\";\\n\\nlet CU_Total_Blocked =\\nCisco_Umbrella\\n| where TimeGenerated {TimeRange} \\n| where DvcAction contains \\\"block\\\"\\n| summarize count()\\n| extend evttype=\\\"Total Blocked\\\";\\n\\nlet CU_Security_Blocked =\\nCisco_Umbrella \\n| where TimeGenerated {TimeRange} \\n| where DvcAction contains \\\"block\\\"\\n| where isnotempty(ThreatCategory)\\n| summarize count()\\n| extend evttype=\\\"Security Blocked\\\";\\n\\nunion CU_Security_Blocked,CU_Total_Blocked,CU_Total_Requests\",\"size\":3,\"title\":\"Network Breakdown Statistic\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"tiles\",\"tileSettings\":{\"titleContent\":{\"columnMatch\":\"evttype\",\"formatter\":1},\"leftContent\":{\"columnMatch\":\"count_\",\"formatter\":12,\"formatOptions\":{\"palette\":\"auto\"},\"numberFormat\":{\"unit\":17,\"options\":{\"maximumSignificantDigits\":3,\"maximumFractionDigits\":2}}},\"showBorder\":false,\"size\":\"auto\"}},\"conditionalVisibility\":{\"parameterName\":\"Tab\",\"comparison\":\"isEqualTo\",\"value\":\"cisco_umbrella_main_dashboard\"},\"customWidth\":\"30\",\"name\":\"NetworkBreakdownStatistic\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"Cisco_Umbrella\\n| where TimeGenerated {TimeRange} \\n| where EventType == \\\"dnslogs\\\"\\n| summarize count() by DvcAction\",\"size\":3,\"title\":\"DNS - Events count by Action\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"piechart\",\"tileSettings\":{\"showBorder\":false,\"titleContent\":{\"columnMatch\":\"DvcAction\",\"formatter\":1},\"leftContent\":{\"columnMatch\":\"count_\",\"formatter\":12,\"formatOptions\":{\"palette\":\"auto\"},\"numberFormat\":{\"unit\":17,\"options\":{\"maximumSignificantDigits\":3,\"maximumFractionDigits\":2}}}}},\"conditionalVisibility\":{\"parameterName\":\"Tab\",\"comparison\":\"isEqualTo\",\"value\":\"cisco_umbrella_dns_dashboard\"},\"customWidth\":\"30\",\"name\":\"DNSEventsCountByAction\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"Cisco_Umbrella\\n| where TimeGenerated {TimeRange} \\n| where EventType == \\\"dnslogs\\\"\\n| summarize Count=count() by DnsQueryTypeName | sort by Count\",\"size\":0,\"title\":\"DNS - Events count by QueryType\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"categoricalbar\"},\"conditionalVisibility\":{\"parameterName\":\"Tab\",\"comparison\":\"isEqualTo\",\"value\":\"cisco_umbrella_dns_dashboard\"},\"customWidth\":\"70\",\"name\":\"DNSEventsCountByQueryType\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"Cisco_Umbrella\\n| where EventType == \\\"dnslogs\\\"\\n| where TimeGenerated {TimeRange} \\n| where isnotempty(ThreatCategory)\\n| extend Threat_Category=parsejson(tostring(ThreatCategory))\\n| mv-expand Threat_Category\\n| summarize Count=count() by tostring(Threat_Category)\\n| sort by Count \\n| join kind = inner (\\nCisco_Umbrella\\n| where EventType == \\\"dnslogs\\\"\\n| where isnotempty(ThreatCategory)\\n| where TimeGenerated {TimeRange} \\n| extend Threat_Category=parsejson(tostring(ThreatCategory))\\n| mv-expand Threat_Category\\n| make-series Trend = count() default = 0 on TimeGenerated from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain} by tostring(Threat_Category))\\n on Threat_Category\\n | project-away Threat_Category1, TimeGenerated\\n | project Threat_Category, Count, Trend\\n | order by Count\\n| take 10\",\"size\":0,\"title\":\"DNS - Events by Threat Category\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"table\",\"gridSettings\":{\"formatters\":[{\"columnMatch\":\"Count\",\"formatter\":8,\"formatOptions\":{\"palette\":\"blueGreen\"}},{\"columnMatch\":\"Trend\",\"formatter\":10,\"formatOptions\":{\"palette\":\"turquoise\"}}]}},\"conditionalVisibility\":{\"parameterName\":\"Tab\",\"comparison\":\"isEqualTo\",\"value\":\"cisco_umbrella_dns_dashboard\"},\"customWidth\":\"30\",\"name\":\"DNSEventsByThreatCategory\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"Cisco_Umbrella\\n| where TimeGenerated {TimeRange} \\n| where EventType == \\\"dnslogs\\\"\\n| where isnotempty(UrlCategory)\\n| extend Url_Category=parsejson(tostring(UrlCategory))\\n| mv-expand Url_Category\\n| summarize Count=count() by tostring(Url_Category)\\n| sort by Count\\n| join kind = inner (\\nCisco_Umbrella\\n| where TimeGenerated {TimeRange} \\n| where EventType == \\\"dnslogs\\\"\\n| where isnotempty(UrlCategory)\\n| extend Url_Category=parsejson(tostring(UrlCategory))\\n| mv-expand Url_Category\\n| make-series Trend = count() default = 0 on TimeGenerated from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain} by tostring(Url_Category))\\n on Url_Category\\n | project-away Url_Category1, TimeGenerated\\n | project Url_Category, Count, Trend\\n | order by Count\\n| take 10\",\"size\":0,\"title\":\"DNS - Events by Url Category\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"gridSettings\":{\"formatters\":[{\"columnMatch\":\"Count\",\"formatter\":8,\"formatOptions\":{\"palette\":\"blueGreen\"}},{\"columnMatch\":\"Trend\",\"formatter\":10,\"formatOptions\":{\"palette\":\"turquoise\"}}]}},\"conditionalVisibility\":{\"parameterName\":\"Tab\",\"comparison\":\"isEqualTo\",\"value\":\"cisco_umbrella_dns_dashboard\"},\"customWidth\":\"35\",\"name\":\"DNSEventsByUrlCategory\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"let list_IP = Cisco_Umbrella\\n| where TimeGenerated {TimeRange} \\n| where EventType == \\\"dnslogs\\\"\\n| where DvcAction == \\\"Blocked\\\"\\n|summarize Count=count() by SrcIpAddr | top 10 by Count\\n| summarize makelist(SrcIpAddr);\\nCisco_Umbrella\\n| where TimeGenerated {TimeRange} \\n| where EventType == \\\"dnslogs\\\"\\n| where DvcAction == \\\"Blocked\\\"\\n|summarize Count=count() by SrcIpAddr \\n| join kind = inner (\\nCisco_Umbrella\\n| where TimeGenerated {TimeRange} \\n| where EventType == \\\"dnslogs\\\"\\n| where DvcAction == \\\"Blocked\\\"\\n| where SrcIpAddr in (list_IP)\\n| make-series Trend = count() default = 0 on TimeGenerated from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain} by SrcIpAddr)\\n on SrcIpAddr\\n |  project-away SrcIpAddr1, TimeGenerated\\n | project SrcIpAddr, Count, Trend\\n | order by Count\\n| take 10\\n\\n\",\"size\":0,\"title\":\"DNS - Top 10 SrcIp with Blocked Action\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"table\",\"gridSettings\":{\"formatters\":[{\"columnMatch\":\"Count\",\"formatter\":8,\"formatOptions\":{\"palette\":\"blueGreen\"}},{\"columnMatch\":\"Trend\",\"formatter\":10,\"formatOptions\":{\"palette\":\"turquoise\"}}]}},\"conditionalVisibility\":{\"parameterName\":\"Tab\",\"comparison\":\"isEqualTo\",\"value\":\"cisco_umbrella_dns_dashboard\"},\"customWidth\":\"35\",\"name\":\"DNSTop10SrcIpBlockedAction\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"Cisco_Umbrella\\n| where TimeGenerated {TimeRange}\\n| where EventType == \\\"dnslogs\\\"\\n| where DvcAction == \\\"Blocked\\\"\\n| summarize Count=count() by DnsQueryName, UrlCategory \\n| top 10 by Count\\n\",\"size\":0,\"title\":\"DNS - Top 10 Blocked Url \",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\"},\"conditionalVisibility\":{\"parameterName\":\"Tab\",\"comparison\":\"isEqualTo\",\"value\":\"cisco_umbrella_dns_dashboard\"},\"name\":\"DNSTop10BlockedUrl \"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"Cisco_Umbrella\\n| where TimeGenerated {TimeRange} \\n| where EventType == \\\"proxylogs\\\"\\n| summarize count() by DvcAction\",\"size\":3,\"title\":\"Proxy - Events count by Action\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"piechart\"},\"conditionalVisibility\":{\"parameterName\":\"Tab\",\"comparison\":\"isEqualTo\",\"value\":\"cisco_umbrella_proxy_dashboard\"},\"customWidth\":\"30\",\"name\":\"ProxyEventsCountByAction\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"let CU_proxy_outcoming_traffic =\\nCisco_Umbrella\\n| where TimeGenerated {TimeRange} \\n| where EventType == \\\"proxylogs\\\"\\n| extend TrafficType = \\\"Outcoming\\\", Bytes = SrcBytes\\n| project TrafficType, Bytes, TimeGenerated;\\n\\nlet CU_proxy_incoming_traffic =\\nCisco_Umbrella\\n| where TimeGenerated {TimeRange} \\n| where EventType == \\\"proxylogs\\\"\\n| extend TrafficType = \\\"Incoming\\\", Bytes = DstBytes\\n| project TrafficType, Bytes, TimeGenerated;\\n\\n\\nunion CU_proxy_outcoming_traffic, CU_proxy_incoming_traffic\\n| make-series TotalGbytes = round(sum(Bytes/(1024*1024*1024)),2) on TimeGenerated  from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain} by TrafficType\\n\",\"size\":0,\"title\":\"Proxy - Traffic timechart, GB\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"timechart\"},\"conditionalVisibility\":{\"parameterName\":\"Tab\",\"comparison\":\"isEqualTo\",\"value\":\"cisco_umbrella_proxy_dashboard\"},\"customWidth\":\"70\",\"name\":\"ProxyTrafficTimechart\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"\\nCisco_Umbrella\\n| where TimeGenerated {TimeRange} \\n| where EventType == \\\"proxylogs\\\"\\n| where isnotempty(UrlCategory)\\n| extend Url_Category=parsejson(tostring(UrlCategory))\\n| mv-expand Url_Category\\n| summarize Count=count() by tostring(Url_Category)\\n| sort by Count\\n| join kind = inner (\\nCisco_Umbrella\\n| where TimeGenerated {TimeRange} \\n| where EventType == \\\"proxylogs\\\"\\n| where isnotempty(UrlCategory)\\n| extend Url_Category=parsejson(tostring(UrlCategory))\\n| mv-expand Url_Category\\n| make-series Trend = count() default = 0 on TimeGenerated from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain} by tostring(Url_Category))\\n on Url_Category\\n | project-away Url_Category1, TimeGenerated\\n | project Url_Category, Count, Trend\\n | order by Count\\n| take 10\",\"size\":0,\"title\":\"Proxy - Events by Url Category\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"gridSettings\":{\"formatters\":[{\"columnMatch\":\"Count\",\"formatter\":8,\"formatOptions\":{\"palette\":\"blueGreen\"}},{\"columnMatch\":\"Trend\",\"formatter\":10,\"formatOptions\":{\"palette\":\"turquoise\"}}]}},\"conditionalVisibility\":{\"parameterName\":\"Tab\",\"comparison\":\"isEqualTo\",\"value\":\"cisco_umbrella_proxy_dashboard\"},\"customWidth\":\"30\",\"name\":\"ProxyEventsByUrlCategory\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"let list_IP = Cisco_Umbrella\\n| where TimeGenerated {TimeRange} \\n| where EventType == \\\"proxylogs\\\"\\n| where DvcAction == \\\"BLOCKED\\\"\\n|summarize Count=count() by SrcIpAddr | top 10 by Count\\n| summarize makelist(SrcIpAddr);\\nCisco_Umbrella\\n| where TimeGenerated {TimeRange} \\n| where EventType == \\\"proxylogs\\\"\\n| where DvcAction == \\\"BLOCKED\\\"\\n|summarize Count=count() by SrcIpAddr \\n| join kind = inner (\\nCisco_Umbrella\\n| where TimeGenerated {TimeRange} \\n| where EventType == \\\"proxylogs\\\"\\n| where DvcAction == \\\"BLOCKED\\\"\\n| where SrcIpAddr in (list_IP)\\n| make-series Trend = count() default = 0 on TimeGenerated from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain} by SrcIpAddr)\\n on SrcIpAddr\\n |  project-away SrcIpAddr1, TimeGenerated\\n | project SrcIpAddr, Count, Trend\\n | order by Count\\n| take 10\\n\\n\",\"size\":0,\"title\":\"Proxy - Top 10 Source IP with Blocked Action\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"table\",\"gridSettings\":{\"formatters\":[{\"columnMatch\":\"Count\",\"formatter\":8,\"formatOptions\":{\"palette\":\"blueGreen\"}},{\"columnMatch\":\"Trend\",\"formatter\":10,\"formatOptions\":{\"palette\":\"turquoise\"}}]}},\"conditionalVisibility\":{\"parameterName\":\"Tab\",\"comparison\":\"isEqualTo\",\"value\":\"cisco_umbrella_proxy_dashboard\"},\"customWidth\":\"35\",\"name\":\"ProxyTop10SourceIPBlockedAction\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"Cisco_Umbrella\\n| where TimeGenerated {TimeRange} \\n| where EventType == \\\"proxylogs\\\"\\n| where isnotempty(ThreatCategory)\\n| extend Threat_Category=parsejson(tostring(ThreatCategory))\\n| mv-expand Threat_Category\\n| summarize Count=count() by tostring(Threat_Category)\\n| sort by Count \\n| join kind = inner (\\nCisco_Umbrella\\n| where TimeGenerated {TimeRange} \\n| where EventType == \\\"proxylogs\\\"\\n| where isnotempty(ThreatCategory)\\n| extend Threat_Category=parsejson(tostring(ThreatCategory))\\n| mv-expand Threat_Category\\n| make-series Trend = count() default = 0 on TimeGenerated from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain} by tostring(Threat_Category))\\n on Threat_Category\\n | project-away Threat_Category1, TimeGenerated\\n | project Threat_Category, Count, Trend\\n | order by Count\\n| take 10\",\"size\":0,\"title\":\"Proxy - Events by Threat Category\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"table\",\"gridSettings\":{\"formatters\":[{\"columnMatch\":\"Count\",\"formatter\":8,\"formatOptions\":{\"palette\":\"blueGreen\"}},{\"columnMatch\":\"Trend\",\"formatter\":10,\"formatOptions\":{\"palette\":\"turquoise\"}}]}},\"conditionalVisibility\":{\"parameterName\":\"Tab\",\"comparison\":\"isEqualTo\",\"value\":\"cisco_umbrella_proxy_dashboard\"},\"customWidth\":\"35\",\"name\":\"ProxyEventsByThreatCategory\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"Cisco_Umbrella\\n| where TimeGenerated {TimeRange}\\n| where EventType == \\\"proxylogs\\\"\\n| where DvcAction == \\\"BLOCKED\\\"\\n| summarize Count=count() by UrlOriginal, UrlCategory \\n| top 10 by Count\\n\",\"size\":0,\"title\":\"Proxy - Top 10 Blocked Url \",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\"},\"conditionalVisibility\":{\"parameterName\":\"Tab\",\"comparison\":\"isEqualTo\",\"value\":\"cisco_umbrella_proxy_dashboard\"},\"name\":\"ProxyTop10BlockedUrl \"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"Cisco_Umbrella\\n| where TimeGenerated {TimeRange} \\n| where EventType == \\\"cloudfirewalllogs\\\"\\n| summarize count() by DvcAction\",\"size\":3,\"title\":\"Firewall - Events count by Action\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"piechart\",\"tileSettings\":{\"showBorder\":false,\"titleContent\":{\"columnMatch\":\"DvcAction\",\"formatter\":1},\"leftContent\":{\"columnMatch\":\"count_\",\"formatter\":12,\"formatOptions\":{\"palette\":\"auto\"},\"numberFormat\":{\"unit\":17,\"options\":{\"maximumSignificantDigits\":3,\"maximumFractionDigits\":2}}}}},\"conditionalVisibility\":{\"parameterName\":\"Tab\",\"comparison\":\"isEqualTo\",\"value\":\"cisco_umbrella_firewall_dashboard\"},\"customWidth\":\"30\",\"name\":\"FirewallEventsCountByAction\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"\\nCisco_Umbrella\\n| where TimeGenerated {TimeRange} \\n| where EventType == \\\"cloudfirewalllogs\\\"\\n| make-series Packets = sum(toint(NetworkPackets)) on TimeGenerated  from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain} by NetworkDirection\",\"size\":0,\"title\":\"Firewall - Traffic over time, Packets\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"timechart\"},\"conditionalVisibility\":{\"parameterName\":\"Tab\",\"comparison\":\"isEqualTo\",\"value\":\"cisco_umbrella_firewall_dashboard\"},\"customWidth\":\"70\",\"name\":\"FirewallTrafficOverTime\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"Cisco_Umbrella\\n|where EventType == \\\"cloudfirewalllogs\\\"\\n| where DvcAction contains \\\"BLOCK\\\"\\n| where TimeGenerated {TimeRange} \\n|make-series Trend = count() on TimeGenerated from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain};\",\"size\":0,\"title\":\"Firewall - Block Events over time\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\"},\"conditionalVisibility\":{\"parameterName\":\"Tab\",\"comparison\":\"isEqualTo\",\"value\":\"cisco_umbrella_firewall_dashboard\"},\"customWidth\":\"50\",\"name\":\"query - 19\"}],\"fromTemplateId\":\"sentinel-CiscoUmbrella\",\"$schema\":\"https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json\"}\r\n",
+        "version": "1.0",
+        "sourceId": "[variables('_workbook-source')]",
+        "category": "sentinel"
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic1-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "description": "IP addresses of broadband links that usually indicates users attempting to access their home network, for example for a remote session to a home computer.",
+        "displayName": "Cisco Umbrella - Connection to non-corporate private network",
+        "enabled": false,
+        "query": "let lbtime = 10m;\nCisco_Umbrella\n| where TimeGenerated > ago(lbtime)\n| where EventType == 'proxylogs'\n| where DvcAction =~ 'Allowed'\n| where UrlCategory contains 'Adult Themes' or\n      UrlCategory contains 'Adware' or\n      UrlCategory contains 'Alcohol' or\n      UrlCategory contains 'Illegal Downloads' or\n      UrlCategory contains 'Drugs' or\n      UrlCategory contains 'Child Abuse Content' or\n      UrlCategory contains 'Hate/Discrimination' or\n      UrlCategory contains 'Nudity' or\n      UrlCategory contains 'Pornography' or\n      UrlCategory contains 'Proxy/Anonymizer' or\n      UrlCategory contains 'Sexuality' or\n      UrlCategory contains 'Tasteless' or\n      UrlCategory contains 'Terrorism' or\n      UrlCategory contains 'Web Spam' or\n      UrlCategory contains 'German Youth Protection' or\n      UrlCategory contains 'Illegal Activities' or\n      UrlCategory contains 'Lingerie/Bikini' or\n      UrlCategory contains 'Weapons'\n| project TimeGenerated, SrcIpAddr, Identities\n| extend IPCustomEntity = SrcIpAddr\n| extend AccountCustomEntity = Identities\n",
+        "queryFrequency": "PT10M",
+        "queryPeriod": "PT10M",
+        "severity": "Medium",
+        "suppressionDuration": "PT1H",
+        "suppressionEnabled": false,
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "tactics": [
+          "CommandandControl",
+          "Exfiltration"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic2-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "description": "Detects first connection to an unpopular website (possible malicious payload delivery).",
+        "displayName": "Cisco Umbrella - Connection to Unpopular Website Detected",
+        "enabled": false,
+        "query": "let domain_lookBack= 14d;\nlet timeframe = 1d;\nlet top_million_list = Cisco_Umbrella\n| where EventType == \"proxylogs\"\n| where TimeGenerated > ago(domain_lookBack) and TimeGenerated < ago(timeframe)\n| extend Hostname = parse_url(UrlOriginal)[\"Host\"]\n| summarize count() by tostring(Hostname)\n| top 1000000 by count_\n| summarize make_list(Hostname);\nCisco_Umbrella\n| where EventType == \"proxylogs\"\n| where TimeGenerated > ago(timeframe)\n| extend Hostname = parse_url(UrlOriginal)[\"Host\"]\n| where Hostname !in (top_million_list)\n| extend Message = \"Connect to unpopular website (possible malicious payload delivery)\"\n| project Message, SrcIpAddr, DstIpAddr,UrlOriginal, TimeGenerated\n| extend IpCustomEntity = SrcIpAddr, UrlCustomEntity = UrlOriginal\n",
+        "queryFrequency": "P1D",
+        "queryPeriod": "P14D",
+        "severity": "Medium",
+        "suppressionDuration": "PT1H",
+        "suppressionEnabled": false,
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "tactics": [
+          "CommandandControl"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic3-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "description": "Detects suspicious user agent strings used by crypto miners in proxy logs.",
+        "displayName": "Cisco Umbrella - Crypto Miner User-Agent Detected",
+        "enabled": false,
+        "query": "let timeframe = 15m;\nCisco_Umbrella\n| where EventType == \"proxylogs\"\n| where TimeGenerated > ago(timeframe)\n| where HttpUserAgentOriginal contains \"XMRig\" or HttpUserAgentOriginal contains \"ccminer\"\n| extend Message = \"Crypto Miner User Agent\"\n| project Message, SrcIpAddr, DstIpAddr, UrlOriginal, TimeGenerated,HttpUserAgentOriginal\n| extend IpCustomEntity = SrcIpAddr, UrlCustomEntity = UrlOriginal\n",
+        "queryFrequency": "PT15M",
+        "queryPeriod": "PT15M",
+        "severity": "Medium",
+        "suppressionDuration": "PT1H",
+        "suppressionEnabled": false,
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "tactics": [
+          "CommandandControl"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic4-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "description": "Rule helps to detect empty and unusual user agent indicating web browsing activity by an unusual process other than a web browser.",
+        "displayName": "Cisco Umbrella - Empty User Agent Detected",
+        "enabled": false,
+        "query": "let timeframe = 15m;\nCisco_Umbrella\n| where EventType == \"proxylogs\"\n| where TimeGenerated > ago(timeframe)\n| where HttpUserAgentOriginal == ''\n| extend Message = \"Empty User Agent\"\n| project Message, SrcIpAddr, DstIpAddr, UrlOriginal, TimeGenerated\n| extend IpCustomEntity = SrcIpAddr, UrlCustomEntity = UrlOriginal\n",
+        "queryFrequency": "PT15M",
+        "queryPeriod": "PT15M",
+        "severity": "Medium",
+        "suppressionDuration": "PT1H",
+        "suppressionEnabled": false,
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "tactics": [
+          "CommandandControl"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic5-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "description": "Detects suspicious user agent strings used by known hack tools",
+        "displayName": "Cisco Umbrella - Hack Tool User-Agent Detected",
+        "enabled": false,
+        "query": "let timeframe = 15m;\nlet user_agents=dynamic([\n                          '(hydra)',\n                          ' arachni/',\n                          ' BFAC ',\n                          ' brutus ',\n                          ' cgichk ',\n                          'core-project/1.0',\n                          ' crimscanner/',\n                          'datacha0s',\n                          'dirbuster',\n                          'domino hunter',\n                          'dotdotpwn',\n                          'FHScan Core',\n                          'floodgate',\n                          'get-minimal',\n                          'gootkit auto-rooter scanner',\n                          'grendel-scan',\n                          ' inspath ',\n                          'internet ninja',\n                          'jaascois',\n                          ' zmeu ',\n                          'masscan',\n                          ' metis ',\n                          'morfeus fucking scanner',\n                          'n-stealth',\n                          'nsauditor',\n                          'pmafind',\n                          'security scan',\n                          'springenwerk',\n                          'teh forest lobster',\n                          'toata dragostea',\n                          ' vega/',\n                          'voideye',\n                          'webshag',\n                          'webvulnscan',\n                          ' whcc/',\n                          ' Havij',\n                          'absinthe',\n                          'bsqlbf',\n                          'mysqloit',\n                          'pangolin',\n                          'sql power injector',\n                          'sqlmap',\n                          'sqlninja',\n                          'uil2pn',\n                          'ruler',\n                          'Mozilla/5.0 (Windows; U; Windows NT 5.1; pt-PT; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 (.NET CLR 3.5.30729)'\n                          ]);\nCisco_Umbrella\n| where EventType == \"proxylogs\"\n| where TimeGenerated > ago(timeframe)\n| where HttpUserAgentOriginal has_any (user_agents)\n| extend Message = \"Hack Tool User Agent\"\n| project Message, SrcIpAddr, DstIpAddr, UrlOriginal, TimeGenerated, HttpUserAgentOriginal\n| extend IpCustomEntity = SrcIpAddr, UrlCustomEntity = UrlOriginal\n",
+        "queryFrequency": "PT15M",
+        "queryPeriod": "PT15M",
+        "severity": "Medium",
+        "suppressionDuration": "PT1H",
+        "suppressionEnabled": false,
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "tactics": [
+          "CommandandControl"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic6-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "description": "Rule helps to detect Powershell user-agent activity by an unusual process other than a web browser.",
+        "displayName": "Cisco Umbrella - Windows PowerShell User-Agent Detected",
+        "enabled": false,
+        "query": "let timeframe = 15m;\nCisco_Umbrella\n| where EventType == \"proxylogs\"\n| where TimeGenerated > ago(timeframe)\n| where HttpUserAgentOriginal contains \"WindowsPowerShell\"\n| extend Message = \"Windows PowerShell User Agent\"\n| project Message, SrcIpAddr, DstIpAddr, UrlOriginal, TimeGenerated,HttpUserAgentOriginal\n| extend IpCustomEntity = SrcIpAddr, UrlCustomEntity = UrlOriginal\n",
+        "queryFrequency": "PT15M",
+        "queryPeriod": "PT15M",
+        "severity": "Medium",
+        "suppressionDuration": "PT1H",
+        "suppressionEnabled": false,
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "tactics": [
+          "CommandandControl",
+          "DefenseEvasion"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic7-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "description": "Rule helps to detect a rare user-agents indicating web browsing activity by an unusual process other than a web browser.",
+        "displayName": "Cisco Umbrella - Rare User Agent Detected",
+        "enabled": false,
+        "query": "let lookBack = 14d;\nlet timeframe = 1d;\nlet user_agents_list = Cisco_Umbrella\n| where EventType == \"proxylogs\"\n| where TimeGenerated > ago(lookBack) and TimeGenerated < ago(timeframe)\n| summarize count() by HttpUserAgentOriginal\n| summarize make_list(HttpUserAgentOriginal);\nCisco_Umbrella\n| where EventType == \"proxylogs\"\n| where TimeGenerated > ago(timeframe)\n| where HttpUserAgentOriginal !in (user_agents_list)\n| extend Message = \"Rare User Agent\"\n| project Message, SrcIpAddr, DstIpAddr, UrlOriginal, TimeGenerated, HttpUserAgentOriginal\n| extend IpCustomEntity = SrcIpAddr, UrlCustomEntity = UrlOriginal\n",
+        "queryFrequency": "P1D",
+        "queryPeriod": "P14D",
+        "severity": "Medium",
+        "suppressionDuration": "PT1H",
+        "suppressionEnabled": false,
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "tactics": [
+          "CommandandControl"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic8-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "description": "It is reccomended that these Categories shoud be blocked by policies because they provide harmful/malicious content..",
+        "displayName": "Cisco Umbrella - Request Allowed to harmful/malicious URI category",
+        "enabled": false,
+        "query": "let lbtime = 10m;\nCisco_Umbrella\n| where TimeGenerated > ago(lbtime)\n| where EventType == 'proxylogs'\n| where DvcAction =~ 'Allowed'\n| where UrlCategory contains 'Adult Themes' or\n      UrlCategory contains 'Adware' or\n      UrlCategory contains 'Alcohol' or\n      UrlCategory contains 'Illegal Downloads' or\n      UrlCategory contains 'Drugs' or\n      UrlCategory contains 'Child Abuse Content' or\n      UrlCategory contains 'Hate/Discrimination' or\n      UrlCategory contains 'Nudity' or\n      UrlCategory contains 'Pornography' or\n      UrlCategory contains 'Proxy/Anonymizer' or\n      UrlCategory contains 'Sexuality' or\n      UrlCategory contains 'Tasteless' or\n      UrlCategory contains 'Terrorism' or\n      UrlCategory contains 'Web Spam' or\n      UrlCategory contains 'German Youth Protection' or\n      UrlCategory contains 'Illegal Activities' or\n      UrlCategory contains 'Lingerie/Bikini' or\n      UrlCategory contains 'Weapons'\n| project TimeGenerated, SrcIpAddr, Identities\n| extend IPCustomEntity = SrcIpAddr\n| extend AccountCustomEntity = Identities\n",
+        "queryFrequency": "PT10M",
+        "queryPeriod": "PT10M",
+        "severity": "Medium",
+        "suppressionDuration": "PT1H",
+        "suppressionEnabled": false,
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "tactics": [
+          "CommandandControl",
+          "InitialAccess"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic9-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "description": "Detects request to potentially harmful file types (.ps1, .bat, .vbs, etc.).",
+        "displayName": "Cisco Umbrella - Request to blocklisted file type",
+        "enabled": false,
+        "query": "let file_ext_blocklist = dynamic(['.ps1', '.vbs', '.bat', '.scr']);\nlet lbtime = 10m;\nCisco_Umbrella\n| where TimeGenerated > ago(lbtime)\n| where EventType == 'proxylogs'\n| where DvcAction =~ 'Allowed'\n| extend file_ext = extract(@'.*(\\.\\w+)$', 1, UrlOriginal)\n| extend Filename = extract(@'.*\\/*\\/(.*\\.\\w+)$', 1, UrlOriginal)\n| where file_ext in (file_ext_blocklist)\n| project TimeGenerated, SrcIpAddr, Identities, Filename\n| extend IPCustomEntity = SrcIpAddr\n| extend AccountCustomEntity = Identities\n",
+        "queryFrequency": "PT10M",
+        "queryPeriod": "PT10M",
+        "severity": "Medium",
+        "suppressionDuration": "PT1H",
+        "suppressionEnabled": false,
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "tactics": [
+          "InitialAccess"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic10-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "description": "Malware can use IP address to communicate with C2.",
+        "displayName": "Cisco Umbrella - URI contains IP address",
+        "enabled": false,
+        "query": "let lbtime = 10m;\nCisco_Umbrella\n| where TimeGenerated > ago(lbtime)\n| where EventType == 'proxylogs'\n| where DvcAction =~ 'Allowed'\n| where UrlOriginal matches regex @'\\Ahttp:\\/\\/\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}.*'\n| project TimeGenerated, SrcIpAddr, Identities\n| extend IPCustomEntity = SrcIpAddr\n| extend AccountCustomEntity = Identities\n",
+        "queryFrequency": "PT10M",
+        "queryPeriod": "PT10M",
+        "severity": "Medium",
+        "suppressionDuration": "PT1H",
+        "suppressionEnabled": false,
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "tactics": [
+          "CommandandControl"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "apiVersion": "2020-08-01",
+      "name": "[parameters('workspace')]",
+      "location": "[parameters('workspace-location')]",
+      "resources": [
+        {
+          "type": "savedSearches",
+          "apiVersion": "2020-08-01",
+          "name": "Cisco Umbrella Hunting Query 1",
+          "dependsOn": [
+            "[variables('workspace-dependency')]"
+          ],
+          "properties": {
+            "eTag": "*",
+            "displayName": "Cisco Umbrella - Anomalous FQDNs for domain",
+            "category": "Hunting Queries",
+            "query": "Cisco_Umbrella\n| where TimeGenerated > ago(24h)\n| where EventType == 'dnslogs'\n| extend replaced = replace(@'\\.$', @'', DnsQueryName)\n| extend Domain = extract(@'.*\\.(.*\\.[a-z]+)', 1, replaced)\n| extend fqdn = extract(@'(.*)\\..*\\.[a-z]+', 1, replaced)\n| summarize FQDNs = dcount(fqdn) by Domain\n| sort by FQDNs\n",
+            "version": 1,
+            "tags": [
+              {
+                "name": "description",
+                "value": "Large number of FQDNs for domain may be indicator of suspicious domain."
+              },
+              {
+                "name": "tactics",
+                "value": "CommandandControl"
+              }
+            ]
+          }
+        },
+        {
+          "type": "savedSearches",
+          "apiVersion": "2020-08-01",
+          "name": "Cisco Umbrella Hunting Query 2",
+          "dependsOn": [
+            "[variables('workspace-dependency')]"
+          ],
+          "properties": {
+            "eTag": "*",
+            "displayName": "Cisco Umbrella - 'Blocked' User-Agents.",
+            "category": "Hunting Queries",
+            "query": "Cisco_Umbrella\n| where TimeGenerated > ago(24h)\n| where DvcAction =~ 'Blocked'\n| summarize count() by HttpUserAgentOriginal\n| sort by count_\n",
+            "version": 1,
+            "tags": [
+              {
+                "name": "description",
+                "value": "Shows User-Agent values which requests were blocked"
+              },
+              {
+                "name": "tactics",
+                "value": "Exfiltration"
+              }
+            ]
+          }
+        },
+        {
+          "type": "savedSearches",
+          "apiVersion": "2020-08-01",
+          "name": "Cisco Umbrella Hunting Query 3",
+          "dependsOn": [
+            "[variables('workspace-dependency')]"
+          ],
+          "properties": {
+            "eTag": "*",
+            "displayName": "Cisco Umbrella - DNS Errors.",
+            "category": "Hunting Queries",
+            "query": "Cisco_Umbrella\n| where TimeGenerated > ago(24h)\n| where EventType == 'dnslogs'\n| where DnsResponseCodeName != 'NOERROR'\n| extend URLCustomEntity = UrlOriginal\n| extend AccountCustomEntity = Identities\n| extend IPCustomEntity = SrcIpAddr\n",
+            "version": 1,
+            "tags": [
+              {
+                "name": "description",
+                "value": "Shows error DNS requests."
+              },
+              {
+                "name": "tactics",
+                "value": "InitialAccess"
+              }
+            ]
+          }
+        },
+        {
+          "type": "savedSearches",
+          "apiVersion": "2020-08-01",
+          "name": "Cisco Umbrella Hunting Query 4",
+          "dependsOn": [
+            "[variables('workspace-dependency')]"
+          ],
+          "properties": {
+            "eTag": "*",
+            "displayName": "Cisco Umbrella - DNS requests to unreliable categories.",
+            "category": "Hunting Queries",
+            "query": "Cisco_Umbrella\n| where TimeGenerated > ago(24h)\n| where EventType == 'dnslogs'\n| where UrlCategory contains 'Dating' or UrlCategory contains 'Digital Postcards' or UrlCategory contains 'Freeware and Shareware' or UrlCategory contains 'Gambling' or UrlCategory contains  'Hacking' or UrlCategory contains 'Hunting' or UrlCategory contains 'Mobile Phones' or UrlCategory contains 'Software Updates' or UrlCategory contains 'URL Shortener' or UrlCategory contains  'Web Hosting'\n| where DvcAction == 'Allowed'\n| summarize TotalEvents = count() by DnsQueryName, SrcIpAddr\n| sort by TotalEvents\n| summarize listOfIps = make_set(SrcIpAddr) by DnsQueryName\n| extend URLCustomEntity = DnsQueryName\n",
+            "version": 1,
+            "tags": [
+              {
+                "name": "description",
+                "value": "Shows requests to URI categories which heavily are used in Initial Access stage by threat actiors and may contain malicious content."
+              },
+              {
+                "name": "tactics",
+                "value": "InitialAccess"
+              }
+            ]
+          }
+        },
+        {
+          "type": "savedSearches",
+          "apiVersion": "2020-08-01",
+          "name": "Cisco Umbrella Hunting Query 5",
+          "dependsOn": [
+            "[variables('workspace-dependency')]"
+          ],
+          "properties": {
+            "eTag": "*",
+            "displayName": "Cisco Umbrella - Higher values of count of the Same BytesIn size",
+            "category": "Hunting Queries",
+            "query": "let timeframe = 1d;\nCisco_Umbrella \n| where EventType == \"proxylogs\"\n| where TimeGenerated > ago(timeframe)\n| summarize count() by SrcIpAddr,DstIpAddr, SrcBytes\n| sort by count_ desc\n| extend Message = \"Possible communication with C2\"\n| project Message, SrcIpAddr, DstIpAddr\n| extend IpCustomEntity = SrcIpAddr\n",
+            "version": 1,
+            "tags": [
+              {
+                "name": "description",
+                "value": "Calculate the count of BytesIn per Source-Destination pair over 24 hours. Higher values may indicate beaconing."
+              },
+              {
+                "name": "tactics",
+                "value": "CommandandControl"
+              }
+            ]
+          }
+        },
+        {
+          "type": "savedSearches",
+          "apiVersion": "2020-08-01",
+          "name": "Cisco Umbrella Hunting Query 6",
+          "dependsOn": [
+            "[variables('workspace-dependency')]"
+          ],
+          "properties": {
+            "eTag": "*",
+            "displayName": "Cisco Umbrella - High values of Uploaded Data",
+            "category": "Hunting Queries",
+            "query": "let timeframe = 1d;\nCisco_Umbrella \n| where EventType == \"proxylogs\"\n| where TimeGenerated > ago(timeframe)\n| summarize sum(DstBytes) by SrcIpAddr,DstIpAddr\n| sort by sum_DstBytes desc\n| project SrcIpAddr, DstIpAddr\n| extend IpCustomEntity = SrcIpAddr\n",
+            "version": 1,
+            "tags": [
+              {
+                "name": "description",
+                "value": "A normal user activity consists mostly of downloading data. Uploaded data is usually small unless there is a file/data upload to a website. Calculate the sum of BytesOut per Source-Destination pair over 12/24 hours."
+              },
+              {
+                "name": "tactics",
+                "value": "Exfiltration"
+              }
+            ]
+          }
+        },
+        {
+          "type": "savedSearches",
+          "apiVersion": "2020-08-01",
+          "name": "Cisco Umbrella Hunting Query 7",
+          "dependsOn": [
+            "[variables('workspace-dependency')]"
+          ],
+          "properties": {
+            "eTag": "*",
+            "displayName": "Cisco Umbrella - Possible connection to C2.",
+            "category": "Hunting Queries",
+            "query": "let timeframe = 1d;\nCisco_Umbrella \n| where EventType == \"proxylogs\"\n| where TimeGenerated > ago(timeframe)\n| summarize count() by SrcIpAddr, DstIpAddr, SrcBytes\n| sort by count_ desc\n| extend Message = \"Possible communication with C2\"\n| extend IPCustomEntity = SrcIpAddr\n",
+            "version": 1,
+            "tags": [
+              {
+                "name": "description",
+                "value": "Calculate the count of BytesIn per Source-Destination pair over 12/24 hours. Higher values may indicate beaconing. C2 servers reply with the same data, making BytesIn value the same."
+              },
+              {
+                "name": "tactics",
+                "value": "CommandandControl"
+              }
+            ]
+          }
+        },
+        {
+          "type": "savedSearches",
+          "apiVersion": "2020-08-01",
+          "name": "Cisco Umbrella Hunting Query 8",
+          "dependsOn": [
+            "[variables('workspace-dependency')]"
+          ],
+          "properties": {
+            "eTag": "*",
+            "displayName": "Cisco Umbrella - Possible data exfiltration",
+            "category": "Hunting Queries",
+            "query": "let timeframe = 1d;\nCisco_Umbrella \n| where EventType == \"proxylogs\"\n| where TimeGenerated > ago(timeframe)\n| summarize sum(DstBytes) by SrcIpAddr,DstIpAddr\n| sort by sum_DstBytes desc\n| extend Message = \"Possible data exfiltration\"\n| extend IPCustomEntity = SrcIpAddr\n",
+            "version": 1,
+            "tags": [
+              {
+                "name": "description",
+                "value": "A normal user activity consists mostly of downloading data. Uploaded data is usually small unless there is a file/data upload to a website. Calculate the sum of BytesOut per Source-Destination pair over 12/24 hours."
+              },
+              {
+                "name": "tactics",
+                "value": "Exfiltration"
+              }
+            ]
+          }
+        },
+        {
+          "type": "savedSearches",
+          "apiVersion": "2020-08-01",
+          "name": "Cisco Umbrella Hunting Query 9",
+          "dependsOn": [
+            "[variables('workspace-dependency')]"
+          ],
+          "properties": {
+            "eTag": "*",
+            "displayName": "Cisco Umbrella - Proxy 'Allowed' to unreliable categories.",
+            "category": "Hunting Queries",
+            "query": "Cisco_Umbrella\n| where TimeGenerated > ago(24h)\n| where EventType == 'proxylogs'\n| where UrlCategory contains 'Dating' or UrlCategory contains 'Digital Postcards' or UrlCategory contains 'Freeware and Shareware' or UrlCategory contains 'Gambling' or UrlCategory contains  'Hacking' or UrlCategory contains 'Hunting' or UrlCategory contains 'Mobile Phones' or UrlCategory contains 'Software Updates' or UrlCategory contains 'URL Shortener' or UrlCategory contains  'Web Hosting'\n| where DvcAction == 'ALLOWED'\n| summarize TotalEvents = count() by UrlOriginal, SrcIpAddr\n| sort by TotalEvents\n| summarize listOfIps = make_set(SrcIpAddr) by UrlOriginal\n| extend URLCustomEntity = UrlOriginal\n",
+            "version": 1,
+            "tags": [
+              {
+                "name": "description",
+                "value": "Shows allowed requests to URI categories which heavily are used in Initial Access stage by threat actiors and may contain malicious content."
+              },
+              {
+                "name": "tactics",
+                "value": "InitialAccess"
+              }
+            ]
+          }
+        },
+        {
+          "type": "savedSearches",
+          "apiVersion": "2020-08-01",
+          "name": "Cisco Umbrella Hunting Query 10",
+          "dependsOn": [
+            "[variables('workspace-dependency')]"
+          ],
+          "properties": {
+            "eTag": "*",
+            "displayName": "Cisco Umbrella - Requests to uncategorized resources",
+            "category": "Hunting Queries",
+            "query": "Cisco_Umbrella\n| where TimeGenerated > ago(24h)\n| where DvcAction =~ 'Allowed'\n| where UrlCategory == ''\n| project UrlOriginal, Identities\n| extend URLCustomEntity = UrlOriginal\n| extend AccountCustomEntity = Identities\n",
+            "version": 1,
+            "tags": [
+              {
+                "name": "description",
+                "value": "Shows requests to URL where UrlCategory is not set."
+              },
+              {
+                "name": "tactics",
+                "value": "InitialAccess"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": {}
+}
