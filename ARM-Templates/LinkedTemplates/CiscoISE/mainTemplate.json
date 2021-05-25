@@ -1,0 +1,802 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "author": "Eli Forbes - v-eliforbes@microsoft.com",
+    "comments": "Solution template for Cisco ISE"
+  },
+  "parameters": {
+    "formattedTimeNow": {
+      "type": "string",
+      "defaultValue": "[utcNow('g')]",
+      "metadata": {
+        "description": "Appended to workbook displayNames to make them unique"
+      }
+    },
+    "location": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Not used, but needed to pass arm-ttk test `Location-Should-Not-Be-Hardcoded`.  We instead use the `workspace-location` which is derived from the LA workspace"
+      }
+    },
+    "workspace-location": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[parameters('location')]",
+      "metadata": {
+        "description": "Region to deploy solution resources"
+      }
+    },
+    "workspace": {
+      "defaultValue": "<Enter Log Analytics Workspace>",
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Workspace name for Log Analytics where Sentinel is setup"
+      }
+    },
+    "analytic1-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic2-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic3-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic4-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic5-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic6-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic7-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic8-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic9-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic10-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "workbook1-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the workbook"
+      }
+    },
+    "workbook1-name": {
+      "type": "string",
+      "defaultValue": "Cisco ISE",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name for the workbook"
+      }
+    },
+    "connectorName": {
+      "type": "string",
+      "defaultValue": "9b1d0241-e990-4618-8bbb-11ce737b318b"
+    }
+  },
+  "variables": {
+    "connector-source": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.OperationalInsights/workspaces/',parameters('workspace'),'/providers/Microsoft.SecurityInsights/dataConnectors/',parameters('connectorName'))]",
+    "_connector-source": "[variables('connector-source')]",
+    "workbook-source": "[concat(resourceGroup().id, '/providers/Microsoft.OperationalInsights/workspaces/',parameters('workspace'))]",
+    "_workbook-source": "[variables('workbook-source')]",
+    "parser-dependency": "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]"
+  },
+  "resources": [
+    {
+      "name": "pid-0d50badc-85d0-436a-be3d-fb12b5df135e-partnercenter",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "resources": []
+        }
+      }
+    },
+    {
+      "id": "[variables('_connector-source')]",
+      "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('connectorName'))]",
+      "apiVersion": "2021-03-01-preview",
+      "type": "Microsoft.OperationalInsights/workspaces/providers/dataConnectors",
+      "kind": "GenericUI",
+      "properties": {
+        "connectorUiConfig": {
+          "title": "Cisco Identity Services Engine",
+          "publisher": "Cisco",
+          "descriptionMarkdown": "The Cisco Identity Services Engine (ISE) data connector provides the capability to ingest [Cisco ISE](https://www.cisco.com/c/en/us/products/security/identity-services-engine/index.html) events with Azure Sentinel. It helps you gain visibility into what is happening in your network, such as who is connected, which applications are installed and running, and much more. Refer to [Cisco ISE logging mechanism documentation](https://www.cisco.com/c/en/us/td/docs/security/ise/2-7/admin_guide/b_ise_27_admin_guide/b_ISE_admin_27_maintain_monitor.html#reference_BAFBA5FA046A45938810A5DF04C00591) for more information.",
+          "graphQueriesTableName": "CiscoISEEvent",
+          "graphQueries": [
+            {
+              "metricName": "Total data received",
+              "legend": "CiscoISE",
+              "baseQuery": "{{graphQueriesTableName}}"
+            }
+          ],
+          "sampleQueries": [
+            {
+              "description": "Top 10 Reporting Devices",
+              "query": "{{graphQueriesTableName}}\n | summarize count() by DvcHostname\n | top 10 by count_"
+            }
+          ],
+          "dataTypes": [
+            {
+              "name": "Syslog(CiscoISE)",
+              "lastDataReceivedQuery": "{{graphQueriesTableName}}\n            | summarize Time = max(TimeGenerated)\n            | where isnotempty(Time)"
+            }
+          ],
+          "connectivityCriterias": [
+            {
+              "type": "IsConnectedQuery",
+              "value": [
+                "{{graphQueriesTableName}}\n            | summarize LastLogReceived = max(TimeGenerated)\n            | project IsConnected = LastLogReceived > ago(30d)"
+              ]
+            }
+          ],
+          "availability": {
+            "status": 1,
+            "isPreview": true
+          },
+          "permissions": {
+            "resourceProvider": [
+              {
+                "provider": "Microsoft.OperationalInsights/workspaces",
+                "permissionsDisplayText": "write permission is required.",
+                "providerDisplayName": "Workspace",
+                "scope": "Workspace",
+                "requiredPermissions": {
+                  "write": true,
+                  "delete": true
+                }
+              }
+            ]
+          },
+          "instructionSteps": [
+            {
+              "description": ">**NOTE:** This data connector depends on a parser based on a Kusto Function to work as expected [**CiscoISEEvent**](https://aka.ms/sentinel-ciscoise-parser) which is deployed with the Azure Sentinel Solution."
+            },
+            {
+              "title": "1. Install and onboard the agent for Linux",
+              "description": "Typically, you should install the agent on a different computer from the one on which the logs are generated.\n\n>  Syslog logs are collected only from **Linux** agents.",
+              "instructions": [
+                {
+                  "parameters": {
+                    "title": "Choose where to install the agent:",
+                    "instructionSteps": [
+                      {
+                        "title": "Install agent on Azure Linux Virtual Machine",
+                        "description": "Select the machine to install the agent on and then click **Connect**.",
+                        "instructions": [
+                          {
+                            "parameters": {
+                              "linkType": "InstallAgentOnLinuxVirtualMachine"
+                            },
+                            "type": "InstallAgent"
+                          }
+                        ]
+                      },
+                      {
+                        "title": "Install agent on a non-Azure Linux Machine",
+                        "description": "Download the agent on the relevant machine and follow the instructions.",
+                        "instructions": [
+                          {
+                            "parameters": {
+                              "linkType": "InstallAgentOnLinuxNonAzure"
+                            },
+                            "type": "InstallAgent"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "InstructionStepsGroup"
+                }
+              ]
+            },
+            {
+              "title": "2. Configure the logs to be collected",
+              "description": "Configure the facilities you want to collect and their severities.\n\n1.  Under workspace advanced settings **Configuration**, select **Data** and then **Syslog**.\n2.  Select **Apply below configuration to my machines** and select the facilities and severities.\n3.  Click **Save**.",
+              "instructions": [
+                {
+                  "parameters": {
+                    "linkType": "OpenAdvancedWorkspaceSettings"
+                  },
+                  "type": "InstallAgent"
+                }
+              ]
+            },
+            {
+              "title": "3. Configure Cisco ISE Remote Syslog Collection Locations",
+              "description": "[Follow these instructions](https://www.cisco.com/c/en/us/td/docs/security/ise/2-7/admin_guide/b_ise_27_admin_guide/b_ISE_admin_27_maintain_monitor.html#ID58) to configure remote syslog collection locations in your Cisco ISE deployment."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic1-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "description": "Detects when the ISE administrator password has been reset.",
+        "displayName": "CiscoISE - ISE administrator password has been reset",
+        "enabled": false,
+        "query": "let lbtime = 5m;\n CiscoISEEvent\n | where TimeGenerated > ago(lbtime)\n | where EventId == '58019'\n | project TimeGenerated, SrcIpAddr, DstUserName\n | extend AccountCustomEntity = DstUserName\n | extend IPCustomEntity = SrcIpAddr",
+        "queryFrequency": "PT5M",
+        "queryPeriod": "PT5M",
+        "severity": "Medium",
+        "suppressionDuration": "PT5M",
+        "suppressionEnabled": false,
+        "tactics": [
+          "InitialAccess",
+          "Persistence",
+          "PrivilegeEscalation",
+          "DefenseEvasion"
+        ],
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic2-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "description": "Detects when attempt to delete local store logs failed.",
+        "displayName": "CiscoISE - Attempt to delete local store logs",
+        "enabled": false,
+        "query": "let lbtime = 5m;\n CiscoISEEvent\n | where TimeGenerated > ago(lbtime)\n | where EventId == '59103'\n  | project TimeGenerated, DvcHostname, DvcIpAddr, DstUserName\n  | extend HostCustomEntity = DvcHostname\n  | extend IPCustomEntity = DvcIpAddr\n  | extend AccountCustomEntity = DstUserName",
+        "queryFrequency": "PT5M",
+        "queryPeriod": "PT5M",
+        "severity": "Medium",
+        "suppressionDuration": "PT5M",
+        "suppressionEnabled": false,
+        "tactics": [
+          "DefenseEvasion"
+        ],
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic3-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "description": "Detects when backup activity failed.",
+        "displayName": "CiscoISE - Backup failed",
+        "enabled": false,
+        "query": "let lbtime = 6h;\n  CiscoISEEvent\n  | where TimeGenerated > ago(lbtime)\n  | where EventId in ('60095', '60098')\n  | project TimeGenerated, DvcHostname, DvcIpAddr\n  | extend HostCustomEntity = DvcHostname\n  | extend IPCustomEntity = DvcIpAddr",
+        "queryFrequency": "PT6H",
+        "queryPeriod": "PT6H",
+        "severity": "Medium",
+        "suppressionDuration": "PT6H",
+        "suppressionEnabled": false,
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic4-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "description": "Detects certificate expiration.",
+        "displayName": "CiscoISE - Certificate has expired",
+        "enabled": false,
+        "query": "let lbtime = 1h;\n CiscoISEEvent\n | where TimeGenerated > ago(lbtime)\n | where EventId == '60167'\n | project SrcIpAddr, DvcIpAddr, DvcHostname, DstUserName\n | extend HostCustomEntity = DvcHostname\n | extend IPCustomEntity = SrcIpAddr\n | extend AccountCustomEntity = DstUserName",
+        "queryFrequency": "PT1H",
+        "queryPeriod": "PT1H",
+        "severity": "Medium",
+        "suppressionDuration": "PT1H",
+        "suppressionEnabled": false,
+        "tactics": [
+          "CredentialAccess"
+        ],
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic5-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "description": "Detects command execution with PrivilegeLevel - 15 from new source.",
+        "displayName": "CiscoISE - Command executed with the highest privileges from new IP",
+        "enabled": false,
+        "query": "let lbperiod = 60d;\n let lbtime = 15m;\n let knownAdminIpList =\n CiscoISEEvent\n | where TimeGenerated between (ago(lbperiod) .. ago(lbtime))\n | where PrivilegeLevel == '15'\n | summarize makelist(SrcIpAddr)\n ;\n CiscoISEEvent\n | where TimeGenerated > ago(lbtime)\n | where PrivilegeLevel == '15'\n | where SrcIpAddr !in (knownAdminIpList)\n | project TimeGenerated, SrcIpAddr, DstIpAddr, DstUserName, CmdSet\n | extend AccountCustomEntity = DstUserName\n | extend IPCustomEntity = SrcIpAddr",
+        "queryFrequency": "PT5M",
+        "queryPeriod": "PT5M",
+        "severity": "Medium",
+        "suppressionDuration": "PT5M",
+        "suppressionEnabled": false,
+        "tactics": [
+          "InitialAccess",
+          "Persistence",
+          "PrivilegeEscalation",
+          "DefenseEvasion",
+          "Execution"
+        ],
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic6-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "description": "Detects command execution with PrivilegeLevel - 15 by user for wich there was no such activity detected earlier.",
+        "displayName": "CiscoISE - Command executed with the highest privileges by new user",
+        "enabled": false,
+        "query": "let lbperiod = 60d;\n let lbtime = 15m;\n let knownPrivUsers =\n CiscoISEEvent\n | where TimeGenerated between (ago(lbperiod) .. ago(lbtime))\n | where PrivilegeLevel == '15'\n | summarize makelist(DstUserName)\n ;\n CiscoISEEvent\n | where TimeGenerated > ago(lbtime)\n | where PrivilegeLevel == '15'\n | where DstUserName !in (knownPrivUsers)\n | project TimeGenerated, SrcIpAddr, DstIpAddr, DstUserName, CmdSet\n | extend AccountCustomEntity = DstUserName\n | extend IPCustomEntity = SrcIpAddr",
+        "queryFrequency": "PT5M",
+        "queryPeriod": "PT5M",
+        "severity": "Medium",
+        "suppressionDuration": "PT5M",
+        "suppressionEnabled": false,
+        "tactics": [
+          "InitialAccess",
+          "Persistence",
+          "PrivilegeEscalation",
+          "DefenseEvasion",
+          "Execution"
+        ],
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic7-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "description": "Detects when device changes IP address in last 24 hours.",
+        "displayName": "CiscoISE - Device changed IP in last 24 hours",
+        "enabled": false,
+        "query": "let lbtime_48h = 48h;\n let lbtime_24h = 24h;\n CiscoISEEvent\n | where TimeGenerated between (ago(lbtime_48h) .. ago(lbtime_24h))\n | where notempty(DvcIpAddr) and notempty(DvcHostname)\n | summarize knownIPs = make_set(DvcIpAddr) by DvcHostname\n | join (CiscoISEEvent\n | where TimeGenerated > ago(lbtime_24h)\n | where notempty(DvcIpAddr) and notempty(DvcHostname)\n | summarize evts = count() by DvcHostname, DvcIpAddr\n | project-away evts) on DvcHostname\n | project-away DvcHostname1\n | where knownIPs !contains DvcIpAddr\n | extend HostCustomEntity = DvcHostname\n | extend IPCustomEntity = DvcIpAddr",
+        "queryFrequency": "PT1H",
+        "queryPeriod": "PT1H",
+        "severity": "Medium",
+        "suppressionDuration": "PT1H",
+        "suppressionEnabled": false,
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic8-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "description": "Detects when device changes PostureStatus from \"Compliant\".",
+        "displayName": "CiscoISE - Device PostureStatus changed to non-compliant",
+        "enabled": false,
+        "query": "let lbtime_48h = 48h;\n let lbtime_24h = 24h;\n let lbtime_now = now();\n let compliantIPs = CiscoISEEvent\n | where TimeGenerated between (ago(lbtime_48h) .. ago(lbtime_24h))\n | where PostureStatus == 'Compliant'\n | summarize makelist(DstIpAddr)\n ;\n CiscoISEEvent\n | where TimeGenerated between (ago(lbtime_24h) .. lbtime_now)\n | where PostureStatus != 'Compliant'\n | where DstIpAddr in (compliantIPs)\n | project DstIpAddr\n | extend IPCustomEntity = DstIpAddr",
+        "queryFrequency": "PT15M",
+        "queryPeriod": "PT15M",
+        "severity": "Medium",
+        "suppressionDuration": "PT15M",
+        "suppressionEnabled": false,
+        "tactics": [
+          "CredentialAccess"
+        ],
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic9-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "description": "Detects when log collector was suspended.",
+        "displayName": "CiscoISE - Log collector was suspended",
+        "enabled": false,
+        "query": "let lbtime = 10m;\n CiscoISEEvent\n | where TimeGenerated > ago(lbtime)\n | where EventId == '59207'\n | project TimeGenerated, SrcIpAddr, DstIpAddr\n | extend IPCustomEntity = DstIpAddr",
+        "queryFrequency": "PT10M",
+        "queryPeriod": "PT10M",
+        "severity": "Medium",
+        "suppressionDuration": "PT10M",
+        "suppressionEnabled": false,
+        "tactics": [
+          "DefenseEvasion"
+        ],
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic10-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "description": "Detects log file deleting activity.",
+        "displayName": "CiscoISE - Log files deleted",
+        "enabled": false,
+        "query": "let lbtime = 5m;\n CiscoISEEvent\n | where TimeGenerated > ago(lbtime)\n | where EventId in ('58015', '59101', '59102')\n | project TimeGenerated, DvcHostname, DvcIpAddr, DstUserName\n | extend HostCustomEntity = DvcHostname\n | extend IPCustomEntity = DvcIpAddr\n | extend AccountCustomEntity = DstUserName",
+        "queryFrequency": "PT5M",
+        "queryPeriod": "PT5M",
+        "severity": "Medium",
+        "suppressionDuration": "PT5M",
+        "suppressionEnabled": false,
+        "tactics": [
+          "DefenseEvasion"
+        ],
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "apiVersion": "2020-08-01",
+      "name": "[parameters('workspace')]",
+      "location": "[parameters('workspace-location')]",
+      "resources": [
+        {
+          "type": "savedSearches",
+          "apiVersion": "2020-08-01",
+          "name": "Cisco ISE Parser",
+          "dependsOn": [
+            "[variables('parser-dependency')]"
+          ],
+          "properties": {
+            "eTag": "*",
+            "displayName": "CiscoISEEvent",
+            "category": "SecureHats",
+            "functionAlias": "CiscoISEEvent",
+            "query": "let EventData = SecureHats_CL | where ProcessName contains \"CSCO\" or ProcessName contains \"CISE\" | where SyslogMessage matches regex (@'.*\\d{10}\\s(\\d{4,5})\\s.*') | extend EventVendor = 'CISCO' | extend EventProduct = 'ISE' | extend EventId = extract(@'.*\\d{10}\\s(\\d{4,5})\\s.*', 1, SyslogMessage) | extend EventSeverity = extract(@'.*(NOTICE|INFO|WARN|WARNING|ERROR|FATAL|DEBUG).*', 1, SyslogMessage) | extend EventCategory = extract(@'\\d{10}\\s\\d{4,5}\\s\\w+\\s(.*?):\\s.*?,', 1, SyslogMessage) | extend EventMessage = extract(@'\\d{10}\\s\\d{4,5}\\s\\w+\\s.*?:\\s(.*?),', 1, SyslogMessage) | extend ConfigVersionId = extract(@'ConfigVersionId=(.*?),', 1, SyslogMessage) | extend DvcIpAddr = extract(@'Device IP Address=(.*?),', 1, SyslogMessage) | extend DvcHostname = extract(@'NetworkDeviceName=(.*?),', 1, SyslogMessage) | extend DstIpAddr = extract(@'DestinationIPAddress=(.*?),', 1, SyslogMessage) | extend DstPortNumber = extract(@'DestinationPort=(.*?),', 1, SyslogMessage) | extend DstUserName = extract(@'UserName=(.*?),', 1, SyslogMessage) | extend NetworkProtocol = extract(@'Protocol=(.*?),', 1, SyslogMessage) | extend RequestLatency = extract(@'RequestLatency=(.*?),', 1, SyslogMessage) | extend NasIpAddress = extract(@'NAS-IP-Address=(.*?),', 1, SyslogMessage) | extend NasPort = extract(@'NAS-Port=(.*?),', 1, SyslogMessage) | extend NasPortType = extract(@'NAS-Port-Type=(.*?),', 1, SyslogMessage) | extend NasIdentifier = extract(@'NAS-Identifier=(.*?),', 1, SyslogMessage) | extend ServiceType = extract(@'Service-Type=(.*?),', 1, SyslogMessage) | extend FramedMtu = extract(@'Framed-MTU=(.*?),', 1, SyslogMessage) | extend CalledStationId = extract(@'Called-Station-ID=(.*?),', 1, SyslogMessage) | extend CallingStationId = extract(@'Calling-Station-ID=(.*?),', 1, SyslogMessage) | extend EventType = extract(@'Type=(.*?),', 1, SyslogMessage) | extend DvcAction = extract(@'Action=(.*?),', 1, SyslogMessage) | extend PrivilegeLevel = extract(@'Privilege-Level=(.*?),', 1, SyslogMessage) | extend SrcIpAddr = extract(@'Remote-Address=(.*?),', 1, SyslogMessage) | extend NetworkDeviceProfileId = extract(@'NetworkDeviceProfileId=(.*?),', 1, SyslogMessage) | extend AcsSessionId = extract(@'AcsSessionID=(.*?),', 1, SyslogMessage) | extend AcctSessionId = extract(@'Acct-Session-Id=(.*?),', 1, SyslogMessage) | extend AuthenType = extract(@'Authen-Type=(.*?),', 1, SyslogMessage) | extend AuthenticationIdentityStore = extract(@'AuthenticationIdentityStore=(.*?),', 1, SyslogMessage) | extend AuthenticationMethod = extract(@'AuthenticationMethod=(.*?),', 1, SyslogMessage) | extend SelectedAccessService = extract(@'SelectedAccessService=(.*?),', 1, SyslogMessage) | extend SelectedShellProfile = extract(@'SelectedShellProfile=(.*?),', 1, SyslogMessage) | extend IdentityGroup = extract(@'IdentityGroup=(.*?),', 1, SyslogMessage) | extend Service = extract(@'Service=(.*?),', 1, SyslogMessage) | extend ServiceArgument = extract(@'Service-Argument=(.*?),', 1, SyslogMessage) | extend CmdSet = extract(@'CmdSet=(.*?),', 1, SyslogMessage) | extend MatchedCommandSet = extract(@'MatchedCommandSet=(.*?),', 1, SyslogMessage) | extend AuthenMethod = extract(@'Authen-Method=(.*?),', 1, SyslogMessage) | extend SelectedCommandSet = extract(@'SelectedCommandSet=(.*?),', 1, SyslogMessage) | extend NetworkDeviceProfileName = extract(@'NetworkDeviceProfileName=(.*?),', 1, SyslogMessage) | extend PostureStatus = extract(@'PostureStatus=(.*?),', 1, SyslogMessage) | extend SelectedAuthorizationProfiles = extract(@'SelectedAuthorizationProfiles=(.*?),', 1, SyslogMessage) | extend AuthorizationPolicyMatchedRule = extract(@'AuthorizationPolicyMatchedRule=(.*).', 1, SyslogMessage) | extend DvcMacAddr = extract(@'device-mac=(.*?),', 1, SyslogMessage) | extend DevicePublicMac = extract(@'device-public-mac=(.*?),', 1, SyslogMessage) | extend DevicePlatform = extract(@'device-platform=(.*?),', 1, SyslogMessage) | extend DevicePlatformVersion = extract(@'device-platform-version=(.*?)\\s', 1, SyslogMessage) | extend DeviceType = extract(@'device-type=(.*?),', 1, SyslogMessage) | extend HttpUserAgentOriginal = extract(@'ac-user-agent=(.*).', 1, SyslogMessage) | extend MisconfiguredClientFixReason = extract(@'MisconfiguredClientFixReason=(.*?),', 1, SyslogMessage) | extend RadiusPacketType = extract(@'RadiusPacketType=(.*?),', 1, SyslogMessage) | extend EventTypeDetailed = extract(@'FailureReason=(.*?),', 1, SyslogMessage) | extend EventResultDetails = extract(@'DetailedInfo=(.*?).', 1, SyslogMessage) ; let EID_5200=() { let processEvents = EventData | where EventId == \"5200\" | extend EventDescription = \"User authentication ended successfully\" ; processEvents; }; let EID_5201=() { let processEvents = EventData | where EventId == \"5201\" | extend EventDescription = \"User authentication ended successfully\" ; processEvents; }; let EID_5202=() { let processEvents = EventData | where EventId == \"5202\" | extend EventDescription = \"The requested Command Authorization passed\" ; processEvents; }; let EID_5203=() { let processEvents = EventData | where EventId == \"5203\" | extend EventDescription = \"The requested Session Authorization passed\" ; processEvents; }; let EID_5205=() { let processEvents = EventData | where EventId == \"5205\" | extend EventDescription = \"Dynamic Authorization succeeded\" ; processEvents; }; let EID_5231=() { let processEvents = EventData | where EventId == \"5231\" | extend EventDescription = \"Guest Authentication Passed\" ; processEvents; }; let EID_5236=() { let processEvents = EventData | where EventId == \"5236\" | extend EventDescription = \"Authorize-Only ended successfully\" ; processEvents; }; let EID_5238=() { let processEvents = EventData | where EventId == \"5238\" ; processEvents; }; let EID_5240=() { let processEvents = EventData | where EventId == \"5240\" | extend EventDescription = \"Previously rejected endpoint was released to continue authentications\" ; processEvents; }; let EID_5400=() { let processEvents = EventData | where EventId == \"5400\" | extend EventDescription = \"User authentication failed. See FailureReason for more information\" ; processEvents; }; let EID_5401=() { let processEvents = EventData | where EventId == \"5401\" | extend EventDescription = \"User authentication failed. See FailureReason for more information\" ; processEvents; }; let EID_5405=() { let processEvents = EventData | where EventId == \"5405\" | extend EventDescription = \"RADIUS request dropped\" ; processEvents; }; let EID_5406=() { let processEvents = EventData | where EventId == \"5406\" ; processEvents; }; let EID_5407=() { let processEvents = EventData | where EventId == \"5407\" | extend EventDescription = \"TACACS+ Authorization failed\" ; processEvents; }; let EID_5411=() { let processEvents = EventData | where EventId == \"5411\" | extend EventDescription = \"Supplicant did not respond to the last message that ISE sent to it\" ; processEvents; }; let EID_5417=() { let processEvents = EventData | where EventId == \"5417\" | extend EventDescription = \"Dynamic Authorization failed\" ; processEvents; }; let EID_5434=() { let processEvents = EventData | where EventId == \"5434\" | extend EventDescription = \"Endpoint conducted several failed authentications of the same scenario\" ; processEvents; }; let EID_5436=() { let processEvents = EventData | where EventId == \"5436\" | extend EventDescription = \"Ignoring this request because it is a duplicate of another packet that is currently being processed\" ; processEvents; }; let EID_5440=() { let processEvents = EventData | where EventId == \"5440\" | extend EventDescription = \"Endpoint started new authentication while previous is still in progress. Most probable that supplicant on that endpoint stopped conducting the previous authentication and started the new one. Closing the previous authentication\" ; processEvents; }; let EID_5449=() { let processEvents = EventData | where EventId == \"5449\" | extend EventDescription = \"Endpoint failed authentication of the same scenario several times and all further requests will be rejected for the duration of the Request Rejection Interval\" ; processEvents; }; let EID_12508=() { let processEvents = EventData | where EventId == \"12508\" | extend EventDescription = \"EAP-TLS handshake failed\" ; processEvents; }; let EID_12514=() { let processEvents = EventData | where EventId == \"12514\" | extend EventDescription = \"EAP-TLS failed SSL/TLS handshake because of an unknown CA in the client certificates chain\" ; processEvents; }; let EID_12516=() { let processEvents = EventData | where EventId == \"12516\" | extend EventDescription = \"EAP-TLS failed SSL/TLS handshake because of an expired certificate in the client certificates chain\" ; processEvents; }; let EID_60114=() { let processEvents = EventData | where EventId == \"60114\" | extend EventDescription = \"ISE server shutdown has been initiated\" ; processEvents; }; let EID_60166=() { let processEvents = EventData | where EventId == \"60166\" | extend EventDescription = \"Certificate Expiration warning\" ; processEvents; }; let EID_60167=() { let processEvents = EventData | where EventId == \"60167\" | extend EventDescription = \"Certificate has expired\" ; processEvents; }; let EID_80002=() { let processEvents = EventData | where EventId == \"80002\" | extend EventDescription = \"This message is generated when a profiler endpoint is profiled\" ; processEvents; }; let EID_86009=() { let processEvents = EventData | where EventId == \"86009\" | extend EventDescription = \"Guest user record is not found in the database\" ; processEvents; }; let EID_86010=() { let processEvents = EventData | where EventId == \"86010\" | extend EventDescription = \"Guest user authentication failed. Please check your password and account permission\" ; processEvents; }; let EID_86011=() { let processEvents = EventData | where EventId == \"86011\" | extend EventDescription = \"Guest user authentication failed. User is not enabled. Please contact your System Administrator\" ; processEvents; }; let EID_86012=() { let processEvents = EventData | where EventId == \"86012\" | extend EventDescription = \"Guest User must accept Access-Use policy before network access is granted\" ; processEvents; }; let EID_86013=() { let processEvents = EventData | where EventId == \"86013\" | extend EventDescription = \"Portal is not found in the database. Please contact your System Administrator\" ; processEvents; }; let EID_86014=() { let processEvents = EventData | where EventId == \"86014\" | extend EventDescription = \"User authentication failed. User account is suspended\" ; processEvents; }; let EID_86015=() { let processEvents = EventData | where EventId == \"86015\" | extend EventDescription = \"Invalid password change. Use correct password based on the password policy\" ; processEvents; }; let EID_86016=() { let processEvents = EventData | where EventId == \"86016\" | extend EventDescription = \"Timeout from server has exceeded the threshold. Please contact your System Administrator\" ; processEvents; }; let EID_86017=() { let processEvents = EventData | where EventId == \"86017\" | extend EventDescription = \"SessionID is missing. Please contact your System Administrator\" ; processEvents; }; let EID_86018=() { let processEvents = EventData | where EventId == \"86018\" | extend EventDescription = \"Guest Change of Authorization has failed. Please contact your System Administrator\" ; processEvents; }; let EID_86019=() { let processEvents = EventData | where EventId == \"86019\" | extend EventDescription = \"User access is restricted based on time profile. Please contact your System Administrator\" ; processEvents; }; let EID_86020=() { let processEvents = EventData | where EventId == \"86020\" | extend EventDescription = \"User authentication failed. Please contact your System Administrator\" ; processEvents; }; (union isfuzzy=true EID_5200, EID_5201, EID_5202, EID_5203, EID_5205, EID_5231, EID_5236, EID_5238, EID_5240, EID_5400, EID_5401, EID_5405, EID_5406, EID_5407, EID_5411, EID_5417, EID_5434, EID_5436, EID_5440, EID_5449, EID_12508, EID_12514, EID_12516, EID_60114, EID_60166, EID_60167, EID_80002, EID_86009, EID_86010, EID_86011, EID_86012, EID_86013, EID_86014, EID_86015, EID_86016, EID_86017, EID_86018, EID_86019, EID_86020) | project TimeGenerated         , EventVendor         , EventProduct         , EventId         , EventSeverity         , EventCategory         , EventMessage         , EventDescription         , ConfigVersionId         , DvcIpAddr         , DvcHostname         , DstIpAddr         , DstPortNumber         , DstUserName         , NetworkProtocol         , RequestLatency         , NasIpAddress         , NasPort         , NasPortType         , NasIdentifier         , ServiceType         , FramedMtu         , CalledStationId         , CallingStationId         , EventType         , DvcAction         , PrivilegeLevel         , SrcIpAddr         , NetworkDeviceProfileId         , AcsSessionId         , AuthenType         , AuthenticationIdentityStore         , AuthenticationMethod         , SelectedAccessService         , SelectedShellProfile         , IdentityGroup         , Service         , ServiceArgument         , CmdSet         , MatchedCommandSet         , AuthenMethod         , SelectedCommandSet         , NetworkDeviceProfileName         , PostureStatus         , SelectedAuthorizationProfiles         , AuthorizationPolicyMatchedRule         , DvcMacAddr         , DevicePublicMac         , DevicePlatform         , DevicePlatformVersion         , DeviceType         , HttpUserAgentOriginal         , MisconfiguredClientFixReason         , RadiusPacketType         , EventTypeDetailed         , EventResultDetails",
+            "version": 1
+          }
+        },
+        {
+          "type": "savedSearches",
+          "apiVersion": "2020-08-01",
+          "name": "CiscoISE - Authentication attempts to suspended user account",
+          "dependsOn": [
+            "[variables('parser-dependency')]"
+          ],
+          "properties": {
+            "eTag": "*",
+            "displayName": "CiscoISE - Authentication attempts to suspended user account",
+            "category": "Hunting Queries",
+            "query": "CiscoISEEvent | where TimeGenerated > ago(24h) | where EventId == '86014' | extend AccountCustomEntity = DstUserName",
+            "version": 1,
+            "tags": [
+              {
+                "name": "description",
+                "value": "Search authentication attempts to suspended user account."
+              },
+              {
+                "name": "tactics",
+                "value": "InitialAccess,CredentialAccess"
+              }
+            ]
+          }
+        },
+        {
+          "type": "savedSearches",
+          "apiVersion": "2020-08-01",
+          "name": "CiscoISE - Dynamic authorization failed",
+          "dependsOn": [
+            "[variables('parser-dependency')]"
+          ],
+          "properties": {
+            "eTag": "*",
+            "displayName": "CiscoISE - Dynamic authorization failed",
+            "category": "Hunting Queries",
+            "query": "let threshold = 10; CiscoISEEvent | where TimeGenerated > ago(24h) | where EventId == '5417' | summarize TotalEvents = count() by SrcIpAddr | where TotalEvents > threshold",
+            "version": 1,
+            "tags": [
+              {
+                "name": "description",
+                "value": "Search for dynamic authorization failed events."
+              },
+              {
+                "name": "tactics",
+                "value": "InitialAccess"
+              }
+            ]
+          }
+        },
+        {
+          "type": "savedSearches",
+          "apiVersion": "2020-08-01",
+          "name": "CiscoISE - Expired certificate in the client certificates chain",
+          "dependsOn": [
+            "[variables('parser-dependency')]"
+          ],
+          "properties": {
+            "eTag": "*",
+            "displayName": "CiscoISE - Expired certificate in the client certificates chain",
+            "category": "Hunting Queries",
+            "query": "CiscoISEEvent | where TimeGenerated > ago(24h) | where EventId == '12516' | extend IPCustomEntity = SrcIpAddr",
+            "version": 1,
+            "tags": [
+              {
+                "name": "description",
+                "value": "Search for expired certificates in the client certificates chain."
+              }
+            ]
+          }
+        },
+        {
+          "type": "savedSearches",
+          "apiVersion": "2020-08-01",
+          "name": "CiscoISE - Failed authentication events",
+          "dependsOn": [
+            "[variables('parser-dependency')]"
+          ],
+          "properties": {
+            "eTag": "*",
+            "displayName": "CiscoISE - Failed authentication events",
+            "category": "Hunting Queries",
+            "query": "CiscoISEEvent | where TimeGenerated > ago(24h) | where EventId in ('5400', '5401', '5412', '12508', '12514', '12516') | summarize count() by DstUserName | sort by count_",
+            "version": 1,
+            "tags": [
+              {
+                "name": "description",
+                "value": "Search for failed authentication events."
+              },
+              {
+                "name": "tactics",
+                "value": "CredentialAccess"
+              }
+            ]
+          }
+        },
+        {
+          "type": "savedSearches",
+          "apiVersion": "2020-08-01",
+          "name": "CiscoISE - Failed login attempts via SSH CLI (users)",
+          "dependsOn": [
+            "[variables('parser-dependency')]"
+          ],
+          "properties": {
+            "eTag": "*",
+            "displayName": "CiscoISE - Failed login attempts via SSH CLI (users)",
+            "category": "Hunting Queries",
+            "query": "CiscoISEEvent | where TimeGenerated > ago(24h) | where EventId in ('60081', '60082') | summarize TotalEvents = count() by DstUserName | sort by TotalEvents",
+            "version": 1,
+            "tags": [
+              {
+                "name": "description",
+                "value": "Search for Failed login attempts via SSH CLI users."
+              },
+              {
+                "name": "tactics",
+                "value": "LateralMovement"
+              }
+            ]
+          }
+        },
+        {
+          "type": "savedSearches",
+          "apiVersion": "2020-08-01",
+          "name": "CiscoISE - Guest authentication failed",
+          "dependsOn": [
+            "[variables('parser-dependency')]"
+          ],
+          "properties": {
+            "eTag": "*",
+            "displayName": "CiscoISE - Guest authentication failed",
+            "category": "Hunting Queries",
+            "query": "CiscoISEEvent | where TimeGenerated > ago(24h) | where EventId in ('86009', '86010', '86011', '86012', '86013', '86014', '86015', '86016', '86017', '86018', '86019', '86020') | project TimeGenerated, DstUserName, SrcIpAddr, DstIpAddr",
+            "version": 1,
+            "tags": [
+              {
+                "name": "description",
+                "value": "Search Guest authentication failed events."
+              },
+              {
+                "name": "tactics",
+                "value": "CredentialAccess"
+              }
+            ]
+          }
+        },
+        {
+          "type": "savedSearches",
+          "apiVersion": "2020-08-01",
+          "name": "CiscoISE - Guest authentication succeeded",
+          "dependsOn": [
+            "[variables('parser-dependency')]"
+          ],
+          "properties": {
+            "eTag": "*",
+            "displayName": "CiscoISE - Guest authentication succeeded",
+            "category": "Hunting Queries",
+            "query": "CiscoISEEvent | where TimeGenerated > ago(24h) | where EventId in ('5231', '5236') | project TimeGenerated, DstUserName, SrcIpAddr, DstIpAddr | extend AccountCustomEntity = DstUserName | extend IPCustomEntity = SrcIpAddr",
+            "version": 1,
+            "tags": [
+              {
+                "name": "description",
+                "value": "Search for successful Guest authentication events."
+              },
+              {
+                "name": "tactics",
+                "value": "InitialAccess,Persistence,PrivilegeEscalation,DefenseEvasion"
+              }
+            ]
+          }
+        },
+        {
+          "type": "savedSearches",
+          "apiVersion": "2020-08-01",
+          "name": "CiscoISE - Rare or new useragent",
+          "dependsOn": [
+            "[variables('parser-dependency')]"
+          ],
+          "properties": {
+            "eTag": "*",
+            "displayName": "CiscoISE - Rare or new useragent",
+            "category": "Hunting Queries",
+            "query": "let dt_lookBackPeriod = 30d; let dt_lookBackTime = 24h; let knownUserAgents = CiscoISEEvent | where TimeGenerated between (ago(dt_lookBackPeriod) .. ago(dt_lookBackTime)) | where HttpUserAgentOriginal != '' | summarize makelist(HttpUserAgentOriginal) ; CiscoISEEvent | where TimeGenerated > ago(dt_lookBackTime) | where HttpUserAgentOriginal !in (knownUserAgents) | summarize EventCount = count() by HttpUserAgentOriginal | project-away EventCount",
+            "version": 1,
+            "tags": [
+              {
+                "name": "description",
+                "value": "Search for rare useragent values."
+              },
+              {
+                "name": "tactics",
+                "value": "InitialAccess"
+              }
+            ]
+          }
+        },
+        {
+          "type": "savedSearches",
+          "apiVersion": "2020-08-01",
+          "name": "CiscoISE - Sources with high number of Failed Authentication events",
+          "dependsOn": [
+            "[variables('parser-dependency')]"
+          ],
+          "properties": {
+            "eTag": "*",
+            "displayName": "CiscoISE - Sources with high number of 'Failed Authentication' events",
+            "category": "Hunting Queries",
+            "query": "let threshold = 10; CiscoISEEvent | where TimeGenerated > ago(24h) | where EventId in ('5400', '5401') | summarize TotalEvents = count() by SrcIpAddr | where TotalEvents > threshold | project SrcIpAddr, TotalEvents",
+            "version": 1,
+            "tags": [
+              {
+                "name": "description",
+                "value": "Search sources with high number of Failed Authentication events."
+              },
+              {
+                "name": "tactics",
+                "value": "CredentialAccess"
+              }
+            ]
+          }
+        },
+        {
+          "type": "savedSearches",
+          "apiVersion": "2020-08-01",
+          "name": "CiscoISE - Attempts to suspend the log collector",
+          "dependsOn": [
+            "[variables('parser-dependency')]"
+          ],
+          "properties": {
+            "eTag": "*",
+            "displayName": "CiscoISE - Attempts to suspend the log collector",
+            "category": "Hunting Queries",
+            "query": "CiscoISEEvent | where TimeGenerated > ago(24h) | where EventId in ('59206', '59208') | extend IPCustomEntity = SrcIpAddr",
+            "version": 1,
+            "tags": [
+              {
+                "name": "description",
+                "value": "Search for attempts to suspend the log collector."
+              },
+              {
+                "name": "tactics",
+                "value": "DefenseEvasion"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "Microsoft.Insights/workbooks",
+      "name": "[parameters('workbook1-id')]",
+      "location": "[parameters('workspace-location')]",
+      "kind": "shared",
+      "apiVersion": "2020-02-12",
+      "properties": {
+        "displayName": "[concat(parameters('workbook1-name'), ' - ', parameters('formattedTimeNow'))]",
+        "serializedData": "{\"version\":\"Notebook/1.0\",\"items\":[{\"type\":1,\"content\":{\"json\":\"## Cisco Identity Services Engine\\nCisco ISE allows you to provide highly secure network access to users and devices. It helps you gain visibility into what is happening in your network, such as who is connected, which applications are installed and running, and much more. It also shares vital contextual data, such as user and device identities, threats, and vulnerabilities with integrated solutions from Cisco technology partners, so you can identify, contain, and remediate threats faster.\",\"style\":\"info\"},\"name\":\"Text\"},{\"type\":9,\"content\":{\"version\":\"KqlParameterItem/1.0\",\"parameters\":[{\"id\":\"88aa96e3-fc48-4b04-836e-fc2ec8ebf37f\",\"version\":\"KqlParameterItem/1.0\",\"name\":\"TimeRange\",\"label\":\" Time Range\",\"type\":4,\"value\":{\"durationMs\":2592000000},\"typeSettings\":{\"selectableValues\":[{\"durationMs\":300000},{\"durationMs\":3600000},{\"durationMs\":43200000},{\"durationMs\":86400000},{\"durationMs\":259200000},{\"durationMs\":604800000},{\"durationMs\":2592000000},{\"durationMs\":7776000000}]},\"timeContext\":{\"durationMs\":86400000}}],\"style\":\"pills\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\"},\"name\":\"Parameters\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"CiscoISEEvent\\r\\n| make-series TotalEvents = count() default = 0 on TimeGenerated from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain} by EventCategory;\",\"size\":0,\"title\":\"Events over time\",\"timeContext\":{\"durationMs\":2592000000},\"timeContextFromParameter\":\"TimeRange\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"timechart\"},\"customWidth\":\"70\",\"name\":\"EventsOverTime\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"CiscoISEEvent\\r\\n| summarize TotalEvents = count() by EventSeverity\",\"size\":4,\"title\":\"Event Severity Distribution\",\"timeContext\":{\"durationMs\":2592000000},\"timeContextFromParameter\":\"TimeRange\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"tiles\",\"tileSettings\":{\"titleContent\":{\"columnMatch\":\"EventSeverity\",\"formatter\":1,\"numberFormat\":{\"unit\":0,\"options\":{\"style\":\"decimal\"}}},\"leftContent\":{\"columnMatch\":\"TotalEvents\",\"formatter\":12,\"formatOptions\":{\"palette\":\"auto\"}},\"showBorder\":true,\"rowLimit\":7,\"size\":\"auto\"},\"graphSettings\":{\"type\":0,\"topContent\":{\"columnMatch\":\"EventSeverity\",\"formatter\":1},\"centerContent\":{\"columnMatch\":\"TotalEvents\",\"formatter\":1,\"numberFormat\":{\"unit\":17,\"options\":{\"maximumSignificantDigits\":3,\"maximumFractionDigits\":2}}}}},\"customWidth\":\"30\",\"name\":\"EventSeverityDistribution\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"CiscoISEEvent\\n| summarize TotalEvents = count() by EventCategory\\n| join kind = inner (CiscoISEEvent\\n      | make-series Trend = count() default = 0 on TimeGenerated from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain} by EventCategory)\\n      on EventCategory\\n| project-away EventCategory1, TimeGenerated\\n| project EventCategory, TotalEvents, Trend\\n| order by TotalEvents desc\\n\\n\\n\",\"size\":4,\"title\":\"Event Categories Distribution\",\"timeContext\":{\"durationMs\":2592000000},\"timeContextFromParameter\":\"TimeRange\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"tiles\",\"tileSettings\":{\"titleContent\":{\"columnMatch\":\"EventCategory\",\"formatter\":1},\"leftContent\":{\"columnMatch\":\"TotalEvents\",\"formatter\":12,\"formatOptions\":{\"palette\":\"auto\"},\"numberFormat\":{\"unit\":17,\"options\":{\"maximumSignificantDigits\":3,\"maximumFractionDigits\":2}}},\"secondaryContent\":{\"columnMatch\":\"Trend\",\"formatter\":9,\"formatOptions\":{\"palette\":\"blue\"}},\"showBorder\":false,\"rowLimit\":10}},\"name\":\"EventCategoriesDistribution\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"CiscoISEEvent\\r\\n| where DvcHostname != ''\\r\\n| summarize TotalEvents = count() by DvcHostname\\r\\n| join kind = inner (CiscoISEEvent\\r\\n | where DvcHostname != ''\\r\\n | make-series Trend = count() default = 0 on TimeGenerated from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain} by DvcHostname)\\r\\n on DvcHostname\\r\\n| project-away DvcHostname1, TimeGenerated\\r\\n| project DvcHostname, TotalEvents, Trend\\r\\n| order by TotalEvents\\r\\n| take 10\\r\\n\",\"size\":0,\"title\":\"Top Reporting Devices\",\"timeContext\":{\"durationMs\":2592000000},\"timeContextFromParameter\":\"TimeRange\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"gridSettings\":{\"formatters\":[{\"columnMatch\":\"TotalEvents\",\"formatter\":8,\"formatOptions\":{\"palette\":\"blueGreen\"}},{\"columnMatch\":\"Trend\",\"formatter\":10,\"formatOptions\":{\"palette\":\"turquoise\"}}],\"rowLimit\":10,\"labelSettings\":[{\"columnId\":\"TotalEvents\",\"label\":\"Total Events\"},{\"columnId\":\"Trend\"}]}},\"customWidth\":\"31\",\"name\":\"TopReportingDevices\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"CiscoISEEvent\\r\\n| where DstUserName != ''\\r\\n| summarize TotalEvents = count() by DstUserName\\r\\n| order by TotalEvents\\r\\n| take 10\",\"size\":3,\"title\":\"Top Users Activity (Events)\",\"timeContext\":{\"durationMs\":2592000000},\"timeContextFromParameter\":\"TimeRange\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"piechart\"},\"customWidth\":\"30\",\"name\":\"TopUsersActivity \"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"CiscoISEEvent\\r\\n| where EventId in ('5400', '5401')\\r\\n| where DstUserName != ''\\r\\n| summarize TotalEvents = count() by DstUserName\\r\\n\",\"size\":0,\"title\":\"Top Users with Failed Authentication\",\"timeContext\":{\"durationMs\":2592000000},\"timeContextFromParameter\":\"TimeRange\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"piechart\"},\"customWidth\":\"30\",\"name\":\"TopUsersFailedAuthentication\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"CiscoISEEvent\\r\\n| where PostureStatus != ''\\r\\n| where PostureStatus != 'Compliant'\\r\\n| summarize TotalEvents = count() by DstIpAddr\\r\\n\\r\\n\",\"size\":1,\"title\":\"Non-Compliant Posture Status\",\"timeContext\":{\"durationMs\":2592000000},\"timeContextFromParameter\":\"TimeRange\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"piechart\"},\"customWidth\":\"50\",\"name\":\"NonCompliantPostureStatus\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"CiscoISEEvent\\r\\n| where EventSeverity in ('FATAL', 'ERROR')\\r\\n| summarize errorCnt = count() by EventId, ErrorMessage = EventMessage\\r\\n| sort by errorCnt\\r\\n| project ['Error Code'] = EventId, ['Error Message'] = ErrorMessage , ['Error Count'] = toint(errorCnt)\",\"size\":1,\"title\":\"Details of top errors\",\"timeContext\":{\"durationMs\":2592000000},\"timeContextFromParameter\":\"TimeRange\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"table\"},\"customWidth\":\"39\",\"name\":\"DetailsTopErrors\"}],\"fromTemplateId\":\"sentinel-CiscoISE\"}",
+        "version": "1.0",
+        "sourceId": "[variables('_workbook-source')]",
+        "category": "sentinel"
+      }
+    }
+  ],
+  "outputs": {}
+}
