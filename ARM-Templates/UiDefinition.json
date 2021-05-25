@@ -191,15 +191,15 @@
                         "constraints": {
                             "allowedValues": [
                                 {
-                                    "label": "Box (Preview)",
+                                    "label": "Box Solution (Preview)",
                                     "value": "Box"
                                 },
                                 {
-                                    "label": "Cisco ISE (Preview)",
+                                    "label": "Cisco ISE Solution (Preview)",
                                     "value": "CiscoISE"
                                 },
                                 {
-                                    "label": "Cisco Umbrella (Preview)",
+                                    "label": "Cisco Umbrella Solution (Preview)",
                                     "value": "CiscoUmbrella"
                                 },
                                 {
@@ -207,7 +207,11 @@
                                     "value": "PaloAlto"
                                 },
                                 {
-                                    "label": "Ubiquiti UniFi (Preview)",
+                                    "label": "Ping Federate Solution (Preview)",
+                                    "value": "PingFederate"
+                                },
+                                {
+                                    "label": "Ubiquiti UniFi Solution (Preview)",
                                     "value": "Ubiquiti"
                                 }
                             ],
