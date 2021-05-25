@@ -98,6 +98,27 @@
             }
         },
         {
+            "condition": "[contains(parameters('enabledSolutions'), 'PingFederate')]",
+            "name": "PingFederate",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/ARM-Templates/LinkedTemplates/PingFederate/mainTemplate.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "workspace": {
+                        "value": "[parameters('workspaceName')]"
+                    }
+                }
+            }
+        },
+        {
             "condition": "[contains(parameters('enabledSolutions'), 'PaloAlto')]",
             "name": "PaloAlto",
             "type": "Microsoft.Resources/deployments",
