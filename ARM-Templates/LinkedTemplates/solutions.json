@@ -11,7 +11,7 @@
         "enabledSolutions": {
             "type": "array",
             "metadata": {
-                "description": "Araay of supported solutions"
+                "description": "Array of supported solutions"
             }
         }
     },
@@ -51,7 +51,7 @@
         },
         {
             "condition": "[contains(parameters('enabledSolutions'), 'CiscoISE')]",
-            "name": "CiscoUmbrella",
+            "name": "CiscoISE",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "dependsOn": [
