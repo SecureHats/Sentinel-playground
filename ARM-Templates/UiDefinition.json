@@ -116,10 +116,6 @@
                                     "value": "ArubaClearPass"
                                 },
                                 {
-                                    "label": "Cisco ISE Event",
-                                    "value": "CiscoISEEvent"
-                                },
-                                {
                                     "label": "Cisco Meraki (Preview)",
                                     "value": "CiscoMeraki"
                                 },
@@ -197,6 +193,10 @@
                                 {
                                     "label": "Box (Preview)",
                                     "value": "Box"
+                                },
+                                {
+                                    "label": "Cisco ISE (Preview)",
+                                    "value": "CiscoISE"
                                 },
                                 {
                                     "label": "Cisco Umbrella (Preview)",
