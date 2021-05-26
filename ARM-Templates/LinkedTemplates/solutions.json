@@ -17,6 +17,18 @@
     },
     "resources": [
         {
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "apiVersion": "2015-11-01-preview",
+            "name": "[parameters('workspaceName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "retentionInDays": 30,
+                "sku": {
+                    "name": "PerGB2018"
+                }
+            }
+        },
+        {
             "condition": "[contains(parameters('enabledSolutions'), 'Box')]",
             "name": "Box",
             "type": "Microsoft.Resources/deployments",
