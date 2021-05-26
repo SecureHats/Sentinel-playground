@@ -10,20 +10,14 @@
         },
         "dataProviders": {
             "type": "Array",
-            "defaultValue": [
-                "None"
-            ],
             "metadata": {
                 "description": "Array of supported data providers"
             }
         },
         "enabledSolutions": {
             "type": "Array",
-            "defaultValue": [
-                "None"
-            ],
             "metadata": {
-                "description": "Array of supported solutions"
+                "description": "Araay of supported solutions"
             }
         },
         "CloudRepo": {
@@ -91,12 +85,24 @@
             }
         },
         {
+            "type": "Microsoft.OperationalInsights/workspaces/providers/dataConnectors",
+            "apiVersion": "2020-01-01",
+            "location": "[resourceGroup().location]",
+            "name": "[concat(parameters('workspaceName'),'/Microsoft.SecurityInsights/', 'AzureSecurityCenter')]",
+            "kind": "AzureSecurityCenter",
+            "properties": {
+                "subscriptionId": "[subscription().subscriptionId]",
+                "dataTypes": {
+                    "alerts": {
+                        "state": "false"
+                    }
+                }
+            }
+        },
+        {
             "type": "Microsoft.OperationalInsights/workspaces/dataSources",
             "apiVersion": "2020-03-01-preview",
             "location": "[resourceGroup().location]",
-            "dependsOn": [
-                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
-            ],
             "name": "[concat(parameters('workspaceName'), concat('/', replace(subscription().subscriptionId,'-', '')))]",
             "kind": "AzureActivityLog",
             "properties": {
@@ -106,11 +112,8 @@
         {
             "type": "Microsoft.OperationalInsights/workspaces/dataSources",
             "apiVersion": "2020-03-01-preview",
-            "name": "[concat(parameters('workspaceName'), '/SecurityInsightsSecurityEventCollectionConfiguration')]",
             "location": "[resourceGroup().location]",
-            "dependsOn": [
-                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
-            ],
+            "name": "[concat(parameters('workspaceName'), '/SecurityInsightsSecurityEventCollectionConfiguration')]",
             "kind": "SecurityInsightsSecurityEventCollectionConfiguration",
             "properties": {
                 "tier": "All",
@@ -129,7 +132,6 @@
             "name": "[parameters('roleGuid')]",
             "dependsOn": [
                 "[concat('Microsoft.Resources/deploymentScripts/', 'sleep')]"
-                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
             ],
             "properties": {
                 "roleDefinitionId": "[variables('Contributor')]",
@@ -144,7 +146,6 @@
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Authorization/roleAssignments/', parameters('roleGuid'))]"
-                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
             ],
             "kind": "AzurePowerShell",
             "identity": {
@@ -175,8 +176,7 @@
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Authorization/roleAssignments/', parameters('roleGuid'))]",
-                "[concat('Microsoft.Resources/deployments/', 'Solutions')]",
-                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+                "[concat('Microsoft.Resources/deployments/', 'Solutions')]"
             ],
             "kind": "AzurePowerShell",
             "identity": {
@@ -212,7 +212,7 @@
                 "forceUpdateTag": "1",
                 "azPowerShellVersion": "3.0",
                 "arguments": "",
-                "scriptContent": "Start-Sleep -Seconds 90",
+                "scriptContent": "Start-Sleep -Seconds 15",
                 "supportingScriptUris": [],
                 "timeout": "PT30M",
                 "cleanupPreference": "Always",
@@ -231,7 +231,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/ARM-Templates/LinkedTemplates/solutions.json",
+                    "uri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/SymantecEndpointProtection/ARM-Templates/LinkedTemplates/solutions.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
