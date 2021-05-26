@@ -17,18 +17,6 @@
     },
     "resources": [
         {
-            "type": "Microsoft.OperationalInsights/workspaces",
-            "apiVersion": "2015-11-01-preview",
-            "name": "[parameters('workspaceName')]",
-            "location": "[resourceGroup().location]",
-            "properties": {
-                "retentionInDays": 30,
-                "sku": {
-                    "name": "PerGB2018"
-                }
-            }
-        },
-        {
             "condition": "[contains(parameters('enabledSolutions'), 'Box')]",
             "name": "Box",
             "type": "Microsoft.Resources/deployments",
@@ -55,7 +43,8 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "dependsOn": [
-                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', 'Box')]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -79,7 +68,8 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "dependsOn": [
-                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', 'CiscoISE')]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -103,7 +93,8 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "dependsOn": [
-                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', 'CiscoUmbrella')]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -124,7 +115,8 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "dependsOn": [
-                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', 'PingFederate')]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -145,7 +137,8 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "dependsOn": [
-                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', 'PaloAlto')]"
             ],
             "properties": {
                 "mode": "Incremental",
