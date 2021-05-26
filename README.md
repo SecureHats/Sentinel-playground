@@ -19,14 +19,14 @@ The following table summarizes permissions, licenses needed and cost to enable e
 | Provider   | Connector                                             | Custom Table                    | Parser | Workbook | Solution | Tested  |
 | ---------- | ----------------------------------------------------- | ------------------------------- | ------ | -------- | -------- | ------- |
 | Alsid      | Alsid for Active Directory (Preview)                  | AlsidForADLog_CL                |   [x]  |    [x]   |   [ ]    |   [ ]   |
-| Agari      | Agari Phishing Defense and Brand Protection (Preview) | agari_apdpolicy_log_CL          |   [ ]  |    [ ]   |   [ ]    |   [ ]   |
-|            |                                                       | agari_apdtc_log_CL              |   [ ]  |    [ ]   |   [ ]    |   [ ]   |
-|            |                                                       | agari_bpalerts_log_CL           |   [ ]  |    [ ]   |   [ ]    |   [ ]   |
+| Agari      | Agari Phishing Defense and Brand Protection (Preview) | agari_apdpolicy_log_CL          |   [x]  |    [ ]   |   [ ]    |   [ ]   |
+|            |                                                       | agari_apdtc_log_CL              |   [x]  |    [ ]   |   [ ]    |   [ ]   |
+|            |                                                       | agari_bpalerts_log_CL           |   [x]  |    [ ]   |   [ ]    |   [ ]   |
 | Akamai     | Akamai Security Events (Preview)                      | SecureHats_CL                   |   [x]  |    [ ]   |   [ ]    |   [ ]   |
-| Aruba      | Aruba ClearPass (Preview)                             | SecureHats_CL                   |   [ ]  |    [ ]   |   [ ]    |   [ ]   |
-| Cisco      | Cisco ISE Event                                       | SecureHats_CL                   |   [ ]  |    [ ]   |   [ ]    |   [ ]   |
-| Cisco      | Cisco Meraki (Preview)                                | SecureHats_CL                   |   [ ]  |    [ ]   |   [ ]    |   [ ]   |
-| Cisco      | Cisco UCS (Preview)                                   | SecureHats_CL                   |   [ ]  |    [ ]   |   [ ]    |   [ ]   |
+| Aruba      | Aruba ClearPass (Preview)                             | SecureHats_CL                   |   [x]  |    [ ]   |   [ ]    |   [ ]   |
+| Cisco      | Cisco ISE Event                                       | SecureHats_CL                   |   [x]  |    [ ]   |   [ ]    |   [ ]   |
+| Cisco      | Cisco Meraki (Preview)                                | SecureHats_CL                   |   [x]  |    [ ]   |   [ ]    |   [ ]   |
+| Cisco      | Cisco UCS (Preview)                                   | SecureHats_CL                   |   [x]  |    [ ]   |   [ ]    |   [ ]   |
 | Cisco      | Cisco Umbrella (Preview)                              | Cisco_Umbrella_cloudfirewall_CL |   [x]  |    [x]   |   [x]    |   [ ]   |
 |            |                                                       | Cisco_Umbrella_dns_CL           |   [x]  |    [x]   |   [x]    |   [ ]   |
 |            |                                                       | Cisco_Umbrella_ip_CL            |   [x]  |    [x]   |   [x]    |   [ ]   |
