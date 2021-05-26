@@ -129,6 +129,7 @@
             "name": "[parameters('roleGuid')]",
             "dependsOn": [
                 "[concat('Microsoft.Resources/deploymentScripts/', 'sleep')]"
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
             ],
             "properties": {
                 "roleDefinitionId": "[variables('Contributor')]",
@@ -143,6 +144,7 @@
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Authorization/roleAssignments/', parameters('roleGuid'))]"
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
             ],
             "kind": "AzurePowerShell",
             "identity": {
@@ -173,7 +175,8 @@
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Authorization/roleAssignments/', parameters('roleGuid'))]",
-                "[concat('Microsoft.Resources/deployments/', 'Solutions')]"
+                "[concat('Microsoft.Resources/deployments/', 'Solutions')]",
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
             ],
             "kind": "AzurePowerShell",
             "identity": {
@@ -209,7 +212,7 @@
                 "forceUpdateTag": "1",
                 "azPowerShellVersion": "3.0",
                 "arguments": "",
-                "scriptContent": "Start-Sleep -Seconds 15",
+                "scriptContent": "Start-Sleep -Seconds 90",
                 "supportingScriptUris": [],
                 "timeout": "PT30M",
                 "cleanupPreference": "Always",
