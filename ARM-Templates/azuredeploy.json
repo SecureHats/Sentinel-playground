@@ -10,12 +10,14 @@
         },
         "dataProviders": {
             "type": "Array",
+            "defaultValue": [],
             "metadata": {
                 "description": "Array of supported data providers"
             }
         },
         "enabledSolutions": {
             "type": "Array",
+            "defaultValue": [],
             "metadata": {
                 "description": "Araay of supported solutions"
             }
@@ -89,6 +91,9 @@
             "apiVersion": "2020-01-01",
             "location": "[resourceGroup().location]",
             "name": "[concat(parameters('workspaceName'),'/Microsoft.SecurityInsights/', 'AzureSecurityCenter')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+            ],
             "kind": "AzureSecurityCenter",
             "properties": {
                 "subscriptionId": "[subscription().subscriptionId]",
@@ -104,6 +109,9 @@
             "apiVersion": "2020-03-01-preview",
             "location": "[resourceGroup().location]",
             "name": "[concat(parameters('workspaceName'), concat('/', replace(subscription().subscriptionId,'-', '')))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+            ],
             "kind": "AzureActivityLog",
             "properties": {
                 "linkedResourceId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/microsoft.insights/eventtypes/management')]"
@@ -114,6 +122,9 @@
             "apiVersion": "2020-03-01-preview",
             "location": "[resourceGroup().location]",
             "name": "[concat(parameters('workspaceName'), '/SecurityInsightsSecurityEventCollectionConfiguration')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+            ],
             "kind": "SecurityInsightsSecurityEventCollectionConfiguration",
             "properties": {
                 "tier": "All",
