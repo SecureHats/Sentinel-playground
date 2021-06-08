@@ -237,6 +237,29 @@
         "description": "Detects requests from forbidden countries.",
         "displayName": "Ping Federate - Forbidden country",
         "enabled": false,
+        "query": "let forbidden_geo = dynamic(['CH']);\nPingFederateEvent\n| where isnotempty(DstGeoCountry)\n| where tostring(DstGeoCountry) in~ (forbidden_geo)\n| extend AccountCustomEntity = DstUserName\n| extend IpCustomEntity = SrcIpAddr\n",
+        "queryFrequency": "PT1H",
+        "queryPeriod": "PT1H",
+        "severity": "High",
+        "suppressionDuration": "PT1H",
+        "suppressionEnabled": false,
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "tactics": [
+          "InitialAccess"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic3-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "description": "Detects requests from forbidden countries.",
+        "displayName": "Ping Federate - Forbidden country",
+        "enabled": false,
         "query": "let forbidden_geo = dynamic(['CH']);\nPingFederateEvent\n| where isnotempty(DstGeoCountry)\n| where DstGeoCountry in~ (forbidden_geo)\n| extend AccountCustomEntity = DstUserName\n| extend IpCustomEntity = SrcIpAddr\n",
         "queryFrequency": "PT1H",
         "queryPeriod": "PT1H",
