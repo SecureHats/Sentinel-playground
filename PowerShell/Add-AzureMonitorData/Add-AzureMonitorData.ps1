@@ -259,7 +259,7 @@ if ($subscriptionId) {
 Write-Output "Retrieving Log Analytics workspace [$($WorkspaceName)]"
 
 try {
-    Write-Output "Looking for requested workspace [$($WorkspaceName)]"
+Write-Output "Looking for requested workspace [$($WorkspaceName)]"
     $workspaceParams = @{
         Method               = 'GET'
         ApiVersion           = '2020-08-01'
@@ -269,7 +269,9 @@ try {
     $workspace = ((Invoke-AzRestMethod @workspaceParams).Content `
         | ConvertFrom-Json).value `
         | Where-Object Name -eq $WorkspaceName
-
+    
+    Write-Output "Workspace properties: $($workspace)
+    
     $splitArray         = $workspace.id -split '/'
     $ResourceGroupName  = $splitArray[4]
     $WorkspaceName      = $splitArray[8]
@@ -279,16 +281,6 @@ catch {
     Write-Warning -Message "Log Analytics workspace [$($WorkspaceName)] not found in the current context"
     break
 }
-
-<#$workspace = Get-AzResource `
-    -Name "$WorkspaceName" `
-    -ResourceType 'Microsoft.OperationalInsights/workspaces'
-
-if ($null -eq $workspace) {
-    Write-Warning "Log Analytics workspace [$($WorkspaceName)] could not be found in this subscription"
-    break
-}
-#>
 
 if ($DataProvidersArray) {
     $dataProviders = $DataProvidersArray | ConvertFrom-Json
