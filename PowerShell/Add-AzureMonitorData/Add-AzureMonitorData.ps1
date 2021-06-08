@@ -259,7 +259,7 @@ if ($subscriptionId) {
 Write-Output "Retrieving Log Analytics workspace [$($WorkspaceName)]"
 
 try {
-Write-Output "Looking for requested workspace [$($WorkspaceName)]"
+    Write-Output "Looking for requested workspace [$($WorkspaceName)]"
     $workspaceParams = @{
         Method               = 'GET'
         ApiVersion           = '2020-08-01'
@@ -270,7 +270,7 @@ Write-Output "Looking for requested workspace [$($WorkspaceName)]"
         | ConvertFrom-Json).value `
         | Where-Object Name -eq $WorkspaceName
     
-    Write-Output "Workspace properties: $($workspace)
+    Write-Output "Workspace properties: $($workspace)"
     
     $splitArray         = $workspace.id -split '/'
     $ResourceGroupName  = $splitArray[4]
