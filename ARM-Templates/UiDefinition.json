@@ -203,6 +203,10 @@
                                     "value": "CiscoUmbrella"
                                 },
                                 {
+                                    "label": "McAfee ePolicy Orchestrator Solution (Preview)",
+                                    "value": "McAfee"
+                                },
+                                {
                                     "label": "Palo Alto Prisma Solution (Preview)",
                                     "value": "PaloAlto"
                                 },
