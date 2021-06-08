@@ -260,22 +260,34 @@ Write-Output "Retrieving Log Analytics workspace [$($WorkspaceName)]"
 
 try {
     Write-Output "Looking for requested workspace [$($WorkspaceName)]"
+    $workspace = $workspace = Get-AzResource `
+        -Name "$WorkspaceName" `
+        -ResourceType 'Microsoft.OperationalInsights/workspaces'
+    
+    <#
     $workspaceParams = @{
         Method               = 'GET'
         ApiVersion           = '2020-08-01'
         ResourceProviderName = 'Microsoft.OperationalInsights/workspaces'
     }
+    
 
     $workspace = ((Invoke-AzRestMethod @workspaceParams).Content `
         | ConvertFrom-Json).value `
         | Where-Object Name -eq $WorkspaceName
-    
+    #>
+
     Write-Output "Workspace properties: $($workspace)"
     
-    $splitArray         = $workspace.id -split '/'
-    $ResourceGroupName  = $splitArray[4]
-    $WorkspaceName      = $splitArray[8]
-    $workspaceId        = $workspace.properties.customerId
+    $ResourceGroupName  = $workspace.ResourceGroupName
+    $workspaceName      = $workspace.Name
+    $workspaceId        = (Get-AzOperationalInsightsWorkspace -ResourceGroupName $resourceGroupName -Name $workspaceName).CustomerId.Guid
+    <#
+        $splitArray         = $workspace.id -split '/'
+        $ResourceGroupName  = $splitArray[4]
+        $WorkspaceName      = $splitArray[8]
+        $workspaceId        = $workspace.properties.customerId
+    #>
 }
 catch {
     Write-Warning -Message "Log Analytics workspace [$($WorkspaceName)] not found in the current context"
