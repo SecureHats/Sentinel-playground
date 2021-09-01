@@ -207,6 +207,10 @@
                                     "value": "CiscoUmbrella"
                                 },
                                 {
+                                    "label": "CrowdStrike Falcon Endpoint Protection Solution (Preview)",
+                                    "value": "CrowdStrike"
+                                },
+                                {
                                     "label": "Palo Alto Prisma Solution (Preview)",
                                     "value": "PaloAlto"
                                 },
