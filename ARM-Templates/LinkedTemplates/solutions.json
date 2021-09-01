@@ -100,13 +100,38 @@
             }
         },
         {
+            "condition": "[contains(parameters('enabledSolutions'), 'CrowdStrike')]",
+            "name": "CiscoUmbrella",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
+                "[concat('Microsoft.Resources/deployments/', 'CiscoUmbrella')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/ARM-Templates/LinkedTemplates/CrowdStrike/mainTemplate.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "workspace": {
+                        "value": "[parameters('workspaceName')]"
+                    },
+                    "location": {
+                        "value": "[resourceGroup().location]"
+                    }
+                }
+            }
+        },
+        {
             "condition": "[contains(parameters('enabledSolutions'), 'PingFederate')]",
             "name": "PingFederate",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "dependsOn": [
                 "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
-                "[concat('Microsoft.Resources/deployments/', 'CiscoUmbrella')]"
+                "[concat('Microsoft.Resources/deployments/', 'CrowdStrike')]"
             ],
             "properties": {
                 "mode": "Incremental",
