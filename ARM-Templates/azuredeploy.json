@@ -3,20 +3,20 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "workspaceName": {
-            "type": "String",
+            "type": "string",
             "metadata": {
                 "description": "Name for the Log Analytics workspace"
             }
         },
         "dataProviders": {
-            "type": "Array",
+            "type": "array",
             "defaultValue": [],
             "metadata": {
-                "description": "Array of supported data providers"
+                "description": "array of supported data providers"
             }
         },
         "enabledSolutions": {
-            "type": "Array",
+            "type": "array",
             "defaultValue": [],
             "metadata": {
                 "description": "Araay of supported solutions"
@@ -24,27 +24,27 @@
         },
         "CloudRepo": {
             "defaultValue": "https://github.com/SecureHats/Sentinel-playground",
-            "type": "String"
+            "type": "string"
         },
         "Branch": {
             "defaultValue": "main",
-            "type": "String"
+            "type": "string"
         },
         "roleGuid": {
             "defaultValue": "[newGuid()]",
-            "type": "String"
+            "type": "string"
         },
         "customTableName": {
             "defaultValue": "SecureHats",
-            "type": "String"
+            "type": "string"
         },
         "newManagedIdentity": {
             "defaultValue": false,
-            "type": "Bool"
+            "type": "bool"
         },
         "managedIdentityName": {
             "defaultValue": "[parameters('workspaceName')]",
-            "type": "String"
+            "type": "string"
         },
         "guid": {
             "type": "string",
@@ -143,7 +143,7 @@
             ],
             "kind": "AzurePowerShell",
             "identity": {
-                "type": "userAssigned",
+                "type": "UserAssigned",
                 "userAssignedIdentities": {
                     "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities/', variables('identityName'))]": {}
                 }
@@ -151,7 +151,7 @@
             "properties": {
                 "forceUpdateTag": "[parameters('guid')]",
                 "azPowerShellVersion": "5.4",
-                "arguments": "[format(' -WorkspaceName {0} -CustomTableName {1} -repoUri {2} -DataProvidersArray \\\"{3}\\\"', parameters('workspaceName'), parameters('CustomTableName'), concat(parameters('CloudRepo'), '/tree/', parameters('Branch'), '/samples/'), union(parameters('dataProviders'), parameters('enabledSolutions')))]",
+                "arguments": "[format(' -WorkspaceName {0} -CustomTableName {1} -repoUri {2} -DataProvidersarray \\\"{3}\\\"', parameters('workspaceName'), parameters('CustomTableName'), concat(parameters('CloudRepo'), '/tree/', parameters('Branch'), '/samples/'), union(parameters('dataProviders'), parameters('enabledSolutions')))]",
                 "primaryScriptUri": "[concat('https://raw.githubusercontent.com/SecureHats/Sentinel-playground/', parameters('Branch'), '/PowerShell/Add-AzureMonitorData/Add-AzureMonitorData.ps1')]",
                 "supportingScriptUris": [],
                 "timeout": "PT30M",
@@ -174,7 +174,7 @@
             ],
             "kind": "AzurePowerShell",
             "identity": {
-                "type": "userAssigned",
+                "type": "UserAssigned",
                 "userAssignedIdentities": {
                     "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities/', variables('identityName'))]": {}
                 }
@@ -182,7 +182,7 @@
             "properties": {
                 "forceUpdateTag": "[parameters('guid')]",
                 "azPowerShellVersion": "5.4",
-                "arguments": "[format(' -WorkspaceName {0} -CustomTableName {1} -repoUri {2} -DataProvidersArray \\\"{3}\\\"', parameters('workspaceName'), parameters('CustomTableName'), concat(parameters('CloudRepo'), '/tree/', parameters('Branch'), '/parsers/'), union(parameters('dataProviders'), parameters('enabledSolutions')))]",
+                "arguments": "[format(' -WorkspaceName {0} -CustomTableName {1} -repoUri {2} -DataProvidersarray \\\"{3}\\\"', parameters('workspaceName'), parameters('CustomTableName'), concat(parameters('CloudRepo'), '/tree/', parameters('Branch'), '/parsers/'), union(parameters('dataProviders'), parameters('enabledSolutions')))]",
                 "primaryScriptUri": "[concat('https://raw.githubusercontent.com/SecureHats/Sentinel-playground/', parameters('Branch'), '/PowerShell/Add-AzureMonitorData/Add-AzureMonitorData.ps1')]",
                 "supportingScriptUris": [],
                 "timeout": "PT30M",
