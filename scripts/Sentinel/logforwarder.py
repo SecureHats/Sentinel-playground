@@ -92,6 +92,6 @@ systemctl status rsyslog.service
 #apt-get update -qq
 #apt-get install -qqy python3-pip
 #python3 -m pip install python-dateutil
-python3 cef_simulator.py --debug
+#python3 cef_simulator.py --debug
 sudo wget -O cef_simulator.py https://raw.githubusercontent.com/OTRF/Blacksmith/master/templates/azure/CEF-Log-Analytics-Agent/scripts/cef_simulator.py&&sudo python ef_simulator.py --debug
 #sudo wget -O cef_troubleshoot.py https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/DataConnectors/CEF/cef_troubleshoot.py&&sudo python cef_troubleshoot.py $WORKSPACE_ID
