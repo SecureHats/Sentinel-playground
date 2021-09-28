@@ -70,7 +70,7 @@ sudo firewall-cmd --direct --get-rules ipv4 filter INPUT
 ######################################################
 
 sudo sed -i -e "/'Severity' => tags[tags.size - 1]/ a \ \t 'Host' => record['host']" -e "s/'Severity' => tags[tags.size - 1]/&,/" /opt/microsoft/omsagent/plugin/filter_syslog_security.rb && sudo /opt/microsoft/omsagent/bin/service_control restart $WORKSPACE_ID
-sudo wget -O TimeGenerated.py https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/DataConnectors/CEF/TimeGenerated.py && python TimeGenerated.py $WORKSPACE_ID
+sudo wget -O TimeGenerated.py https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/DataConnectors/CEF/TimeGenerated.py && yes | python TimeGenerated.py $WORKSPACE_ID
 
 ##############################################
 # Re-Enabling and Configuring SELinux Policy #
@@ -80,9 +80,9 @@ sudo setenforce 1
 sudo systemctl restart rsyslog.service
 sudo ausearch -c 'rsyslogd' --raw | audit2allow -M my-rsyslogd
 sudo semodule -X 300 -i my-rsyslogd.pp
+sleep 15
 sudo systemctl restart rsyslog.service
 sudo semanage port -a -t syslogd_port_t -p tcp 25226
-sleep 15
 systemctl status rsyslog.service
 
 
@@ -92,5 +92,6 @@ systemctl status rsyslog.service
 #apt-get update -qq
 #apt-get install -qqy python3-pip
 #python3 -m pip install python-dateutil
-#python3 cef_simulator.py --debug
-sudo wget -O cef_troubleshoot.py https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/DataConnectors/CEF/cef_troubleshoot.py&&sudo python cef_troubleshoot.py $WORKSPACE_ID
+python3 cef_simulator.py --debug
+sudo wget -O cef_simulator.py https://raw.githubusercontent.com/OTRF/Blacksmith/master/templates/azure/CEF-Log-Analytics-Agent/scripts/cef_simulator.py&&sudo python ef_simulator.py --debug
+#sudo wget -O cef_troubleshoot.py https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/DataConnectors/CEF/cef_troubleshoot.py&&sudo python cef_troubleshoot.py $WORKSPACE_ID
