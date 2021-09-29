@@ -13,13 +13,13 @@ echoerror() {
     printf "${RC} * ERROR${EC}: $@\n" 1>&2;
 }
 
-# *********** helk function ***************
+# *********** help function ***************
 usage(){
     echo " "
     echo "Usage: $0 [option...]" >&2
     echo
-    echo "   -w         Azure Sentinel Workspace ID"
-    echo "   -k         Azure Sentinel Workspace Key"
+    echo "   -workspaceId         Azure Sentinel Workspace ID"
+    echo "   -workspaceKey        Azure Sentinel Workspace Key"
     echo
     echo "Examples:"
     echo " $0 -w xxxxx -k xxxxxx"
@@ -32,8 +32,8 @@ while getopts w:k:h option
 do
     case "${option}"
     in
-        w) WORKSPACE_ID=$OPTARG;;
-        k) WORKSPACE_KEY=$OPTARG;;
+        workspaceId) WORKSPACE_ID=$OPTARG;;
+        workspaceKey) WORKSPACE_KEY=$OPTARG;;
         h) usage;;
         \?) usage;;
         :  ) echo "Missing option argument for -$OPTARG" >&2; exit 1;;
@@ -53,7 +53,7 @@ fi
 sudo alternatives --set python /usr/bin/python3
 sudo setenforce 0
 sudo wget -O cef_installer.py https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/DataConnectors/CEF/cef_installer.py&&sudo python cef_installer.py $WORKSPACE_ID $WORKSPACE_KEY
-sleep 30
+sleep 15
 
 ######################
 # Configure Firewall #
@@ -63,7 +63,6 @@ sudo firewall-cmd --permanent --add-port=514/tcp
 sudo firewall-cmd --permanent --add-port=514/udp
 sudo firewall-cmd --reload
 sudo firewall-cmd --direct --get-rules ipv4 filter INPUT
-
 
 ######################################################
 # Host Name Setting and Keep Time Generated Original #
@@ -85,13 +84,7 @@ sudo systemctl restart rsyslog.service
 sudo semanage port -a -t syslogd_port_t -p tcp 25226
 systemctl status rsyslog.service
 
-
 ###########################
 # SEND SAMPLE CEF MESSAGE #
 ###########################
-#apt-get update -qq
-#apt-get install -qqy python3-pip
-#python3 -m pip install python-dateutil
-#python3 cef_simulator.py --debug
 sudo wget -O cef_simulator.py https://raw.githubusercontent.com/OTRF/Blacksmith/master/templates/azure/CEF-Log-Analytics-Agent/scripts/cef_simulator.py&&sudo python ef_simulator.py --debug
-#sudo wget -O cef_troubleshoot.py https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/DataConnectors/CEF/cef_troubleshoot.py&&sudo python cef_troubleshoot.py $WORKSPACE_ID
