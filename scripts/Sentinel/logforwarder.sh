@@ -18,11 +18,11 @@ usage(){
     echo " "
     echo "Usage: $0 [option...]" >&2
     echo
-    echo "   -workspaceId         Azure Sentinel Workspace ID"
-    echo "   -workspaceKey        Azure Sentinel Workspace Key"
+    echo "   -w         Azure Sentinel Workspace ID"
+    echo "   -k        Azure Sentinel Workspace Key"
     echo
     echo "Examples:"
-    echo " $0 -workspaceId xxxxx -workspaceKey xxxxxx"
+    echo " $0 -w xxxxx -k xxxxxx"
     echo " "
     exit 1
 }
@@ -32,8 +32,8 @@ while getopts w:k:h option
 do
     case "${option}"
     in
-        workspaceId) WORKSPACE_ID=$OPTARG;;
-        workspaceKey) WORKSPACE_KEY=$OPTARG;;
+        w) WORKSPACE_ID=$OPTARG;;
+        k) WORKSPACE_KEY=$OPTARG;;
         h) usage;;
         \?) usage;;
         :  ) echo "Missing option argument for -$OPTARG" >&2; exit 1;;
