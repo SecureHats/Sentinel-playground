@@ -1,0 +1,66 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceName": {
+            "value": ""
+        },
+        "vmSize": {
+            "value": "Standard_B2s"
+        },
+        "location": {
+            "value": ""
+        },
+        "bootDiagnostics": {
+            "value": false
+        },
+        "diagnosticsStorageAccountName": {
+            "value": ""
+        },
+        "osStorageAccountType": {
+            "value": "StandardSSD_LRS"
+        },
+        "osDiskSizeGB": {
+            "value": 128
+        },
+        "authenticationType": {
+            "value": "password"
+        },
+        "adminPasswordOrKey": {
+            "value": ""
+        },
+        "adminUserName": {
+            "value": ""
+        },
+        "aadLogin": {
+            "value": true
+        },
+        "remoteAccessMode": {
+            "value": true
+        },
+        "enableCEF": {
+            "value": true
+        },
+        "virtualNetworkResourceGroup": {
+            "value": ""
+        },
+        "virtualNetworkName": {
+            "value": ""
+        },
+        "subnetName": {
+            "value": ""
+        },
+        "workspaceResoureGroup": {
+            "value": ""
+        },
+        "workspaceName": {
+            "value": ""
+        },
+        "_artifactsLocation": {
+            "value": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/"
+        },
+        "_artifactsLocationSasToken": {
+            "value": ""
+        }
+    }
+}
