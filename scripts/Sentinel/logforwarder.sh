@@ -52,6 +52,7 @@ fi
 ############################
 sudo alternatives --set python /usr/bin/python3
 sudo setenforce 0
+wget -O onboard_agent.sh https://raw.githubusercontent.com/Microsoft/OMS-Agent-for-Linux/master/installer/scripts/onboard_agent.sh && sudo sh onboard_agent.sh --purge
 sudo wget -O cef_installer.py https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/DataConnectors/CEF/cef_installer.py&&sudo python cef_installer.py $WORKSPACE_ID $WORKSPACE_KEY
 sleep 15
 
@@ -87,4 +88,4 @@ systemctl status rsyslog.service
 ###########################
 # SEND SAMPLE CEF MESSAGE #
 ###########################
-sudo wget -O cef_simulator.py https://raw.githubusercontent.com/OTRF/Blacksmith/master/templates/azure/CEF-Log-Analytics-Agent/scripts/cef_simulator.py&&sudo python ef_simulator.py --debug
+sudo wget -O cef_simulator.py https://raw.githubusercontent.com/OTRF/Blacksmith/master/templates/azure/CEF-Log-Analytics-Agent/scripts/cef_simulator.py&&sudo python cef_simulator.py --debug
