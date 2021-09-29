@@ -1,7 +1,11 @@
 #!/bin/bash
 
-# Author: Rogier Dijkman (@DijkmanRogier)
+# Author: Roberto Rodriguez (@Cyb3rWard0g)
 # License: GPL-3.0
+
+# Last update: Rogier Dijkman (@DijkmanRogier)
+# Data       : 9/29/2021
+# Info source: https://blog.aelterman.com/about/ (@svenaelterman)
 
 # *********** log tagging variables ***********
 INFO_TAG="[INSTALLATION-INFO]"
