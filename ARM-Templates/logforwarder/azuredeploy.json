@@ -1,0 +1,534 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.4.63.48766",
+      "templateHash": "1015076074151752525"
+    }
+  },
+  "parameters": {
+    "resourceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Resource and host name for the Linux VM."
+      }
+    },
+    "vmSize": {
+      "type": "string",
+      "defaultValue": "Standard_B2s",
+      "allowedValues": [
+        "Standard_A2",
+        "Standard_A3",
+        "Standard_B2s",
+        "Standard_B2ms",
+        "Standard_B4ms",
+        "Standard_A2_v2",
+        "Standard_A4_v2"
+      ],
+      "metadata": {
+        "description": "Size of the virtual machine. Reference: https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-general"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources."
+      }
+    },
+    "bootDiagnostics": {
+      "type": "bool",
+      "metadata": {
+        "description": "Wether or not boot diagnostics must be enabled"
+      }
+    },
+    "diagnosticsStorageAccountName": {
+      "type": "string",
+      "maxLength": 24,
+      "metadata": {
+        "description": "Storage Account for boot diagnostics"
+      }
+    },
+    "osStorageAccountType": {
+      "type": "string",
+      "defaultValue": "StandardSSD_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "StandardSSD_LRS",
+        "Premium_LRS"
+      ],
+      "metadata": {
+        "description": "This parameter allows the user to select the Storage Acocunt Type for the OS Disks."
+      }
+    },
+    "osDiskSizeGB": {
+      "type": "int",
+      "defaultValue": 128,
+      "allowedValues": [
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "metadata": {
+        "description": "Size of the OS disk"
+      }
+    },
+    "authenticationType": {
+      "type": "string",
+      "defaultValue": "password",
+      "allowedValues": [
+        "sshPublicKey",
+        "password"
+      ],
+      "metadata": {
+        "description": "Type of authentication to use on the Virtual Machine. SSH key is recommended."
+      }
+    },
+    "adminPasswordOrKey": {
+      "type": "secureString",
+      "metadata": {
+        "description": "SSH Key or password for the Virtual Machine. SSH key is recommended. The password must be at least 8 characters in length and must contain at least one digit, one non-alphanumeric character, and one upper or lower case letter."
+      }
+    },
+    "adminUserName": {
+      "type": "string",
+      "metadata": {
+        "description": "Local admin username for Linux VM"
+      }
+    },
+    "aadLogin": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Enable Azure AD Authentication to login to the virtual machine"
+      }
+    },
+    "remoteAccessMode": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Allow remote access through an Azure Bastion Service"
+      }
+    },
+    "enableCEF": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Confiugre Linux VM as Log Forwarder"
+      }
+    },
+    "virtualNetworkResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the resourcegroup where the virtual network resides"
+      }
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the virtual network"
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the subnet to join the virtual machine"
+      }
+    },
+    "workspaceResoureGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the resourcegroup where the log analyics workspace resides"
+      }
+    },
+    "workspaceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Log Analytics workspace"
+      }
+    },
+    "_artifactsLocation": {
+      "type": "string",
+      "defaultValue": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/",
+      "metadata": {
+        "description": "The location of resources, such as templates and DSC modules, that the template depends on"
+      }
+    },
+    "_artifactsLocationSasToken": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Auto-generated token to access _artifactsLocation. Leave it blank unless you need to provide your own value."
+      }
+    }
+  },
+  "functions": [],
+  "variables": {
+    "setUpCEFScript": "[uri(format('{0}/scripts/Sentinel/logforwarder.sh', parameters('_artifactsLocation')), parameters('_artifactsLocationSasToken'))]",
+    "aadLoginExtensionName": "AADLoginForLinux",
+    "linuxConfiguration": {
+      "disablePasswordAuthentication": true,
+      "ssh": {
+        "publicKeys": [
+          {
+            "path": "[format('/home/{0}/.ssh/authorized_keys', parameters('adminUserName'))]",
+            "keyData": "[parameters('adminPasswordOrKey')]"
+          }
+        ]
+      }
+    },
+    "azureBastionSubnet": [
+      {
+        "name": "AzureBastionSubnet",
+        "properties": {
+          "addressPrefix": "10.247.250.0/27",
+          "networkSecurityGroup": {
+            "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'nsg-bastion-host')]"
+          }
+        }
+      }
+    ]
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2021-04-01",
+      "name": "[parameters('diagnosticsStorageAccountName')]",
+      "location": "[parameters('location')]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "minimumTlsVersion": "TLS1_2",
+        "supportsHttpsTrafficOnly": true
+      },
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "kind": "StorageV2"
+    },
+    {
+      "type": "Microsoft.Authorization/locks",
+      "apiVersion": "2016-09-01",
+      "scope": "[format('Microsoft.Storage/storageAccounts/{0}', parameters('diagnosticsStorageAccountName'))]",
+      "name": "[format('{0}-lock', parameters('diagnosticsStorageAccountName'))]",
+      "properties": {
+        "level": "CanNotDelete",
+        "notes": "resource should not be deleted manually"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('diagnosticsStorageAccountName'))]"
+      ]
+    },
+    {
+      "condition": "[parameters('remoteAccessMode')]",
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2021-02-01",
+      "name": "vnet-bastion",
+      "location": "[parameters('location')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.247.250.0/26"
+          ]
+        },
+        "subnets": "[variables('azureBastionSubnet')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', 'nsg-bastion-host')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2021-02-01",
+      "name": "[format('{0}-nic', parameters('resourceName'))]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('virtualNetworkResourceGroup')), 'Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('virtualNetworkName'), parameters('subnetName')), '/')[0], split(format('{0}/{1}', parameters('virtualNetworkName'), parameters('subnetName')), '/')[1])]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "condition": "[parameters('remoteAccessMode')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2021-02-01",
+      "name": "nsg-bastion-host",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "AllowHTTPsInbound",
+            "properties": {
+              "priority": 100,
+              "access": "Allow",
+              "direction": "Inbound",
+              "destinationPortRange": "443",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "Internet",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "AllowGatewayManagerInbound",
+            "properties": {
+              "priority": 110,
+              "access": "Allow",
+              "direction": "Inbound",
+              "destinationPortRange": "443",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "GatewayManager",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "AllowSshRdpOutbound",
+            "properties": {
+              "priority": 100,
+              "access": "Allow",
+              "direction": "Outbound",
+              "destinationPortRanges": [
+                "22",
+                "3389"
+              ],
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "VirtualNetwork"
+            }
+          },
+          {
+            "name": "AllowAzureCloudOutbound",
+            "properties": {
+              "priority": 110,
+              "access": "Allow",
+              "direction": "Outbound",
+              "destinationPortRange": "443",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "AzureCloud"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "condition": "[parameters('remoteAccessMode')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2018-11-01",
+      "name": "pip-LinuxBastionHost",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Static"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/locks",
+      "apiVersion": "2016-09-01",
+      "scope": "[format('Microsoft.Network/publicIPAddresses/{0}', 'pip-LinuxBastionHost')]",
+      "name": "[format('{0}-lock', 'pip-LinuxBastionHost')]",
+      "properties": {
+        "level": "CanNotDelete",
+        "notes": "resource should not be deleted manually"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', 'pip-LinuxBastionHost')]"
+      ]
+    },
+    {
+      "condition": "[parameters('remoteAccessMode')]",
+      "type": "Microsoft.Network/bastionHosts",
+      "apiVersion": "2020-05-01",
+      "name": "LinuxBastionHost",
+      "location": "[parameters('location')]",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "IpConf",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'pip-LinuxBastionHost')]"
+              },
+              "subnet": {
+                "id": "[format('{0}/subnets/azureBastionSubnet', resourceId('Microsoft.Network/virtualNetworks', 'vnet-bastion'))]"
+              }
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', 'vnet-bastion')]",
+        "[resourceId('Microsoft.Network/publicIPAddresses', 'pip-LinuxBastionHost')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Authorization/locks",
+      "apiVersion": "2016-09-01",
+      "scope": "[format('Microsoft.Network/bastionHosts/{0}', 'LinuxBastionHost')]",
+      "name": "[format('{0}-lock', 'LinuxBastionHost')]",
+      "properties": {
+        "level": "CanNotDelete",
+        "notes": "resource should not be deleted manually"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/bastionHosts', 'LinuxBastionHost')]"
+      ]
+    },
+    {
+      "condition": "[parameters('remoteAccessMode')]",
+      "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+      "apiVersion": "2021-02-01",
+      "name": "[format('{0}/bastion-link', 'vnet-bastion')]",
+      "properties": {
+        "allowVirtualNetworkAccess": true,
+        "allowForwardedTraffic": true,
+        "allowGatewayTransit": false,
+        "useRemoteGateways": false,
+        "remoteVirtualNetwork": {
+          "id": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('virtualNetworkResourceGroup')), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', 'vnet-bastion')]"
+      ]
+    },
+    {
+      "condition": "[parameters('remoteAccessMode')]",
+      "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+      "apiVersion": "2021-02-01",
+      "name": "[format('{0}/bastion-link', parameters('virtualNetworkName'))]",
+      "properties": {
+        "allowVirtualNetworkAccess": true,
+        "allowForwardedTraffic": true,
+        "allowGatewayTransit": false,
+        "useRemoteGateways": false,
+        "remoteVirtualNetwork": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworks', 'vnet-bastion')]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', 'vnet-bastion')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2020-06-01",
+      "name": "[parameters('resourceName')]",
+      "location": "[parameters('location')]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "RedHat",
+            "offer": "RHEL",
+            "sku": "82gen2",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[format('{0}-osDisk', parameters('resourceName'))]",
+            "osType": "Linux",
+            "diskSizeGB": "[parameters('osDiskSizeGB')]",
+            "createOption": "FromImage",
+            "caching": "ReadWrite",
+            "managedDisk": {
+              "storageAccountType": "[parameters('osStorageAccountType')]"
+            }
+          }
+        },
+        "osProfile": {
+          "computerName": "[parameters('resourceName')]",
+          "adminUsername": "[parameters('adminUserName')]",
+          "adminPassword": "[parameters('adminPasswordOrKey')]",
+          "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
+        },
+        "diagnosticsProfile": "[if(parameters('bootDiagnostics'), createObject('bootDiagnostics', createObject('enabled', parameters('bootDiagnostics'), 'storageUri', reference(resourceId('Microsoft.Storage/storageAccounts', parameters('diagnosticsStorageAccountName'))).primaryEndpoints.blob)), null())]",
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', format('{0}-nic', parameters('resourceName')))]"
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces', format('{0}-nic', parameters('resourceName')))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('diagnosticsStorageAccountName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Authorization/locks",
+      "apiVersion": "2016-09-01",
+      "scope": "[format('Microsoft.Compute/virtualMachines/{0}', parameters('resourceName'))]",
+      "name": "[format('{0}-lock', parameters('resourceName'))]",
+      "properties": {
+        "level": "CanNotDelete",
+        "notes": "resource should not be deleted manually"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines', parameters('resourceName'))]"
+      ]
+    },
+    {
+      "condition": "[parameters('aadLogin')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "apiVersion": "2020-06-01",
+      "name": "[format('{0}/{1}', parameters('resourceName'), variables('aadLoginExtensionName'))]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "publisher": "Microsoft.Azure.ActiveDirectory.LinuxSSH",
+        "type": "[variables('aadLoginExtensionName')]",
+        "typeHandlerVersion": "1.0",
+        "autoUpgradeMinorVersion": true
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines', parameters('resourceName'))]"
+      ]
+    },
+    {
+      "condition": "[parameters('enableCEF')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "apiVersion": "2020-06-01",
+      "name": "[format('{0}/cef', parameters('resourceName'))]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "autoUpgradeMinorVersion": true,
+        "publisher": "Microsoft.Azure.Extensions",
+        "type": "CustomScript",
+        "typeHandlerVersion": "2.1",
+        "protectedSettings": {
+          "commandToExecute": "[format('bash logforwarder.sh -w {0} -k {1}', reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('workspaceResoureGroup')), 'Microsoft.OperationalInsights/workspaces', parameters('workspaceName')), '2015-11-01-preview').customerId, listKeys(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('workspaceResoureGroup')), 'Microsoft.OperationalInsights/workspaces', parameters('workspaceName')), '2015-11-01-preview').primarySharedKey)]",
+          "fileUris": [
+            "[variables('setUpCEFScript')]"
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines', parameters('resourceName'))]"
+      ]
+    }
+  ]
+}
