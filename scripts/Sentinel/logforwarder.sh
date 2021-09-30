@@ -23,7 +23,7 @@ usage(){
     echo "Usage: $0 [option...]" >&2
     echo
     echo "   -w         Azure Sentinel Workspace ID"
-    echo "   -k        Azure Sentinel Workspace Key"
+    echo "   -k         Azure Sentinel Workspace Key"
     echo
     echo "Examples:"
     echo " $0 -w xxxxx -k xxxxxx"
