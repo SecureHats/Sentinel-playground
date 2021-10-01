@@ -57,15 +57,14 @@ fi
 echo "CONFIGURE CEF FORWARDING"
 sudo alternatives --set python /usr/bin/python3
 sudo setenforce 0
-sudo wget -O onboard_agent.sh https://raw.githubusercontent.com/Microsoft/OMS-Agent-for-Linux/master/installer/scripts/onboard_agent.sh && sudo sh onboard_agent.sh --purge
-sudo wget -O cef_installer.py https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/DataConnectors/CEF/cef_installer.py&&sudo python cef_installer.py $WORKSPACE_ID $WORKSPACE_KEY
+sudo wget -O cef_installer.py https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/DataConnectors/CEF/cef_installer.py && sudo python cef_installer.py $WORKSPACE_ID $WORKSPACE_KEY
 sleep 15
 
 ######################
 # Configure Firewall #
 ######################
 echo "CONFIGURE LOCAL FIREWALL"
-sudo firewall-cmd --direct --permanent --add-rule ipv4 filter INPUT 0 -p tcp --dport 25226  -j ACCEPT
+sudo firewall-cmd --direct --permanent --add-rule ipv4 filter INPUT 0 -p tcp --dport 25226 -j ACCEPT
 sudo firewall-cmd --permanent --add-port=514/tcp
 sudo firewall-cmd --permanent --add-port=514/udp
 sudo firewall-cmd --reload
@@ -98,4 +97,4 @@ systemctl status rsyslog.service
 ###########################
 # SEND SAMPLE CEF MESSAGE #
 ###########################
-sudo wget -O cef_simulator.py https://raw.githubusercontent.com/OTRF/Blacksmith/master/templates/azure/CEF-Log-Analytics-Agent/scripts/cef_simulator.py&&sudo python cef_simulator.py --debug
+sudo wget -O cef_simulator.py https://raw.githubusercontent.com/OTRF/Blacksmith/master/templates/azure/CEF-Log-Analytics-Agent/scripts/cef_simulator.py && sudo python cef_simulator.py --debug
