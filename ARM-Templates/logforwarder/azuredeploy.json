@@ -151,6 +151,13 @@
         "description": "Name of the Log Analytics workspace"
       }
     },
+    "disableLocks": {
+      "type": "boolean",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Set to true if you don't want to deploy any resource locks"
+      }
+    },
     "_artifactsLocation": {
       "type": "string",
       "defaultValue": "https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/",
@@ -341,6 +348,7 @@
       }
     },
     {
+      "condition": "[parameters('enableLocks')]",
       "type": "Microsoft.Authorization/locks",
       "apiVersion": "2016-09-01",
       "scope": "[format('Microsoft.Network/publicIPAddresses/{0}', 'pip-LinuxBastionHost')]",
@@ -381,6 +389,7 @@
       ]
     },
     {
+      "condition": "[parameters('enableLocks')]",
       "type": "Microsoft.Authorization/locks",
       "apiVersion": "2016-09-01",
       "scope": "[format('Microsoft.Network/bastionHosts/{0}', 'LinuxBastionHost')]",
@@ -480,6 +489,7 @@
       ]
     },
     {
+      "condition": "[parameters('enableLocks')]",
       "type": "Microsoft.Authorization/locks",
       "apiVersion": "2016-09-01",
       "scope": "[format('Microsoft.Compute/virtualMachines/{0}', parameters('resourceName'))]",
