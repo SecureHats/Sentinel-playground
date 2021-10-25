@@ -151,11 +151,11 @@
         "description": "Name of the Log Analytics workspace"
       }
     },
-    "disableLocks": {
+    "enableLocks": {
       "type": "boolean",
       "defaultValue": false,
       "metadata": {
-        "description": "Set to true if you don't want to deploy any resource locks"
+        "description": "Set to true if you want to deploy any resource locks"
       }
     },
     "_artifactsLocation": {
@@ -219,6 +219,7 @@
       "kind": "StorageV2"
     },
     {
+      "condition": "[parameters('enableLocks')]",
       "type": "Microsoft.Authorization/locks",
       "apiVersion": "2016-09-01",
       "scope": "[format('Microsoft.Storage/storageAccounts/{0}', parameters('diagnosticsStorageAccountName'))]",
