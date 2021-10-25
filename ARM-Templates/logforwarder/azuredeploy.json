@@ -152,7 +152,7 @@
       }
     },
     "enableLocks": {
-      "type": "boolean",
+      "type": "bool",
       "defaultValue": false,
       "metadata": {
         "description": "Set to true if you want to deploy any resource locks"
