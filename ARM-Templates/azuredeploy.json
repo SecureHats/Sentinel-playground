@@ -15,11 +15,25 @@
                 "description": "array of supported data providers"
             }
         },
+        "dataConnectors": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "array of supported data providers"
+            }
+        },
         "enabledSolutions": {
             "type": "array",
             "defaultValue": [],
             "metadata": {
                 "description": "Araay of supported solutions"
+            }
+        },
+        "solutionConnectors": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Array of supported solutions"
             }
         },
         "CloudRepo": {
@@ -279,7 +293,7 @@
             "properties": {
                 "forceUpdateTag": "[parameters('guid')]",
                 "azPowerShellVersion": "5.4",
-                "arguments": "[format(' -Workspace {0} -ResourceGroup {1} -Connectors \\\"{2}\\\"', parameters('workspaceName'), resourceGroup().name, union(parameters('dataProviders'), parameters('enabledSolutions')))]",
+                "arguments": "[format(' -Workspace {0} -ResourceGroup {1} -Connectors \\\"{2}\\\"', parameters('workspaceName'), resourceGroup().name, union(parameters('dataConnectors'), parameters('solutionConnectors')))]",
                 "primaryScriptUri": "[concat('https://raw.githubusercontent.com/SecureHats/Sentinel-playground/', parameters('Branch'), '/PowerShell/Enable-AlertRules/Enable-AlertRules.ps1')]",
                 "supportingScriptUris": [],
                 "timeout": "PT30M",
