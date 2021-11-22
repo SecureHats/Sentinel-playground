@@ -216,7 +216,7 @@
         },
         {
             "condition": "[not(empty(parameters('enabledSolutions')))]",
-            "name": "Solutions",
+            "name": "solutions",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "dependsOn": [
@@ -236,6 +236,57 @@
                     "enabledSolutions": {
                         "value": "[parameters('enabledSolutions')]"
                     }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deploymentScripts",
+            "apiVersion": "2020-10-01",
+            "name": "waiting-for-customdata",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.ManagedIdentity/userAssignedIdentities/', variables('identityName'))]",
+                "[concat('Microsoft.Resources/deployments/', 'solutions')]"
+            ],
+            "kind": "AzurePowerShell",
+            "properties": {
+                "forceUpdateTag": "1",
+                "azPowerShellVersion": "3.0",
+                "arguments": "",
+                "scriptContent": "Start-Sleep -Seconds 900",
+                "supportingScriptUris": [],
+                "timeout": "PT30M",
+                "cleanupPreference": "Always",
+                "retentionInterval": "P1D"
+            },
+            "condition": "[if(parameters('newManagedIdentity'), bool('true'), bool('false'))]"
+        },
+        {
+            "type": "Microsoft.Resources/deploymentScripts",
+            "apiVersion": "2020-10-01",
+            "name": "functions",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/deploymentScripts/', 'waiting-for-customdata')]"
+            ],
+            "kind": "AzurePowerShell",
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities/', variables('identityName'))]": {}
+                }
+            },
+            "properties": {
+                "forceUpdateTag": "[parameters('guid')]",
+                "azPowerShellVersion": "5.4",
+                "arguments": "[format(' -Workspace {0} -ResourceGroup {1} -Connectors \\\"{2}\\\"', parameters('workspaceName'), resourceGroup().name, union(parameters('dataProviders'), parameters('enabledSolutions')))]",
+                "primaryScriptUri": "[concat('https://raw.githubusercontent.com/SecureHats/Sentinel-playground/', parameters('Branch'), '/PowerShell/Enable-AlertRules/Enable-AlertRules.ps1')]",
+                "supportingScriptUris": [],
+                "timeout": "PT30M",
+                "cleanupPreference": "Always",
+                "retentionInterval": "P1D",
+                "containerSettings": {
+                    "containerGroupName": "alertscontainer"
                 }
             }
         }
