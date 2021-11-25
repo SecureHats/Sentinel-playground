@@ -272,8 +272,7 @@
                 "timeout": "PT30M",
                 "cleanupPreference": "Always",
                 "retentionInterval": "P1D"
-            },
-            "condition": "[if(parameters('newManagedIdentity'), bool('true'), bool('false'))]"
+            }
         },
         {
             "type": "Microsoft.Resources/deploymentScripts",
@@ -302,8 +301,7 @@
                 "containerSettings": {
                     "containerGroupName": "alertscontainer"
                 }
-            },
-            "condition": "[if(parameters('newManagedIdentity'), 'true', 'false')]"
+            }
         }
     ]
 }
