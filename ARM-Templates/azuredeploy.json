@@ -278,7 +278,7 @@
         {
             "type": "Microsoft.Resources/deploymentScripts",
             "apiVersion": "2020-10-01",
-            "name": "functions",
+            "name": "AlertRules",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Resources/deploymentScripts/', 'waiting-for-customdata')]"
@@ -302,7 +302,8 @@
                 "containerSettings": {
                     "containerGroupName": "alertscontainer"
                 }
-            }
+            },
+            "condition": "[if(parameters('newManagedIdentity'), 'true', 'false')]"
         }
     ]
 }

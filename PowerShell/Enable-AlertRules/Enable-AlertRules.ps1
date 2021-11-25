@@ -1,7 +1,6 @@
 param(
     [Parameter(Mandatory=$true)][string]$ResourceGroup,
-    [Parameter(Mandatory=$true)][string]$Workspace,
-    [Parameter(Mandatory=$true)][string[]]$Connectors
+    [Parameter(Mandatory=$true)][string]$Workspace
 )
 
 $context = Get-AzContext
@@ -30,30 +29,39 @@ catch {
 
 $return = @()
 
+$connectors = $alertRulesTemplates.properties.requiredDataConnectors.connectorId | Get-Unique | Sort-Object
+
 if ($Connectors){
     foreach ($item in $alertRulesTemplates) {
         if ($item.kind -eq "Scheduled"){
             foreach ($connector in $item.properties.requiredDataConnectors) {
                 if ($connector.connectorId -in $Connectors){
-                    #$return += $item.properties
                     $guid = New-Guid
-                    $alertUriGuid = $alertUri + $guid + '?api-version=2020-01-01'
+                    $alertUriGuid = $alertUri + $guid + '?api-version=2021-10-01-preview'
 
                     $properties = @{
-                        displayName = $item.properties.displayName
-                        enabled = $true
-                        suppressionDuration = "PT5H"
-                        suppressionEnabled = $false
-                        alertRuleTemplateName = $item.name
-                        description = $item.properties.description
-                        query = $item.properties.query
-                        queryFrequency = $item.properties.queryFrequency
-                        queryPeriod = $item.properties.queryPeriod
-                        severity = $item.properties.severity
-                        tactics = $item.properties.tactics
-                        triggerOperator = $item.properties.triggerOperator
-                        triggerThreshold = $item.properties.triggerThreshold
-                    }
+                    queryFrequency        = $item.properties.queryFrequency
+                    queryPeriod           = $item.properties.queryPeriod
+                    triggerOperator       = $item.properties.triggerOperator
+                    triggerThreshold      = $item.properties.triggerThreshold
+                    severity              = $item.properties.severity
+                    query                 = $item.properties.query
+                    entityMappings        = $item.properties.entityMappings
+                    version               = $item.properties.version
+                    displayName           = $item.properties.displayName
+                    description           = $item.properties.description
+                    enabled               = $true
+                    suppressionDuration   = "PT5H"
+                    suppressionEnabled    = $false
+                    alertRuleTemplateName = $item.name
+                }
+
+                if($item.properties.techniques){
+                    $properties.techniques = $item.properties.techniques
+                }
+                if($item.properties.tactics){
+                    $properties.tactics = $item.properties.tactics
+                }
 
                     $alertBody = @{}
                     $alertBody | Add-Member -NotePropertyName kind -NotePropertyValue $item.kind -Force
