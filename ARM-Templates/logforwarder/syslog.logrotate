@@ -1,0 +1,14 @@
+/var/log/messages
+/var/log/syslog {
+    daily
+    rotate 5
+    missingok
+    notifempty
+    sharedscripts
+    size 250M
+    compress
+    delaycompress
+    postrotate
+        /bin/systemctl kill -s HUP rsyslog.service >/dev/null 2>&1 || true
+    endscript
+}
