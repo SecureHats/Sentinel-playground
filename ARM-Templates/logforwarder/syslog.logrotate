@@ -1,13 +1,38 @@
 /var/log/messages
 /var/log/syslog {
+    # Rotate the syslog files on a daily base.
     daily
-    rotate 5
+    
+    # If the log file is missing, go on to the next one without issuing an error message
     missingok
+
+    # Do not rotate the log file if it is empty
     notifempty
     sharedscripts
+    
+    # Only rotate log files if they are > 250 MB, and keep last 5 archived files.
     size 250M
+    rotate 5
+
+    # Old versions of the log files are compressed with gzip by default.
     compress
+    
+    # Leave the most recent log file uncompressed until the next rotation schedule. 
     delaycompress
+    
+    # Use date as extension when rotating logs
+    dateext
+
+    # Formattiing the date extension to YYYY-MM-DD format. logrotate does not provide hours, mins and seconds option. 
+    # Add the -%s (system clock epoch time) to differentiate rotated log files within the same day.
+    dateformat -%Y-%m-%d
+
+    # This ensures the that log files are not readable after their scheduled deletion.
+    shred
+
+    # 
+
+    # The lines between postrotate/endscript are executed (using /bin/sh) afther the log file is rotated.
     postrotate
         /bin/systemctl kill -s HUP rsyslog.service >/dev/null 2>&1 || true
     endscript
