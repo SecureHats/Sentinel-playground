@@ -1,0 +1,112 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspaceName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name for the Log Analytics workspace"
+            }
+        },
+        "newManagedIdentity": {
+            "defaultValue": false,
+            "type": "bool"
+        },
+        "managedIdentityName": {
+            "defaultValue": "[parameters('workspaceName')]",
+            "type": "string"
+        },
+        "guid": {
+            "type": "string",
+            "defaultValue": "[newGuid()]"
+        },
+        "roleGuid": {
+            "defaultValue": "[newGuid()]",
+            "type": "string"
+        }
+    },
+    "variables": {
+        "Contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+        "identityName": "[if(parameters('newManagedIdentity'), concat(parameters('managedIdentityName'), '-', resourceGroup().location), parameters('managedIdentityName'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "apiVersion": "2015-11-01-preview",
+            "name": "[parameters('workspaceName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "retentionInDays": 30,
+                "sku": {
+                    "name": "PerGB2018"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+            "apiVersion": "2018-11-30",
+            "name": "[variables('identityName')]",
+            "location": "[resourceGroup().location]"
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2020-04-01-preview",
+            "name": "[parameters('roleGuid')]",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/deploymentScripts/', 'sleep')]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[variables('Contributor')]",
+                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), '2018-11-30', 'Full').properties.principalId]"
+            },
+            "condition": "[if(parameters('newManagedIdentity'), bool('true'), bool('false'))]"
+        },
+        {
+            "type": "Microsoft.Resources/deploymentScripts",
+            "apiVersion": "2020-10-01",
+            "name": "sleep",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.ManagedIdentity/userAssignedIdentities/', variables('identityName'))]"
+            ],
+            "kind": "AzurePowerShell",
+            "properties": {
+                "forceUpdateTag": "1",
+                "azPowerShellVersion": "3.0",
+                "arguments": "",
+                "scriptContent": "Start-Sleep -Seconds 90",
+                "supportingScriptUris": [],
+                "timeout": "PT30M",
+                "cleanupPreference": "Always",
+                "retentionInterval": "P1D"
+            },
+            "condition": "[if(parameters('newManagedIdentity'), bool('true'), bool('false'))]"
+        },
+        {
+            "type": "Microsoft.Resources/deploymentScripts",
+            "apiVersion": "2020-10-01",
+            "name": "UpdateDetectionTemplates",
+            "location": "[resourceGroup().location]",
+            "kind": "AzurePowerShell",
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities/', variables('identityName'))]": {}
+                }
+            },
+            "properties": {
+                "forceUpdateTag": "[parameters('guid')]",
+                "azPowerShellVersion": "5.4",
+                "arguments": "[format(' -Workspace {0} -ResourceGroup {1}', parameters('workspaceName'), resourceGroup().name )]",
+                "primaryScriptUri": "[concat('https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/', 'PowerShell/Update-DetectionRules/Update-DetectionRules.ps1')]",
+                "supportingScriptUris": [],
+                "timeout": "PT30M",
+                "cleanupPreference": "Always",
+                "retentionInterval": "P1D",
+                "containerSettings": {
+                    "containerGroupName": "alertscontainer"
+                }
+            }
+        }
+    ]
+}
