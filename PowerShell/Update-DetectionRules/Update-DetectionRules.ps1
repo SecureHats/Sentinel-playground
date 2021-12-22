@@ -25,7 +25,7 @@ function Update-DetectionRules {
     $context = Get-AzContext
 
     if (!$context) {
-        Connect-AzAccount
+        Connect-AzAccount -UseDeviceAuthentication
         $context = Get-AzContext
     }
 
@@ -33,20 +33,21 @@ function Update-DetectionRules {
 
     Write-Host "Connected to Azure with subscription: " + $context.Subscription
 
-    $apiVersion     = "api-version=2021-10-01-preview"
+    $apiVersion     = "?api-version=2021-10-01-preview"
     $baseUri        = "/subscriptions/${SubscriptionId}/resourceGroups/${ResourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/${WorkspaceName}"
-    $templatesUri   = "$baseUri/providers/Microsoft.SecurityInsights/alertRuleTemplates?apiVersion"
-    $alertUri       = "$baseUri/providers/Microsoft.SecurityInsights/alertRules/?$apiVersion"
+    $templatesUri   = "$baseUri/providers/Microsoft.SecurityInsights/alertRuleTemplates$apiVersion"
+    $alertUri       = "$baseUri/providers/Microsoft.SecurityInsights/alertRules"
 
     $alertRulesTemplates = ((Invoke-AzRestMethod -Path "$($templatesUri)" -Method GET).Content | ConvertFrom-Json).value
-    $alerts = ((Invoke-AzRestMethod -Path "$($alertUri)" -Method GET).Content | ConvertFrom-Json).value
+    $alerts = ((Invoke-AzRestMethod -Path "$($alertUri)$($apiVersion)" -Method GET).Content | ConvertFrom-Json).value
 
     $i = 0
     foreach ($item in $alertRulesTemplates) {
         if ($item.kind -eq "Scheduled") {
             foreach ($alert in $alerts) {
                 if ($alert.properties.alertRuleTemplateName -in $item.name -or $alert.properties.displayName -eq $item.properties.displayName) {
-                    $alertUriGuid = $alertUri + $alert.name + '?api-version=2021-10-01-preview'
+                    Write-Host "$($item.properties.displayName)"
+                    $alertUriGuid = $alertUri +'/'+ $($alert.name) + $apiVersion
                     $i++
                     Write-Host "Processing $($i) of $($alerts.count): $($item.properties.displayname)" -ForegroundColor Yellow
 
@@ -84,7 +85,7 @@ function Update-DetectionRules {
                             # if the existing built-in rule was not created from a template (old versions)
                             if ((($result.Content | ConvertFrom-Json).error.message) -match 'already exists and was not created by a template') {
                                 Invoke-AzRestMethod -Path $alertUriGuid -Method DELETE
-                                pause 10
+                                pause
                                 Invoke-AzRestMethod -Path $alertUriGuid -Method PUT -Payload ($alertBody | ConvertTo-Json -Depth 10)
                             }
                         }
