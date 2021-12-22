@@ -2,14 +2,20 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "workspaceName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name for the Log Analytics workspace"
-            }
+        "workspaceId": {
+            "type": "string"
+        },
+        "workspaceKey": {
+            "type": "string"
+        },
+        "organization": {
+            "type": "string"
+        },
+        "pattoken": {
+            "type": "string"
         },
         "newManagedIdentity": {
-            "defaultValue": false,
+            "defaultValue": true,
             "type": "bool"
         },
         "managedIdentityName": {
@@ -31,18 +37,6 @@
     },
     "resources": [
         {
-            "type": "Microsoft.OperationalInsights/workspaces",
-            "apiVersion": "2015-11-01-preview",
-            "name": "[parameters('workspaceName')]",
-            "location": "[resourceGroup().location]",
-            "properties": {
-                "retentionInDays": 30,
-                "sku": {
-                    "name": "PerGB2018"
-                }
-            }
-        },
-        {
             "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
             "apiVersion": "2018-11-30",
             "name": "[variables('identityName')]",
@@ -58,8 +52,7 @@
             "properties": {
                 "roleDefinitionId": "[variables('Contributor')]",
                 "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), '2018-11-30', 'Full').properties.principalId]"
-            },
-            "condition": "[if(parameters('newManagedIdentity'), bool('true'), bool('false'))]"
+            }
         },
         {
             "type": "Microsoft.Resources/deploymentScripts",
@@ -79,13 +72,12 @@
                 "timeout": "PT30M",
                 "cleanupPreference": "Always",
                 "retentionInterval": "P1D"
-            },
-            "condition": "[if(parameters('newManagedIdentity'), bool('true'), bool('false'))]"
+            }
         },
         {
             "type": "Microsoft.Resources/deploymentScripts",
             "apiVersion": "2020-10-01",
-            "name": "UpdateDetectionTemplates",
+            "name": "AzureDevOpsAuditing",
             "location": "[resourceGroup().location]",
             "kind": "AzurePowerShell",
             "identity": {
@@ -97,14 +89,14 @@
             "properties": {
                 "forceUpdateTag": "[parameters('guid')]",
                 "azPowerShellVersion": "5.4",
-                "arguments": "[format(' -Workspace {0} -ResourceGroup {1}', parameters('workspaceName'), resourceGroup().name )]",
-                "primaryScriptUri": "[concat('https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/', 'PowerShell/Update-DetectionRules/Update-DetectionRules.ps1')]",
+                "arguments": "[format(' -WorkspaceId {0} -WorkspaceKey {1} -Organization {2} -PersonalAccessToken {3}', parameters('workspaceId'), parameters('workspaceKey'), parameters('organization'), parameters('pattoken'))]",
+                "primaryScriptUri": "[concat('https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/', 'DataConnectors/Set-AzureDevOpsAuditing.ps1')]",
                 "supportingScriptUris": [],
                 "timeout": "PT30M",
                 "cleanupPreference": "Always",
                 "retentionInterval": "P1D",
                 "containerSettings": {
-                    "containerGroupName": "alertscontainer"
+                    "containerGroupName": "pwshcontainer"
                 }
             }
         }
