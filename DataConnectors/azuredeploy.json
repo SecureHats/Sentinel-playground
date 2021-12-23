@@ -13,7 +13,7 @@
         "workspaceName": {
             "type": "string",
             "defaultValue": ""
-        }
+        },
         "organization": {
             "type": "string"
         },
@@ -21,8 +21,8 @@
             "type": "string"
         },
         "roleGuid": {
-            "defaultValue": "[newGuid()]",
-            "type": "string"
+            "type": "string",
+            "defaultValue": "[newGuid()]"
         }
     },
     "variables": {
