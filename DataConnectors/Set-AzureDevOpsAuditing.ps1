@@ -18,11 +18,11 @@ param (
     
     [Parameter(Mandatory = $false,
     Position = 4)]
-    [string]$workspaceName,
+    [string]$WorkspaceName,
 
     [Parameter(Mandatory = $false,
     Position = 4)]
-    [string]$deploymentGuid
+    [string]$DeploymentGuid,
 
 )
 
@@ -48,36 +48,32 @@ if ($null -eq $AzModule) {
     }
 }
 
-if ($workspaceName) {
+if ($WorkspaceName) {
     Write-Output "Retrieving Log Analytics workspace [$($WorkspaceName)]"
 
     try {
-    Write-Output "Looking for requested workspace [$($WorkspaceName)]"
     $workspace = Get-AzResource `
         -Name "$WorkspaceName" `
         -ResourceType 'Microsoft.OperationalInsights/workspaces'
 
-    Write-Output "Workspace properties: $($workspace.name)"
+    Write-Output "Workspace properties: $($workspace)"
     
-        $_resourceGroupName  = $workspace.ResourceGroupName
-        $_workspaceName      = $workspace.Name
-        
-        Write-Output "retrieving Workspace Id"
-        $workspaceId = (Get-AzOperationalInsightsWorkspace -ResourceGroupName $_resourceGroupName -Name $_workspaceName).CustomerId.Guid
-        
-        Write-Output "workspaceId found $($workspaceId)"
-    
-       # Ignoring the message for now.
-        Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
-        $workspaceKey = (Get-AzOperationalInsightsWorkspaceSharedKeys -ResourceGroupName $_resourceGroupName -Name $_workspaceName).PrimarySharedKey
+    $_resourceGroupName  = $workspace.ResourceGroupName
+    $_workspaceName      = $workspace.Name
+    $workspaceId        = (Get-AzOperationalInsightsWorkspace -ResourceGroupName $_resourceGroupName -Name $_workspaceName).CustomerId.Guid
     }
     catch {
         Write-Warning -Message "Log Analytics workspace [$($WorkspaceName)] not found in the current context"
         break
     }
+
+    $workspaceKey = (Get-AzOperationalInsightsWorkspaceSharedKeys `
+                    -ResourceGroupName $_resourceGroupName `
+                    -Name $_workspaceName).PrimarySharedKey `
+                    | ConvertTo-SecureString -AsPlainText -Force
 }
 
-# Creating POST request for Azure DevOps
+
 $uri = 'https://auditservice.dev.azure.com/{0}/_apis/audit/streams?daysToBackfill=0&api-version=6.0-preview.1' -f $organization
 
 $headers = @{
@@ -104,4 +100,9 @@ $defaultHttpSettings = @{
 Invoke-RestMethod @defaultHttpSettings -Body $payload
 
 Clear-Host
-Write-Warning "Please disable or remove the used PAT token!"
+if ($DeploymentGuid) {
+    Write-Output "Cleanup resources"
+    Get-AzResource -Name sleep -ResourceGroupName $_resourceGroupName | Remove-AzResource -Force
+}
+
+Write-Output "Please disable or remove the used PAT token!"
