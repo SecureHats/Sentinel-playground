@@ -24,7 +24,7 @@ param (
 )
 
 Write-Output "Validating if required module is installed"
-$AzModule = Get-InstalledModule -Name Az -ErrorAction SilentlyContinue
+$AzModule = Get-InstalledModule -Name Az.Accounts -ErrorAction SilentlyContinue
 
 if ($null -eq $AzModule) {
     Write-Warning "The Az PowerShell module is not found"
