@@ -21,9 +21,8 @@ param (
     [string]$workspaceName,
 
     [Parameter(Mandatory = $false,
-    Position = 4)]
+    Position = 5)]
     [string]$VaultName
-
 )
 
 Write-Output "Validating if required module is installed"
