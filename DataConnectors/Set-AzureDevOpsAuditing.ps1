@@ -22,7 +22,7 @@ param (
 
     [Parameter(Mandatory = $false,
     Position = 4)]
-    [string]$DeploymentGuid,
+    [string]$DeploymentGuid
 
 )
 
