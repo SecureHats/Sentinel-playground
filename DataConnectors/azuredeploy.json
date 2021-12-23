@@ -32,7 +32,7 @@
     },
     "variables": {
         "Contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
-        "identityName": "[concat('devops-', resourcegroup().id)]"
+        "identityName": "[parameters('Guid')]"
     },
     "resources": [
         {
