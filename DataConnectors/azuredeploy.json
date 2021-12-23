@@ -6,13 +6,13 @@
             "type": "string"
         },
         "workspaceKey": {
-            "type": "string"
+            "type": "securestring"
         },
         "organization": {
             "type": "string"
         },
         "pattoken": {
-            "type": "string"
+            "type": "securestring"
         },
         "newManagedIdentity": {
             "defaultValue": true,
