@@ -3,16 +3,22 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "workspaceId": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": ""
         },
         "workspaceKey": {
-            "type": "securestring"
+            "type": "string",
+            "defaultValue": ""
         },
+        "workspaceName": {
+            "type": "string",
+            "defaultValue": ""
+        }
         "organization": {
             "type": "string"
         },
         "pattoken": {
-            "type": "securestring"
+            "type": "string"
         },
         "roleGuid": {
             "defaultValue": "[newGuid()]",
@@ -80,7 +86,7 @@
             "properties": {
                 "forceUpdateTag": "[parameters('guid')]",
                 "azPowerShellVersion": "5.4",
-                "arguments": "[format(' -WorkspaceId {0} -WorkspaceKey {1} -Organization {2} -PersonalAccessToken {3}', parameters('workspaceId'), parameters('workspaceKey'), parameters('organization'), parameters('pattoken'))]",
+                "arguments": "[format(' -WorkspaceId {0} -WorkspaceKey {1} -Organization {2} -PersonalAccessToken {3} -WorkspaceName {4}', parameters('workspaceId'), parameters('workspaceKey'), parameters('organization'), parameters('pattoken'), parameter('workspaceName'))]",
                 "primaryScriptUri": "[concat('https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/', 'DataConnectors/Set-AzureDevOpsAuditing.ps1')]",
                 "supportingScriptUris": [],
                 "timeout": "PT30M",
