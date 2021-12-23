@@ -3,14 +3,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "workspaceId": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "workspaceKey": {
-            "type": "string",
-            "defaultValue": ""
-        },
         "workspaceName": {
             "type": "string",
             "defaultValue": ""
@@ -91,7 +83,7 @@
             "properties": {
                 "forceUpdateTag": "[parameters('guid')]",
                 "azPowerShellVersion": "5.4",
-                "arguments": "[format(' -WorkspaceId {0} -WorkspaceKey {1} -Organization {2} -PersonalAccessToken {3} -WorkspaceName {4}', parameters('workspaceId'), parameters('workspaceKey'), parameters('organization'), parameters('pattoken'), parameters('workspaceName'))]",
+                "arguments": "[format(' -WorkspaceName {0} -Organization {1} -PersonalAccessToken {2}', parameters('workspaceName'), parameters('organization'), parameters('pattoken'))]",
                 "primaryScriptUri": "[concat('https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/', 'DataConnectors/Set-AzureDevOpsAuditing.ps1')]",
                 "supportingScriptUris": [],
                 "timeout": "PT30M",
