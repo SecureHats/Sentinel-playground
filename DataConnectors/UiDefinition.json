@@ -62,13 +62,16 @@
                     },
                     {
                         "name": "pattoken",
-                        "type": "Microsoft.Common.TextBox",
+                        "type": "Microsoft.Common.PasswordBox",
                         "label": "Personal Access Token",
                         "placeholder": "",
                         "defaultValue": "",
                         "toolTip": "A pattoken value with permissions to configure Azure DevOps auditing.",
                         "constraints": {
                             "required": true
+                        },
+                        "options": {
+                            "hideConfirmation": true
                         }
                     }
                 ]
