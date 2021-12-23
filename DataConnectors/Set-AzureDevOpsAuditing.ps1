@@ -57,11 +57,16 @@ if ($workspaceName) {
         -Name "$WorkspaceName" `
         -ResourceType 'Microsoft.OperationalInsights/workspaces'
 
-    Write-Output "Workspace properties: $($workspace)"
+    Write-Output "Workspace properties: $($workspace.name)"
     
-    $_resourceGroupName  = $workspace.ResourceGroupName
-    $_workspaceName      = $workspace.Name
-    $workspaceId        = (Get-AzOperationalInsightsWorkspace -ResourceGroupName $_resourceGroupName -Name $_workspaceName).CustomerId.Guid
+        $_resourceGroupName  = $workspace.ResourceGroupName
+        $_workspaceName      = $workspace.Name
+        
+        Write-Output "retrieving Workspace Id"
+        $workspaceId = (Get-AzOperationalInsightsWorkspace -ResourceGroupName $_resourceGroupName -Name $_workspaceName).CustomerId.Guid
+        
+        Write-Output "workspaceId found $($workspaceId)"
+    
     }
     catch {
         Write-Warning -Message "Log Analytics workspace [$($WorkspaceName)] not found in the current context"
