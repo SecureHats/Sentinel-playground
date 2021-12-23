@@ -11,7 +11,7 @@
             "type": "string"
         },
         "pattoken": {
-            "type": "string"
+            "type": "securestring"
         },
         "guid": {
             "type": "string",
