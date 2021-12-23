@@ -21,7 +21,7 @@
     "variables": {
         "Contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
         "identityName": "AzureDevOpsAuditing",
-        "KeyVaultName": "[tolower(concat('githubkv', uniqueString(resourceGroup().id, subscription().id)))]",
+        "KeyVaultName": "[tolower(concat('devopskv', uniqueString(resourceGroup().id, subscription().id)))]",
         "SecretName": "PersonalAccessToken"
     },
     "resources": [
