@@ -12,7 +12,7 @@ param (
         Position = 2)]
     [string]$Organization,
 
-    [Parameter(Mandatory = $true,
+    [Parameter(Mandatory = $false,
         Position = 3)]
     [string]$PersonalAccessToken,
     
@@ -22,7 +22,7 @@ param (
 
     [Parameter(Mandatory = $false,
     Position = 4)]
-    [string]$deploymentGuid
+    [string]$VaultName
 
 )
 
@@ -70,6 +70,8 @@ if ($workspaceName) {
        # Ignoring the message for now.
         Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
         $workspaceKey = (Get-AzOperationalInsightsWorkspaceSharedKeys -ResourceGroupName $_resourceGroupName -Name $_workspaceName).PrimarySharedKey
+    
+        $PersonalAccessToken = Get-AzKeyVaultSecret -VaultName $VaultName -Name PersonalAccessToken -AsPlainText
     }
     catch {
         Write-Warning -Message "Log Analytics workspace [$($WorkspaceName)] not found in the current context"
@@ -102,6 +104,3 @@ $defaultHttpSettings = @{
 }
 
 Invoke-RestMethod @defaultHttpSettings -Body $payload
-
-Clear-Host
-Write-Warning "Please disable or remove the used PAT token!"
