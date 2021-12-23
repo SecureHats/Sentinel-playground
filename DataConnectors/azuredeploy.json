@@ -67,7 +67,7 @@
                 "forceUpdateTag": "1",
                 "azPowerShellVersion": "3.0",
                 "arguments": "",
-                "scriptContent": "Start-Sleep -Seconds 90",
+                "scriptContent": "Start-Sleep -Seconds 15",
                 "supportingScriptUris": [],
                 "timeout": "PT30M",
                 "cleanupPreference": "Always",
@@ -80,6 +80,9 @@
             "name": "AzureDevOpsAuditing",
             "location": "[resourceGroup().location]",
             "kind": "AzurePowerShell",
+            "dependsOn": [
+                "sleep"
+            ],
             "identity": {
                 "type": "UserAssigned",
                 "userAssignedIdentities": {
