@@ -14,18 +14,6 @@
         "pattoken": {
             "type": "securestring"
         },
-        "newManagedIdentity": {
-            "defaultValue": true,
-            "type": "bool"
-        },
-        "managedIdentityName": {
-            "defaultValue": "[parameters('workspaceName')]",
-            "type": "string"
-        },
-        "guid": {
-            "type": "string",
-            "defaultValue": "[newGuid()]"
-        },
         "roleGuid": {
             "defaultValue": "[newGuid()]",
             "type": "string"
@@ -33,7 +21,7 @@
     },
     "variables": {
         "Contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
-        "identityName": "[if(parameters('newManagedIdentity'), concat(parameters('managedIdentityName'), '-', resourceGroup().location), parameters('managedIdentityName'))]"
+        "identityName": "[parameters('workspaceId')]"
     },
     "resources": [
         {
