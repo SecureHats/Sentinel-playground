@@ -105,7 +105,7 @@
             "properties": {
                 "forceUpdateTag": "[parameters('guid')]",
                 "azPowerShellVersion": "5.4",
-                "arguments": "[format(' -WorkspaceName {0} -Organization {1} -PersonalAccessToken {2} -DeploymentGuid {3}', parameters('workspaceName'), parameters('organization'), parameters('pattoken'), parameters('guid'))]",
+                "arguments": "[format(' -WorkspaceName {0} -Organization {1} -PersonalAccessToken {2} -VaultName {3}', parameters('workspaceName'), parameters('organization'), parameters('pattoken'), variables('KeyVaultName'))]",
                 "primaryScriptUri": "[concat('https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/', 'DataConnectors/Set-AzureDevOpsAuditing.ps1')]",
                 "supportingScriptUris": [],
                 "timeout": "PT30M",
