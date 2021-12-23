@@ -16,12 +16,10 @@ param (
         Position = 3)]
     [string]$PersonalAccessToken,
     
-    [Parameter(Mandatory = $false,
-    Position = 4)]
+    [Parameter(Mandatory = $false)]
     [string]$workspaceName,
 
-    [Parameter(Mandatory = $false,
-    Position = 5)]
+    [Parameter(Mandatory = $false)]
     [string]$VaultName
 )
 
