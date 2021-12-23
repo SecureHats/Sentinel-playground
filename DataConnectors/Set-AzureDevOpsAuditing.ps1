@@ -67,20 +67,17 @@ if ($workspaceName) {
         
         Write-Output "workspaceId found $($workspaceId)"
     
+       # Ignoring the message for now.
+        Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
+        $workspaceKey = (Get-AzOperationalInsightsWorkspaceSharedKeys -ResourceGroupName $_resourceGroupName -Name $_workspaceName).PrimarySharedKey
     }
     catch {
         Write-Warning -Message "Log Analytics workspace [$($WorkspaceName)] not found in the current context"
         break
     }
-
-    # Ignoring the message for now.
-    Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
-    $workspaceKey = (Get-AzOperationalInsightsWorkspaceSharedKeys `
-                    -ResourceGroupName $_resourceGroupName `
-                    -Name $_workspaceName).PrimarySharedKey `
-                    | ConvertTo-SecureString -AsPlainText -Force
 }
 
+# Creating POST request for Azure DevOps
 $uri = 'https://auditservice.dev.azure.com/{0}/_apis/audit/streams?daysToBackfill=0&api-version=6.0-preview.1' -f $organization
 
 $headers = @{
