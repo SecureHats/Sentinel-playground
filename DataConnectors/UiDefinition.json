@@ -56,7 +56,7 @@
                         "toolTip": "The name of the Azure DevOps organization. example: 'https://dev.azure.com/<organization>'.",
                         "constraints": {
                             "required": true,
-                            "regex": "^[A-Za-z0-9]$",
+                            "regex": "^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$",
                             "validationMessage": "Only alphanumeric characters are allowed"
                         }
                     },
@@ -68,7 +68,8 @@
                         "defaultValue": "",
                         "toolTip": "A pattoken value with permissions to configure Azure DevOps auditing.",
                         "constraints": {
-                            "required": true
+                            "required": true,
+                            "regex": "^[a-z0-9]$"
                         }
                     }
                 ]
