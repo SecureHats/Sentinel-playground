@@ -18,7 +18,11 @@ param (
     
     [Parameter(Mandatory = $false,
     Position = 4)]
-    [string]$workspaceName
+    [string]$workspaceName,
+
+    [Parameter(Mandatory = $false,
+    Position = 4)]
+    [string]$deploymentGuid,
 
 )
 
@@ -49,7 +53,7 @@ if ($workspaceName) {
 
     try {
     Write-Output "Looking for requested workspace [$($WorkspaceName)]"
-    $workspace = $workspace = Get-AzResource `
+    $workspace = Get-AzResource `
         -Name "$WorkspaceName" `
         -ResourceType 'Microsoft.OperationalInsights/workspaces'
 
@@ -57,7 +61,7 @@ if ($workspaceName) {
     
     $_resourceGroupName  = $workspace.ResourceGroupName
     $_workspaceName      = $workspace.Name
-    $workspaceId        = (Get-AzOperationalInsightsWorkspace -ResourceGroupName $resourceGroupName -Name $workspaceName).CustomerId.Guid
+    $workspaceId        = (Get-AzOperationalInsightsWorkspace -ResourceGroupName $_resourceGroupName -Name $_workspaceName).CustomerId.Guid
     }
     catch {
         Write-Warning -Message "Log Analytics workspace [$($WorkspaceName)] not found in the current context"
@@ -82,7 +86,7 @@ $payload = @{
     consumerType   = 'AzureMonitorLogs'
     consumerInputs = @{
         WorkspaceId = $WorkspaceId
-        SharedKey   = $WorkspaceKey
+        SharedKey   = $workspaceKey
     }
 } | ConvertTo-Json -Depth 10
 
@@ -95,3 +99,11 @@ $defaultHttpSettings = @{
 }
 
 Invoke-RestMethod @defaultHttpSettings -Body $payload
+
+Clear-Host
+if ($deploymentGuid) {
+    Write-Output "Cleanup resources"
+    Get-AzResource -Name sleep -ResourceGroupName $_resourceGroupName | Remove-AzResource -Force
+    Get-AzResource -Name $deploymentGuid -ResourceGroupName $_resourceGroupName | Remove-AzResource -Force
+}
+Write-Warning "Please disable or remove the used PAT token!"
