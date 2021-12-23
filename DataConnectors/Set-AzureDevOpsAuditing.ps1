@@ -1,10 +1,10 @@
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory = $true,
+    [Parameter(Mandatory = $fasle,
         Position = 0)]
     [string]$WorkspaceId,
 
-    [Parameter(Mandatory = $true,
+    [Parameter(Mandatory = $false,
         Position = 1)]
     [string]$WorkspaceKey,
 
@@ -14,7 +14,11 @@ param (
 
     [Parameter(Mandatory = $true,
         Position = 3)]
-    [string]$PersonalAccessToken
+    [string]$PersonalAccessToken,
+    
+    [Parameter(Mandatory = $true,
+    Position = 4)]
+    [string]$workspaceName
 
 )
 
