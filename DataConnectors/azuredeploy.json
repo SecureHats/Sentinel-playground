@@ -37,43 +37,43 @@
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2020-04-01-preview",
             "name": "[parameters('roleGuid')]",
-            "dependsOn": [
-                "[concat('Microsoft.Resources/deploymentScripts/', 'sleep')]"
-            ],
+            //"dependsOn": [
+            //    "[concat('Microsoft.Resources/deploymentScripts/', 'sleep')]"
+            //],
             "properties": {
                 "roleDefinitionId": "[variables('Contributor')]",
                 "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), '2018-11-30', 'Full').properties.principalId]"
             }
         },
-        {
-            "type": "Microsoft.Resources/deploymentScripts",
-            "apiVersion": "2020-10-01",
-            "name": "sleep",
-            "location": "[resourceGroup().location]",
-            "dependsOn": [
-                "[concat('Microsoft.ManagedIdentity/userAssignedIdentities/', variables('identityName'))]"
-            ],
-            "kind": "AzurePowerShell",
-            "properties": {
-                "forceUpdateTag": "1",
-                "azPowerShellVersion": "3.0",
-                "arguments": "",
-                "scriptContent": "Start-Sleep -Seconds 15",
-                "supportingScriptUris": [],
-                "timeout": "PT30M",
-                "cleanupPreference": "Always",
-                "retentionInterval": "P1D"
-            }
-        },
+        //{
+        //   "type": "Microsoft.Resources/deploymentScripts",
+        //    "apiVersion": "2020-10-01",
+        //    "name": "sleep",
+        //    "location": "[resourceGroup().location]",
+        //    "dependsOn": [
+        //        "[concat('Microsoft.ManagedIdentity/userAssignedIdentities/', variables('identityName'))]"
+        //    ],
+        //    "kind": "AzurePowerShell",
+        //    "properties": {
+        //        "forceUpdateTag": "1",
+        //        "azPowerShellVersion": "3.0",
+        //       "arguments": "",
+        //        "scriptContent": "Start-Sleep -Seconds 15",
+        //        "supportingScriptUris": [],
+        //        "timeout": "PT30M",
+        //        "cleanupPreference": "Always",
+        //        "retentionInterval": "P1D"
+        //    }
+        //},
         {
             "type": "Microsoft.Resources/deploymentScripts",
             "apiVersion": "2020-10-01",
             "name": "[parameters('guid')]",
             "location": "[resourceGroup().location]",
             "kind": "AzurePowerShell",
-            "dependsOn": [
-                "sleep"
-            ],
+            //"dependsOn": [
+            //    "sleep"
+            //],
             "identity": {
                 "type": "UserAssigned",
                 "userAssignedIdentities": {
