@@ -64,7 +64,7 @@
                         "name": "pattoken",
                         "type": "Microsoft.Common.PasswordBox",
                         "label": "Personal Access Token",
-                        "placeholder": "",
+                        "placeholder": "PersonalAccessToken",
                         "defaultValue": "",
                         "toolTip": "A pattoken value with permissions to configure Azure DevOps auditing.",
                         "constraints": {
