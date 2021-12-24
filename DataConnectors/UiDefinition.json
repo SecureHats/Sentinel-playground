@@ -53,7 +53,7 @@
                         "label": "Organization Name",
                         "placeholder": "",
                         "defaultValue": "",
-                        "toolTip": "The name of the Azure DevOps organization. example: 'https://dev.azure.com/<organization>'.",
+                        "toolTip": "The name of the Azure DevOps organization. Only the last part of the URL is required. example: 'https://dev.azure.com/SecureHats'.",
                         "constraints": {
                             "required": true,
                             "regex": "^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$",
