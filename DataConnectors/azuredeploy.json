@@ -34,7 +34,7 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2020-04-01-preview",
-            "name": "[resourcegroup().id]",
+            "name": "[tolower(concat('role', uniqueString(resourceGroup().id, subscription().id)))]",
             "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults', variables('KeyVaultName'))]"
             ],
