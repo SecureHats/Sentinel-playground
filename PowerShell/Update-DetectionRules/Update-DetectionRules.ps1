@@ -85,7 +85,6 @@ function Update-DetectionRules {
                             # if the existing built-in rule was not created from a template (old versions)
                             if ((($result.Content | ConvertFrom-Json).error.message) -match 'already exists and was not created by a template') {
                                 Invoke-AzRestMethod -Path $alertUriGuid -Method DELETE
-                                pause
                                 Invoke-AzRestMethod -Path $alertUriGuid -Method PUT -Payload ($alertBody | ConvertTo-Json -Depth 10)
                             }
                         }
