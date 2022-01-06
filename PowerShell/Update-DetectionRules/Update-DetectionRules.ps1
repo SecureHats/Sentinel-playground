@@ -87,7 +87,7 @@ function Update-DetectionRules {
                         $properties.triggerOperator       = $item.properties.triggerOperator
                         $properties.triggerThreshold      = $item.properties.triggerThreshold
                         $properties.displayName           = $item.properties.displayName
-                        $properties.enabled               = $true
+                        $properties.enabled               = [bool]$item.properties.enabled
                         $properties.suppressionEnabled    = [bool]$item.properties.suppressionEnabled
                     }
 
@@ -114,8 +114,7 @@ function Update-DetectionRules {
                                 Write-Host "Warning: "(($result.Content | ConvertFrom-Json).error.message) -ForegroundColor Red
                             }
                         }
-                    }
-                    catch {
+                    } catch {
                         Write-Verbose $_
                         Write-Error "Unable to create alert rule with error code: $($_.Exception.Message)" -ErrorAction Stop
                     }

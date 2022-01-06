@@ -292,7 +292,7 @@
             "properties": {
                 "forceUpdateTag": "[parameters('guid')]",
                 "azPowerShellVersion": "5.4",
-                "arguments": "[format(' -Workspace {0} -ResourceGroup {1} -SetDefaults', parameters('workspaceName'), resourceGroup().name )]",
+                "arguments": "[format(' -Workspace {0} -ResourceGroup {1} -SetDefaults', parameters('workspaceName'), resourceGroup().name, $true )]",
                 "primaryScriptUri": "[concat('https://raw.githubusercontent.com/SecureHats/Sentinel-playground/', parameters('Branch'), '/PowerShell/Update-DetectionRules/Update-DetectionRules.ps1')]",
                 "supportingScriptUris": [],
                 "timeout": "PT30M",
