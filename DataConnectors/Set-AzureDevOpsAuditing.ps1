@@ -84,13 +84,13 @@ $headers = @{
     "Content-Type"  = "application/json"
 }
 
-$payload = @{
-    consumerType   = 'AzureMonitorLogs'
-    consumerInputs = @{
-        WorkspaceId = $WorkspaceId
-        SharedKey   = $workspaceKey
-    }
-} | ConvertTo-Json -Depth 10
+    $payload = @{
+        consumerType   = 'AzureMonitorLogs'
+        consumerInputs = @{
+            WorkspaceId = $WorkspaceId
+            SharedKey   = $workspaceKey
+        }
+    } | ConvertTo-Json -Depth 10
 
 $defaultHttpSettings = @{
     useBasicParsing = $true
