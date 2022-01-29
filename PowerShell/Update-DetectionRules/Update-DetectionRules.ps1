@@ -87,7 +87,7 @@ function Update-DetectionRules {
                         $properties.triggerOperator       = $item.properties.triggerOperator
                         $properties.triggerThreshold      = $item.properties.triggerThreshold
                         $properties.displayName           = $item.properties.displayName
-                        $properties.enabled               = [bool]$item.properties.enabled
+                        $properties.enabled               = $true
                         $properties.suppressionEnabled    = [bool]$item.properties.suppressionEnabled
                     }
 
