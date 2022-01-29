@@ -114,8 +114,7 @@ function Update-DetectionRules {
                                 Write-Host "Warning: "(($result.Content | ConvertFrom-Json).error.message) -ForegroundColor Red
                             }
                         }
-                    }
-                    catch {
+                    } catch {
                         Write-Verbose $_
                         Write-Error "Unable to create alert rule with error code: $($_.Exception.Message)" -ErrorAction Stop
                     }
