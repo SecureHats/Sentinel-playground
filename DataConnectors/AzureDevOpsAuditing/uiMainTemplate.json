@@ -38,7 +38,7 @@
                     {
                         "name": "textBlock1",
                         "type": "Microsoft.Common.TextBlock",
-                        "visible": true,
+                        "visible": false,
                         "options": {
                             "text": "Fill in the properties related to the Azure DevOps tenant",
                             "link": {
@@ -51,7 +51,7 @@
             }
         ],
         "outputs": {
-            "workspaceName": "[steps('basics').workspaceSelector.name]"
+            "workspace": "[steps('basics').workspaceSelector.name]"
         }
     }
 }
