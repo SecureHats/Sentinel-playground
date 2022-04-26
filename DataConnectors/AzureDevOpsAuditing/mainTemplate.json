@@ -1,0 +1,495 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "author": "Rogier Dijkman - r.dijkman@securehats.nl",
+    "comments": "Solution template for Azure DevOps Auditing"
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Not used, but needed to pass arm-ttk test `Location-Should-Not-Be-Hardcoded`.  We instead use the `workspace-location` which is derived from the LA workspace"
+      }
+    },
+    "workspace-location": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[parameters('location')]",
+      "metadata": {
+        "description": "Region to deploy solution resources"
+      }
+    },
+    "workspace": {
+      "defaultValue": "<Enter Log Analytics Workspace>",
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Workspace name for Log Analytics where Sentinel is setup"
+      }
+    },
+    "formattedTimeNow": {
+      "type": "string",
+      "defaultValue": "[utcNow('g')]",
+      "metadata": {
+        "description": "Appended to workbook displayNames to make them unique"
+      }
+    },
+    "workbook1-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the workbook"
+      }
+    },
+    "workbook1-name": {
+      "type": "string",
+      "defaultValue": "Azure DevOps Auditing",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name for the workbook"
+      }
+    },
+    "analytic1-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic2-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic3-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic4-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic5-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic6-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic7-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic8-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic9-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "analytic10-id": {
+      "type": "string",
+      "defaultValue": "[newGuid()]",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique id for the scheduled alert rule"
+      }
+    },
+    "connector1-name": {
+      "type": "string",
+      "defaultValue": "fee94e4b-8505-4c25-b087-ab5fc3edd29f"
+    }
+  },
+  "variables": {
+    "workbook-source": "[concat(resourceGroup().id, '/providers/Microsoft.OperationalInsights/workspaces/',parameters('workspace'))]",
+    "_workbook-source": "[variables('workbook-source')]",
+    "connector1-source": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.OperationalInsights/workspaces/',parameters('workspace'),'/providers/Microsoft.SecurityInsights/dataConnectors/',parameters('connector1-name'))]",
+    "_connector1-source": "[variables('connector1-source')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Insights/workbooks",
+      "name": "[parameters('workbook1-id')]",
+      "location": "[parameters('workspace-location')]",
+      "kind": "shared",
+      "apiVersion": "2020-02-12",
+      "properties": {
+        "displayName": "[concat(parameters('workbook1-name'), ' - ', parameters('formattedTimeNow'))]",
+        "serializedData": "{\"version\":\"Notebook/1.0\",\"items\":[{\"type\":1,\"content\":{\"json\":\"**NOTE**: This workbook depends on a parser based on Kusto Function to work as expected [**BoxEvents**](https://aka.ms/sentinel-BoxDataConnector-parser) which is deployed with the Azure Sentinel Solution.\",\"style\":\"info\"},\"name\":\"text - 9\"},{\"type\":9,\"content\":{\"version\":\"KqlParameterItem/1.0\",\"parameters\":[{\"id\":\"88aa96e3-fc48-4b04-836e-fc2ec8ebf37f\",\"version\":\"KqlParameterItem/1.0\",\"name\":\"TimeRange\",\"label\":\" Time Range\",\"type\":4,\"value\":{\"durationMs\":7776000000},\"typeSettings\":{\"selectableValues\":[{\"durationMs\":300000},{\"durationMs\":3600000},{\"durationMs\":43200000},{\"durationMs\":86400000},{\"durationMs\":259200000},{\"durationMs\":604800000},{\"durationMs\":2592000000},{\"durationMs\":7776000000}]},\"timeContext\":{\"durationMs\":86400000}}],\"style\":\"pills\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\"},\"name\":\"parameters - 2\"},{\"type\":12,\"content\":{\"version\":\"NotebookGroup/1.0\",\"groupType\":\"editable\",\"items\":[{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"BoxEvents\\r\\n| make-series TotalEvents = count() default = 0 on TimeGenerated from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain};\",\"size\":0,\"title\":\"Events over time\",\"timeContext\":{\"durationMs\":7776000000},\"timeContextFromParameter\":\"TimeRange\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"timechart\"},\"customWidth\":\"65\",\"name\":\"query - 9\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"BoxEvents\\r\\n| where isnotempty(EventType)\\r\\n| summarize TotalEvents = count() by EventType\",\"size\":3,\"title\":\"Event Types\",\"timeContext\":{\"durationMs\":7776000000},\"timeContextFromParameter\":\"TimeRange\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"piechart\",\"tileSettings\":{\"titleContent\":{\"columnMatch\":\"EventSeverity\",\"formatter\":1,\"numberFormat\":{\"unit\":0,\"options\":{\"style\":\"decimal\"}}},\"leftContent\":{\"columnMatch\":\"TotalEvents\",\"formatter\":12,\"formatOptions\":{\"palette\":\"auto\"}},\"showBorder\":true,\"rowLimit\":7,\"size\":\"auto\"},\"graphSettings\":{\"type\":0,\"topContent\":{\"columnMatch\":\"EventSeverity\",\"formatter\":1},\"centerContent\":{\"columnMatch\":\"TotalEvents\",\"formatter\":1,\"numberFormat\":{\"unit\":17,\"options\":{\"maximumSignificantDigits\":3,\"maximumFractionDigits\":2}}}}},\"customWidth\":\"35\",\"name\":\"query - 3\"}]},\"customWidth\":\"80\",\"name\":\"group - 9\"},{\"type\":12,\"content\":{\"version\":\"NotebookGroup/1.0\",\"groupType\":\"editable\",\"loadType\":\"always\",\"items\":[{\"type\":12,\"content\":{\"version\":\"NotebookGroup/1.0\",\"groupType\":\"editable\",\"items\":[{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"let user1 = BoxEvents\\r\\n| where isnotempty(SourceName)\\r\\n| summarize Users = dcount(SourceName) by SourceName\\r\\n| project Users, User = SourceName;\\r\\nlet user2 = BoxEvents\\r\\n| where isnotempty(SrcUserName)\\r\\n| summarize Users = count(SrcUserName) by SrcUserName\\r\\n| project Users, User = SrcUserName;\\r\\nlet user3 = BoxEvents\\r\\n| where isnotempty(AccessibleByName)\\r\\n| summarize Users = dcount(AccessibleByName) by AccessibleByName\\r\\n| project Users, User = AccessibleByName;\\r\\nlet users = union user1, user2, user3;\\r\\nusers\\r\\n| summarize Users = dcount(User)\",\"size\":3,\"title\":\"Unique Users\",\"timeContext\":{\"durationMs\":7776000000},\"timeContextFromParameter\":\"TimeRange\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"card\",\"textSettings\":{\"style\":\"bignumber\"}},\"name\":\"query - 5\"}]},\"name\":\"group - 4\"},{\"type\":12,\"content\":{\"version\":\"NotebookGroup/1.0\",\"groupType\":\"editable\",\"items\":[{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"BoxEvents\\r\\n| where isnotempty(SrcIpAddr)\\r\\n| summarize dcount(SrcIpAddr)\\r\\n\",\"size\":3,\"title\":\"Unique IPs\",\"timeContext\":{\"durationMs\":7776000000},\"timeContextFromParameter\":\"TimeRange\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"card\",\"gridSettings\":{\"formatters\":[{\"columnMatch\":\"TotalEvents\",\"formatter\":8,\"formatOptions\":{\"palette\":\"blueGreen\"}},{\"columnMatch\":\"Trend\",\"formatter\":10,\"formatOptions\":{\"palette\":\"turquoise\"}}],\"rowLimit\":10,\"labelSettings\":[{\"columnId\":\"TotalEvents\",\"label\":\"Total Events\"},{\"columnId\":\"Trend\"}]},\"textSettings\":{\"style\":\"bignumber\"}},\"name\":\"query - 6\"}]},\"name\":\"group - 2\"},{\"type\":12,\"content\":{\"version\":\"NotebookGroup/1.0\",\"groupType\":\"editable\",\"items\":[{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"let file1 = BoxEvents\\r\\n| where isnotempty(SourceFileName)\\r\\n| summarize d_files = dcount(SourceFileName);\\r\\nlet file2 = BoxEvents\\r\\n| where isnotempty(SourceItemName)\\r\\n| summarize d_files = dcount(SourceItemName);\\r\\nlet files = union file1, file2;\\r\\nfiles\\r\\n| summarize sum(d_files)\\r\\n\",\"size\":3,\"title\":\"Unique files\",\"timeContext\":{\"durationMs\":7776000000},\"timeContextFromParameter\":\"TimeRange\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"card\",\"tileSettings\":{\"titleContent\":{\"formatter\":12,\"formatOptions\":{\"palette\":\"blue\"}},\"leftContent\":{\"columnMatch\":\"sum_d_files\",\"formatter\":22,\"formatOptions\":{\"compositeBarSettings\":{\"labelText\":\"Unique files\",\"columnSettings\":[{\"columnName\":\"sum_d_files\",\"color\":\"blue\"}]}}},\"rightContent\":{\"columnMatch\":\"sum_d_files\",\"formatter\":12,\"formatOptions\":{\"palette\":\"blue\"}},\"showBorder\":false},\"textSettings\":{\"style\":\"bignumber\"}},\"name\":\"query - 0\"}]},\"name\":\"group - 2\"},{\"type\":12,\"content\":{\"version\":\"NotebookGroup/1.0\",\"groupType\":\"editable\",\"items\":[{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"let files_1 = BoxEvents\\r\\n| where TimeGenerated > ago(90d)\\r\\n| where isnotempty(SourceFileName)\\r\\n| summarize TotalItems = dcount(SourceFileName) by SourceFileName\\r\\n| project TotalItems, FileName = SourceFileName;\\r\\nlet files_2 = BoxEvents\\r\\n| where TimeGenerated > ago(90d)\\r\\n| where isnotempty(SourceItemName)\\r\\n| summarize TotalItems = dcount(SourceItemName) by SourceItemName\\r\\n| project TotalItems, FileName = SourceItemName;\\r\\nlet known_files = (union files_1, files_2)\\r\\n| summarize makeset(FileName);\\r\\nBoxEvents\\r\\n| where TimeGenerated between (ago(24h) .. now())\\r\\n| where isnotempty(SourceFileName) \\r\\n| project FileName = SourceFileName\\r\\n| union (BoxEvents\\r\\n    | where TimeGenerated between (ago(24h) .. now())\\r\\n    | where isnotempty(SourceItemName)\\r\\n    | project FileName = SourceItemName)\\r\\n| where FileName !in (known_files)\\r\\n| summarize dcount(FileName)\\r\\n\\r\\n\",\"size\":3,\"title\":\"New files (last 24h)\",\"noDataMessage\":\"No new files during last 24h\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"card\"},\"name\":\"query - 3\"}]},\"name\":\"group - 4\"}]},\"customWidth\":\"20\",\"name\":\"group - 10\"},{\"type\":12,\"content\":{\"version\":\"NotebookGroup/1.0\",\"groupType\":\"editable\",\"items\":[{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"BoxEvents\\r\\n| where TimeGenerated > ago(90d)\\r\\n| where EventType == 'ADMIN_LOGIN'\\r\\n| summarize Username = dcount(SourceName) by SourceName\\r\\n| project SourceName\\r\\n\",\"size\":3,\"title\":\"Admin users\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"card\",\"gridSettings\":{\"formatters\":[{\"columnMatch\":\"TotalEvents\",\"formatter\":8,\"formatOptions\":{\"palette\":\"turquoise\"}},{\"columnMatch\":\"Trend\",\"formatter\":10,\"formatOptions\":{\"palette\":\"blue\"}}]},\"tileSettings\":{\"showBorder\":false,\"titleContent\":{\"columnMatch\":\"SrcDvcHostname\",\"formatter\":1},\"leftContent\":{\"columnMatch\":\"TotalEvents\",\"formatter\":12,\"formatOptions\":{\"palette\":\"auto\"},\"numberFormat\":{\"unit\":17,\"options\":{\"maximumSignificantDigits\":3,\"maximumFractionDigits\":2}}}},\"textSettings\":{\"style\":\"header\"}},\"customWidth\":\"25\",\"name\":\"query - 7\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"let admins = BoxEvents\\r\\n| where TimeGenerated > ago(90d)\\r\\n| where EventType == 'ADMIN_LOGIN'\\r\\n| summarize makeset(SourceName);\\r\\nlet adm_type1 = BoxEvents\\r\\n| where SourceName in (admins)\\r\\n| summarize TotalActions = count() by SourceName;\\r\\nlet adm_type2 = BoxEvents\\r\\n| where SrcUserName in (admins)\\r\\n| summarize TotalActions = count() by SrcUserName\\r\\n| project TotalActions, SourceName = SrcUserName; \\r\\nlet adm_activity = (union adm_type1, adm_type2);\\r\\nadm_activity\\r\\n| summarize TotalActions = sum(TotalActions) by SourceName\\r\\n| join kind = inner (BoxEvents\\r\\n | where SourceName in (admins) or SrcUserName in (admins)\\r\\n | make-series Trend = count() default = 0 on TimeGenerated from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain} by SourceName)\\r\\n on SourceName\\r\\n| project SourceName, TotalActions, Trend\\r\\n| order by TotalActions\\r\\n\",\"size\":3,\"title\":\"Admin users activity\",\"timeContext\":{\"durationMs\":7776000000},\"timeContextFromParameter\":\"TimeRange\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"table\",\"gridSettings\":{\"formatters\":[{\"columnMatch\":\"TotalActions\",\"formatter\":8,\"formatOptions\":{\"palette\":\"coldHot\"}},{\"columnMatch\":\"Trend\",\"formatter\":21,\"formatOptions\":{\"palette\":\"blue\"}}]},\"tileSettings\":{\"titleContent\":{\"columnMatch\":\"SourceName\",\"formatter\":1},\"leftContent\":{\"columnMatch\":\"TotalActions\",\"formatter\":12,\"formatOptions\":{\"palette\":\"auto\"},\"numberFormat\":{\"unit\":17,\"options\":{\"maximumSignificantDigits\":3,\"maximumFractionDigits\":2}}},\"secondaryContent\":{\"columnMatch\":\"Trend\",\"formatter\":21,\"formatOptions\":{\"palette\":\"blue\"}},\"showBorder\":false}},\"customWidth\":\"40\",\"name\":\"query - 1\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"let admins = BoxEvents\\r\\n| where TimeGenerated > ago(90d)\\r\\n| where EventType == 'ADMIN_LOGIN'\\r\\n| summarize makeset(SourceName);\\r\\nlet adm_type1 = BoxEvents\\r\\n| where SourceName in (admins)\\r\\n| summarize by EventType, SourceName\\r\\n| project Action = EventType, SourceName;\\r\\nlet adm_type2 = BoxEvents\\r\\n| where SrcUserName in (admins)\\r\\n| summarize max(TimeGenerated) by EventType, SrcUserName\\r\\n| project Action = EventType, SourceName = SrcUserName; \\r\\nlet adm_activity = (union adm_type1, adm_type2);\\r\\nadm_activity\\r\\n\",\"size\":1,\"title\":\"Latest admin activity\",\"timeContext\":{\"durationMs\":7776000000},\"timeContextFromParameter\":\"TimeRange\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"table\",\"gridSettings\":{\"filter\":true}},\"customWidth\":\"35\",\"name\":\"query - 2\"}]},\"name\":\"group - 8\"},{\"type\":12,\"content\":{\"version\":\"NotebookGroup/1.0\",\"groupType\":\"editable\",\"items\":[{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"BoxEvents\\n| where EventType == 'NEW_USER'\\n| project SourceName\\n\",\"size\":3,\"title\":\"New users\",\"timeContext\":{\"durationMs\":7776000000},\"timeContextFromParameter\":\"TimeRange\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"card\",\"tileSettings\":{\"titleContent\":{\"columnMatch\":\"EventCategory\",\"formatter\":1},\"leftContent\":{\"columnMatch\":\"TotalEvents\",\"formatter\":12,\"formatOptions\":{\"palette\":\"auto\"},\"numberFormat\":{\"unit\":17,\"options\":{\"maximumSignificantDigits\":3,\"maximumFractionDigits\":2}}},\"secondaryContent\":{\"columnMatch\":\"Trend\",\"formatter\":9,\"formatOptions\":{\"palette\":\"blue\"}},\"showBorder\":false,\"rowLimit\":10},\"graphSettings\":{\"type\":0,\"topContent\":{\"columnMatch\":\"TableName\",\"formatter\":1},\"centerContent\":{\"columnMatch\":\"count_\",\"formatter\":1,\"numberFormat\":{\"unit\":17,\"options\":{\"maximumSignificantDigits\":3,\"maximumFractionDigits\":2}}},\"nodeIdField\":\"TableName\",\"sourceIdField\":\"TableName\",\"targetIdField\":\"count_\",\"graphOrientation\":3,\"showOrientationToggles\":false,\"staticNodeSize\":100,\"hivesMargin\":5},\"chartSettings\":{\"xSettings\":{\"numberFormatSettings\":{\"unit\":0,\"options\":{\"style\":\"decimal\",\"useGrouping\":true}}}},\"textSettings\":{\"style\":\"header\"}},\"customWidth\":\"15\",\"name\":\"query - 2\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"BoxEvents\\r\\n| where EventType == 'DELETE_USER'\\r\\n| project SourceName\",\"size\":3,\"title\":\"Deleted users\",\"timeContext\":{\"durationMs\":7776000000},\"timeContextFromParameter\":\"TimeRange\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"card\",\"textSettings\":{\"style\":\"header\"}},\"customWidth\":\"15\",\"name\":\"query - 1\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"BoxEvents\\r\\n| where EventType == 'LOGIN'\\r\\n| summarize LastLoginTime = max(TimeGenerated) by SourceName\\r\\n| where LastLoginTime > ago(90d)\",\"size\":0,\"title\":\"Inactive users\",\"timeContext\":{\"durationMs\":7776000000},\"timeContextFromParameter\":\"TimeRange\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"table\",\"gridSettings\":{\"filter\":true}},\"customWidth\":\"35\",\"name\":\"query - 2\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"let user_act1 = BoxEvents\\r\\n| where isnotempty(SourceName)\\r\\n| summarize TotalActions = count() by SourceName;\\r\\nlet user_act2 = BoxEvents\\r\\n| where isnotempty(SrcUserName)\\r\\n| summarize TotalActions = count() by SrcUserName\\r\\n| project TotalActions, SourceName = SrcUserName; \\r\\nlet user_activity = (union user_act1, user_act2);\\r\\nuser_activity\\r\\n| join kind = inner (BoxEvents\\r\\n | where isnotempty(SourceName) or isnotempty(SrcUserName)\\r\\n | make-series Trend = count() default = 0 on TimeGenerated from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain} by SourceName)\\r\\n on SourceName\\r\\n| project SourceName, TotalActions, Trend\\r\\n| order by TotalActions\",\"size\":0,\"title\":\"Users activity over time\",\"timeContext\":{\"durationMs\":7776000000},\"timeContextFromParameter\":\"TimeRange\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"table\",\"gridSettings\":{\"formatters\":[{\"columnMatch\":\"TotalActions\",\"formatter\":8,\"formatOptions\":{\"palette\":\"orange\"}},{\"columnMatch\":\"Trend\",\"formatter\":21,\"formatOptions\":{\"palette\":\"orange\"}}],\"filter\":true},\"tileSettings\":{\"showBorder\":false,\"titleContent\":{\"columnMatch\":\"SourceName\",\"formatter\":1},\"leftContent\":{\"columnMatch\":\"TotalActions\",\"formatter\":12,\"formatOptions\":{\"palette\":\"auto\"},\"numberFormat\":{\"unit\":17,\"options\":{\"maximumSignificantDigits\":3,\"maximumFractionDigits\":2}}}}},\"customWidth\":\"35\",\"name\":\"query - 3\"}]},\"name\":\"group - 20\"},{\"type\":12,\"content\":{\"version\":\"NotebookGroup/1.0\",\"groupType\":\"editable\",\"items\":[{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"BoxEvents\\r\\n| summarize Downloads = countif(EventType == \\\"DOWNLOAD\\\"), Uploads = countif(EventType == \\\"UPLOAD\\\") by bin_at(TimeGenerated, 1h, now())\",\"size\":3,\"title\":\"Downloads/Uploads comparison\",\"timeContext\":{\"durationMs\":7776000000},\"timeContextFromParameter\":\"TimeRange\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"linechart\"},\"name\":\"query - 2\",\"styleSettings\":{\"margin\":\"0px\"}},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"BoxEvents\\r\\n| where EventType == 'DOWNLOAD'\\r\\n| where isnotempty(SourceItemName)\\r\\n| project FileName = SourceItemName, SrcUserName, TimeGenerated\\r\\n| top 100 by TimeGenerated desc\",\"size\":0,\"title\":\"Latest downloaded items\",\"timeContext\":{\"durationMs\":7776000000},\"timeContextFromParameter\":\"TimeRange\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"table\",\"gridSettings\":{\"formatters\":[{\"columnMatch\":\"FileName\",\"formatter\":0,\"formatOptions\":{\"customColumnWidthSetting\":\"35ch\"}},{\"columnMatch\":\"SrcUserName\",\"formatter\":0,\"formatOptions\":{\"customColumnWidthSetting\":\"25ch\"}},{\"columnMatch\":\"TimeGenerated\",\"formatter\":0,\"formatOptions\":{\"customColumnWidthSetting\":\"25ch\"}}],\"filter\":true},\"textSettings\":{\"style\":\"bignumber\"}},\"customWidth\":\"50\",\"name\":\"query - 0\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"BoxEvents\\r\\n| where EventType == 'UPLOAD'\\r\\n| where isnotempty(SourceItemName)\\r\\n| project FileName = SourceItemName, SrcUserName, TimeGenerated\\r\\n| top 100 by TimeGenerated desc\",\"size\":0,\"title\":\"Latest uploaded items\",\"timeContext\":{\"durationMs\":7776000000},\"timeContextFromParameter\":\"TimeRange\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"gridSettings\":{\"formatters\":[{\"columnMatch\":\"FileName\",\"formatter\":0,\"formatOptions\":{\"customColumnWidthSetting\":\"35ch\"}},{\"columnMatch\":\"SrcUserName\",\"formatter\":0,\"formatOptions\":{\"customColumnWidthSetting\":\"25ch\"}},{\"columnMatch\":\"TimeGenerated\",\"formatter\":0,\"formatOptions\":{\"customColumnWidthSetting\":\"25ch\"}}],\"filter\":true}},\"customWidth\":\"50\",\"name\":\"query - 1\"}]},\"name\":\"group - 6\"}],\"fromTemplateId\":\"sentinel-Box\",\"$schema\":\"https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json\"}\r\n",
+        "version": "1.0",
+        "sourceId": "[variables('_workbook-source')]",
+        "category": "sentinel"
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'), '/Microsoft.SecurityInsights/', parameters('analytic2-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "displayName": "Azure DevOps Personal Access Token (PAT) misuse",
+        "description": "This Alert detects whenever a PAT is used in ways that PATs are not normally used.  May require an allow list and baselining.\nReference - https://docs.microsoft.com/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=preview-page\nUse this query for baselining:\nAzureDevOpsAuditing\n| distinct OperationName",
+        "severity": "High",
+        "enabled": true,
+        "query": "// Allowlisted UPNs should likely stay empty\nlet AllowlistedUpns = datatable(UPN:string)['foo@bar.com', 'test@foo.com'];\n// Operation Name parts that will alert\nlet HasAnyBlocklist = datatable(OperationNamePart:string)['Security.','Project.','AuditLog.','Extension.'];\n// Distinct Operation Names that will flag\nlet HasExactBlocklist = datatable(OperationName:string)['Group.UpdateGroupMembership.Add','Library.ServiceConnectionExecuted','Pipelines.PipelineModified',\n'Release.ReleasePipelineModified', 'Git.RefUpdatePoliciesBypassed'];\nAzureDevOpsAuditing\n| where AuthenticationMechanism startswith \"PAT\" and (OperationName has_any (HasAnyBlocklist) or OperationName in (HasExactBlocklist))\n  and ActorUPN !in (AllowlistedUpns)\n| project TimeGenerated, AuthenticationMechanism, ProjectName, ActorUPN, ActorDisplayName, IpAddress, UserAgent, OperationName, Details, Data\n| extend timestamp = TimeGenerated, AccountCustomEntity = ActorUPN, IPCustomEntity = IpAddress",
+        "queryFrequency": "PT1H",
+        "queryPeriod": "PT1H",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "PT5H",
+        "suppressionEnabled": false,
+        "tactics": [
+          "Execution",
+          "Impact"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'), '/Microsoft.SecurityInsights/', parameters('analytic3-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "displayName": "(Preview) Azure DevOps Agent Pool Created Then Deleted",
+        "description": "As well as adding build agents to an existing pool to execute malicious activity within a pipeline, an attacker could create a complete new agent pool and use this for execution.\nAzure DevOps allows for the creation of agent pools with Azure hosted infrastructure or self-hosted infrastructure. Given the additional customizability of self-hosted agents this \ndetection focuses on the creation of new self-hosted pools. To further reduce false positive rates the detection looks for pools created and deleted relatively quickly (within 7 days by default), \nas an attacker is likely to remove a malicious pool once used in order to reduce/remove evidence of their activity.",
+        "severity": "High",
+        "enabled": true,
+        "ruleStatus": "Production",
+        "customizableObservations": {
+                    "multiSelectObservations": null,
+                    "singleSelectObservations": null,
+                    "prioritizeExcludeObservations": null,
+                    "thresholdObservations": [
+                        {
+                            "minimum": "0",
+                            "maximum": "1",
+                            "value": "0.87",
+                            "name": "Score",
+                            "description": "Generate an anomaly when score is greater than the chosen value",
+                            "sequenceNumber": 0,
+                            "rerun": "NotRequired"
+                        }
+                    ],
+                    "singleValueObservations": null
+                },
+        "isDefaultRule": true,
+        "query": "let lookback = 14d;\nlet timewindow = 7d;\nAzureDevOpsAuditing\n| where TimeGenerated > ago(lookback)\n| where OperationName =~ \"Library.AgentPoolCreated\"\n| extend AgentCloudId = tostring(Data.AgentCloudId)\n| extend PoolType = iif(isnotempty(AgentCloudId), \"Azure VMs\", \"Self Hosted\")\n// Comment this line out to include cloud pools as well\n| where PoolType == \"Self Hosted\"\n| extend AgentPoolName = tostring(Data.AgentPoolName)\n| extend AgentPoolId = tostring(Data.AgentPoolId)\n| extend IsHosted = tostring(Data.IsHosted)\n| extend IsLegacy = tostring(Data.IsLegacy)\n| extend timekey = bin(TimeGenerated, timewindow)\n// Join only with pools deleted in the same window\n| join (AzureDevOpsAuditing\n| where TimeGenerated > ago(lookback)\n| where OperationName =~ \"Library.AgentPoolDeleted\"\n| extend AgentPoolName = tostring(Data.AgentPoolName)\n| extend AgentPoolId = tostring(Data.AgentPoolId)\n| extend timekey = bin(TimeGenerated, timewindow)) on AgentPoolId, timekey\n| project-reorder TimeGenerated, ActorUPN, UserAgent, IpAddress, AuthenticationMechanism, OperationName, AgentPoolName, IsHosted, IsLegacy, Data\n| extend timestamp = TimeGenerated, AccountCustomEntity = ActorUPN, IPCustomEntity = IpAddress",
+        "queryFrequency": "P7D",
+        "queryPeriod": "P14D",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "PT5H",
+        "suppressionEnabled": false,
+        "tactics": [
+          "DefenseEvasion"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'), '/Microsoft.SecurityInsights/', parameters('analytic4-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "displayName": "Azure DevOps Variable Secret Not Secured",
+        "description": "Credentials used in the build process may be stored as Azure DevOps variables. To secure these variables they should be stored in KeyVault or marked as Secrets. \nThis detection looks for new variables added with names that suggest they are credentials but where they are not set as Secrets or stored in KeyVault.",
+        "severity": "Medium",
+        "enabled": true,
+        "query": "let keywords = dynamic([\"secret\", \"secrets\", \"password\", \"PAT\", \"passwd\", \"pswd\", \"pwd\", \"cred\", \"creds\", \"credentials\", \"credential\", \"key\"]);\nAzureDevOpsAuditing\n| where OperationName =~ \"Library.VariableGroupModified\"\n| extend Type = tostring(Data.Type)\n| extend VariableGroupId = tostring(Data.VariableGroupId)\n| extend VariableGroupName = tostring(Data.VariableGroupName)\n| mv-expand Data.Variables\n| where VariableGroupName has_any (keywords) or Data_Variables has_any (keywords)\n| where Type != \"AzureKeyVault\"\n| where Data_Variables !has \"IsSecret\"\n| extend timestamp = TimeGenerated, AccountCustomEntity = ActorUPN, IPCustomEntity = IpAddress",
+        "queryFrequency": "P1D",
+        "queryPeriod": "P1D",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "PT5H",
+        "suppressionEnabled": false,
+        "tactics": [
+          "CredentialAccess"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'), '/Microsoft.SecurityInsights/', parameters('analytic5-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "displayName": "Azure DevOps Pull Request Policy Bypassing - Historic allow list",
+        "description": "This detection builds an allow list of historic PR policy bypasses and compares to recent history, flagging pull request bypasses that are not manually in the allow list and not historically included in the allow list.",
+        "severity": "Medium",
+        "enabled": true,
+        "query": "let starttime = 14d;\nlet endtime = 3h;\n// Add full UPN (user@domain.com) to Authorized Bypassers to ignore policy bypasses by certain authorized users\nlet AuthorizedBypassers = dynamic(['foo@baz.com', 'test@foo.com']);\nlet historicBypassers = AzureDevOpsAuditing\n| where TimeGenerated between (ago(starttime) .. ago(endtime))\n| where OperationName == 'Git.RefUpdatePoliciesBypassed'\n| distinct ActorUPN;\nAzureDevOpsAuditing\n| where TimeGenerated >= ago(endtime)\n| where OperationName == 'Git.RefUpdatePoliciesBypassed'\n| where ActorUPN !in (historicBypassers) and ActorUPN !in (AuthorizedBypassers)\n| parse ScopeDisplayName with OrganizationName '(Organization)'\n| project TimeGenerated, ActorUPN, IpAddress, UserAgent, OrganizationName, ProjectName, RepoName = Data.RepoName, AlertDetails = Details, Branch = Data.Name, \n  BypassReason = Data.BypassReason, PRLink = strcat('https://dev.azure.com/', OrganizationName, '/', ProjectName, '/_git/', Data.RepoName, '/pullrequest/', Data.PullRequestId)\n| extend timestamp = TimeGenerated, AccountCustomEntity = ActorUPN, IPCustomEntity = IpAddress",
+        "queryFrequency": "PT3H",
+        "queryPeriod": "P14D",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "PT5H",
+        "suppressionEnabled": false,
+        "tactics": [
+          "Persistence"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'), '/Microsoft.SecurityInsights/', parameters('analytic6-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "displayName": "Azure DevOps Pipeline modified by a new user.",
+        "description": "There are several potential pipeline steps that could be modified by an attacker to inject malicious code into the build cycle. A likely attacker path is the modification to an existing pipeline that they have access to. \nThis detection looks for users modifying a pipeline when they have not previously been observed modifying or creating that pipeline before. This query also joins events with data to Azure AD Identity Protection (AAD IdP) \nin order to show if the user conducting the action has any associated AAD IdP alerts. You can also choose to filter this detection to only alert when the user also has AAD IdP alerts associated with them.",
+        "severity": "Medium",
+        "enabled": true,
+        "query": "// Set the lookback to determine if user has created pipelines before\nlet timeback = 14d;\n// Set the period for detections\nlet timeframe = 1d;\n// Get a list of previous Release Pipeline creators to exclude\nlet releaseusers = AzureDevOpsAuditing\n| where TimeGenerated > ago(timeback) and TimeGenerated < ago(timeframe)\n| where OperationName in (\"Release.ReleasePipelineCreated\", \"Release.ReleasePipelineModified\")\n// We want to look for users performing actions in specific projects so we create this userscope object to match on\n| extend UserScope = strcat(ActorUserId, \"-\", ProjectName)\n| summarize by UserScope;\n// Get Release Pipeline creations by new users\nAzureDevOpsAuditing\n| where TimeGenerated > ago(timeframe)\n| where OperationName =~ \"Release.ReleasePipelineModified\"\n| extend UserScope = strcat(ActorUserId, \"-\", ProjectName)\n| where UserScope !in (releaseusers)\n| extend ActorUPN = tolower(ActorUPN)\n| project-away Id, ActivityId, ActorCUID, ScopeId, ProjectId, TenantId, SourceSystem, UserScope\n// See if any of these users have Azure AD alerts associated with them in the same timeframe\n| join kind = leftouter (\nSecurityAlert\n| where TimeGenerated > ago(timeframe)\n| where ProviderName == \"IPC\"\n| extend AadUserId = tostring(parse_json(Entities)[0].AadUserId)\n| summarize Alerts=count() by AadUserId) on $left.ActorUserId == $right.AadUserId\n| extend Alerts = iif(isnotempty(Alerts), Alerts, 0)\n// Uncomment the line below to only show results where the user as AADIdP alerts\n//| where Alerts > 0\n| extend timestamp = TimeGenerated, AccountCustomEntity = ActorUPN, IPCustomEntity = IpAddress",
+        "queryFrequency": "P1D",
+        "queryPeriod": "P14D",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "PT5H",
+        "suppressionEnabled": false,
+        "tactics": [
+          "Execution",
+          "DefenseEvasion"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'), '/Microsoft.SecurityInsights/', parameters('analytic7-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "displayName": "New PA, PCA, or PCAS added to Azure DevOps",
+        "description": "In order for an attacker to be able to conduct many potential attacks against Azure DevOps they will need to gain elevated permissions. \nThis detection looks for users being granted key administrative permissions. If the principal of least privilege is applied, the number of \nusers granted these permissions should be small. Note that permissions can also be granted via Azure AD groups and monitoring of these \nshould also be conducted.",
+        "severity": "Medium",
+        "enabled": true,
+        "query": "AzureDevOpsAuditing\n| where OperationName =~ \"Group.UpdateGroupMembership.Add\"\n| where Details has_any (\"Project Administrators\", \"Project Collection Administrators\", \"Project Collection Service Accounts\", \"Build Administrator\")\n| project-reorder TimeGenerated, Details, ActorUPN, IpAddress, UserAgent, AuthenticationMechanism, ScopeDisplayName\n| extend timekey = bin(TimeGenerated, 1h)\n| extend ActorUserId = tostring(Data.MemberId)\n| project timekey, ActorUserId, AddingUser=ActorUPN, TimeAdded=TimeGenerated, PermissionGrantDetails = Details\n// Get details of operations conducted by user soon after elevation of permissions\n| join (AzureDevOpsAuditing\n| extend ActorUserId = tostring(Data.MemberId)\n| extend timekey = bin(TimeGenerated, 1h)) on timekey, ActorUserId\n| summarize ActionsWhenAdded = make_set(OperationName) by ActorUPN, AddingUser, TimeAdded, PermissionGrantDetails, IpAddress, UserAgent\n| extend timestamp = TimeAdded, AccountCustomEntity = ActorUPN, IPCustomEntity = IpAddress",
+        "queryFrequency": "P1D",
+        "queryPeriod": "P1D",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "PT5H",
+        "suppressionEnabled": false,
+        "tactics": [
+          "InitialAccess"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'), '/Microsoft.SecurityInsights/', parameters('analytic8-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "displayName": "Azure DevOps PAT used with Browser.",
+        "description": "Personal Access Tokens (PATs) are used as an alternate password to authenticate into Azure DevOps. PATs are intended for programmatic access use in code or applications. \nThis can be prone to attacker theft if not adequately secured. This query looks for the use of a PAT in authentication but from a User Agent indicating a browser. \nThis should not be normal activity and could be an indicator of an attacker using a stolen PAT.",
+        "severity": "Medium",
+        "enabled": true,
+        "query": "AzureDevOpsAuditing\n| where AuthenticationMechanism startswith \"PAT\"\n// Look for useragents that include a redenring engine\n| where UserAgent has_any (\"Gecko\", \"WebKit\", \"Presto\", \"Trident\", \"EdgeHTML\", \"Blink\")\n| extend timestamp = TimeGenerated, AccountCustomEntity = ActorUPN, IPCustomEntity = IpAddress",
+        "queryFrequency": "P1D",
+        "queryPeriod": "P1D",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "PT5H",
+        "suppressionEnabled": false,
+        "tactics": [
+          "CredentialAccess"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'), '/Microsoft.SecurityInsights/', parameters('analytic9-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "displayName": "External Upstream Source Added to Azure DevOps Feed",
+        "description": "The detection looks for new external sources added to an Azure DevOps feed. An allow list can be customized to explicitly allow known good sources. \nAn attacker could look to add a malicious feed in order to inject malicious packages into a build pipeline.",
+        "severity": "Medium",
+        "enabled": true,
+        "query": "// Add any known allowed sources and source locations to the filter below (the NuGet Gallery has been added here as an example).\nlet allowed_sources = dynamic([\"NuGet Gallery\"]);\nlet allowed_locations = dynamic([\"https://api.nuget.org/v3/index.json\"]);\nAzureDevOpsAuditing\n// Look for feeds created or modified at either the organization or project level\n| where OperationName matches regex \"Artifacts.Feed.(Org|Project).Modify\"\n| where Details has \"UpstreamSources, added\"\n| extend FeedName = tostring(Data.FeedName)\n| extend FeedId = tostring(Data.FeedId)\n| extend UpstreamsAdded = Data.UpstreamsAdded\n// As multiple feeds may be added expand these out\n| mv-expand UpstreamsAdded\n// Only focus on external feeds\n| where UpstreamsAdded.UpstreamSourceType !~ \"internal\"\n| extend SourceLocation = tostring(UpstreamsAdded.Location)\n| extend SourceName = tostring(UpstreamsAdded.Name)\n// Exclude sources and locations in the allow list\n| where SourceLocation !in (allowed_locations) and SourceName !in (allowed_sources)\n| extend SourceProtocol = tostring(UpstreamsAdded.Protocol)\n| extend SourceStatus = tostring(UpstreamsAdded.Status)\n| project-reorder TimeGenerated, OperationName, ScopeDisplayName, ProjectName, FeedName, SourceName, SourceLocation, SourceProtocol, ActorUPN, UserAgent, IpAddress\n| extend timestamp = TimeGenerated, AccountCustomEntity = ActorUPN, IPCustomEntity =  IpAddress",
+        "queryFrequency": "P1D",
+        "queryPeriod": "P1D",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "PT5H",
+        "suppressionEnabled": false,
+        "tactics": [
+          "InitialAccess"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+      "name": "[concat(parameters('workspace'), '/Microsoft.SecurityInsights/', parameters('analytic10-id'))]",
+      "apiVersion": "2020-01-01",
+      "kind": "Scheduled",
+      "location": "[parameters('workspace-location')]",
+      "properties": {
+        "displayName": "Azure DevOps Administrator Group Monitoring",
+        "description": "This detection monitors for additions to projects or project collection administration groups in an Azure DevOps Organization.",
+        "severity": "Medium",
+        "enabled": true,
+        "query": "// Change to true to monitor for Project Administrator adds to *any* project\nlet MonitorAllProjects = false;\n// If MonitorAllProjects is false, trigger only on Project Administrator add for the following projects\nlet ProjectsToMonitor = dynamic(['<project_X>','<project_Y>']);\nAzureDevOpsAuditing\n| where Area == \"Group\" and OperationName == \"Group.UpdateGroupMembership.Add\"\n| where Details has 'Administrators'\n| where Details has \"was added as a member of group\" and (Details endswith '\\\\Project Administrators' or Details endswith '\\\\Project Collection Administrators')\n| parse Details with AddedIdentity ' was added as a member of group [' EntityName ']\\\\' GroupName\n| extend Level = iif(GroupName == 'Project Collection Administrators', 'Organization', 'Project'), AddedIdentityId = Data.MemberId\n| extend Severity = iif(Level == 'Organization', 'High', 'Medium'), AlertDetails = strcat('At ', TimeGenerated, ' UTC ', ActorUPN, '/', ActorDisplayName, ' added ', AddedIdentity, ' to the ', EntityName, ' ', Level)\n| where MonitorAllProjects == true or EntityName in (ProjectsToMonitor) or Level == 'Organization'\n| project TimeGenerated, Severity, Adder = ActorUPN, AddedIdentity, AddedIdentityId, AlertDetails, Level, EntityName, GroupName, ActorAuthType = AuthenticationMechanism, \n  ActorIpAddress = IpAddress, ActorUserAgent = UserAgent, RawDetails = Details\n| extend timestamp = TimeGenerated, AccountCustomEntity = Adder, IPCustomEntity = ActorIpAddress",
+        "queryFrequency": "PT4H",
+        "queryPeriod": "PT4H",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "PT5H",
+        "suppressionEnabled": false,
+        "tactics": [
+          "Persistence"
+        ]
+      }
+    },
+    {
+      "id": "[variables('_connector1-source')]",
+      "name": "[concat(parameters('workspace'), '/Microsoft.SecurityInsights/', parameters('connector1-name'))]",
+      "apiVersion": "2021-03-01-preview",
+      "type": "Microsoft.OperationalInsights/workspaces/providers/dataConnectors",
+      "kind": "GenericUI",
+      "properties": {
+        "connectorUiConfig": {
+          "title": " Azure DevOps Auditing",
+          "publisher": "SecureHats",
+          "descriptionMarkdown": "The Azure DevOps Auditing data connector provides the capability to ingest [Azure DevOps](https://docs.microsoft.com/en-us/azure/devops/organizations/audit/auditing-streaming?view=azure-devops#set-up-an-azure-monitor-log-stream) events with Azure Sentinel. It helps you gain visibility into what is happening in your environment, such as who is connected, which applications are installed and running, and much more.",
+          "graphQueries": [
+            {
+              "metricName": "Total data received",
+              "legend": "AzureDevOpsAuditing",
+              "baseQuery": "AzureDevOpsAuditing"
+            }
+          ],
+          "sampleQueries": [
+            {
+              "description": "Top 10 Users",
+              "query": "AzureDevOpsAuditing\n | summarize count() by ActorDisplayName\n | top 10 by count_"
+            }
+          ],
+          "dataTypes": [
+            {
+              "name": "AzureDevOpsAuditing",
+              "lastDataReceivedQuery": "AzureDevOpsAuditing\n | summarize Time = max(TimeGenerated)\n | where isnotempty(Time)"
+            }
+          ],
+          "connectivityCriterias": [
+            {
+              "type": "IsConnectedQuery",
+              "value": [
+                "AzureDevOpsAuditing\n | summarize LastLogReceived = max(TimeGenerated)\n | project IsConnected = LastLogReceived > ago(7d)"
+              ]
+            }
+          ],
+          "availability": {
+            "status": 1,
+            "isPreview": true
+          },
+          "permissions": {
+            "resourceProvider": [
+              {
+                "provider": "Microsoft.OperationalInsights/workspaces",
+                "permissionsDisplayText": "read and write permission are required.",
+                "providerDisplayName": "Workspace",
+                "scope": "Workspace",
+                "requiredPermissions": {
+                  "write": true,
+                  "read": true,
+                  "delete": true
+                }
+              },
+              {
+                "provider": "Microsoft.Authorization/roleAssignments",
+                "permissionsDisplayText": "role assignment permissions are required for option 2.",
+                "providerDisplayName": "Role Assignments",
+                "scope": "ResourceGroup",
+                "requiredPermissions": {
+                  "write": true,
+                  "read": true
+                }
+              }
+            ],
+            "customs": [
+              {
+                "name": "Azure DevOps pattoken",
+                "description": "A personal access token (PAT) is used as an alternate password to authenticate into Azure DevOps. [See the documentation to learn more about Pat Tokens](https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=preview-page#create-a-pat)."
+              }
+            ]
+          },
+          "instructionSteps": [
+            {
+              "title": "",
+              "description": ">**NOTE:** To setup the connection to Microsoft Sentinel a personal access token (PAT) is required.\n>By default, Project Collection Administrators (PCAs) are the only group that have access to the auditing feature.\nYou must have the following permissions:\n- Manage Audit Streams"
+            },
+            {
+              "title": "Option 1 - PowerShell",
+              "description": "Use this method for automated configuration of the log forwarding using a PowerShell Script.\n1. Replace the _*{organization}*_ with the Azure DevOps organization name.\n2. Replace the _*{pattoken}*_ with the Personal Access Token. ",
+              "instructions": [
+                {
+                  "parameters": {
+                    "fillWith": [
+                      "WorkspaceId",
+                      "PrimaryKey"
+                    ],
+                    "label": "Run the following command to configure Azure DevOps Streams:",
+                    "value": "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/SecureHats/Sentinel-playground/main/DataConnectors/Set-AzureDevOpsAuditing.ps1' -OutFile 'Set-AzureDevOpsAuditing.ps1' && .\/Set-AzureDevOpsAuditing.ps1 -workspaceId {0} -workspaceKey {1} -organization {organization} -personalaccesstoken {pattoken}"
+                  },
+                  "type": "CopyableLabel"
+                }
+              ]
+            },
+            {
+              "title": "Option 2 - Azure Resource Manager (ARM) Template",
+              "description": "Use this method for automated configuration of the data connector using an ARM Tempate.\n\n1. Click the **Deploy to Azure** button below. \n\n\t[![Deploy To Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FSecureHats%2FSentinel-playground%2Fmain%2FDataConnectors%2Fazuredeploy.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FSecureHats%2FSentinel-playground%2Fmain%2FDataConnectors%2FUiDefinition.json)"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}
