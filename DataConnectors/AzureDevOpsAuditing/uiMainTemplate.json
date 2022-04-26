@@ -30,6 +30,26 @@
                 }
             }
         ],
+        "steps": [
+            {
+                "name": "DevOps",
+                "label": "Azure DevOps",
+                "elements": [
+                    {
+                        "name": "textBlock1",
+                        "type": "Microsoft.Common.TextBlock",
+                        "visible": true,
+                        "options": {
+                            "text": "Fill in the properties related to the Azure DevOps tenant",
+                            "link": {
+                                "label": "Learn more",
+                                "uri": "https://www.microsoft.com"
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
         "outputs": {
             "workspaceName": "[steps('basics').workspaceSelector.name]"
         }
