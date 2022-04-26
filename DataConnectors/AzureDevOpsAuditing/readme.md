@@ -5,9 +5,9 @@ Author: Rogier Dijkman
 The Azure DevOps Auditing Sentinel connector provides the capability to ingest [Azure DevOps](https://docs.microsoft.com/en-us/azure/devops/organizations/audit/auditing-streaming?view=azure-devops#set-up-an-azure-monitor-log-stream) events in Microsoft Sentinel. 
 It helps you gain visibility into what is happening in your environment, such as who is connected, which applications are installed and running, and much more.
 
-[![Deploy To Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FSecureHats%2FSentinel-playground%2Fmain%2FDataConnectors%2FAzureDevOpsAuditing%2FuiMainTemplate.json)
+[![Deploy To Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FSecureHats%2FSentinel-playground%2Fmain%2FDataConnectors%2FAzureDevOpsAuditing%2FuiMainTemplate.json)
 
-/uri/https%3A%2F%2Fraw.githubusercontent.com%2FSecureHats%2FSentinel-playground%2Fmain%2FDataConnectors%2FAzureDevOpsAuditing%2FmainTemplate.json
+/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FSecureHats%2FSentinel-playground%2Fmain%2FDataConnectors%2FAzureDevOpsAuditing%2FmainTemplate.json
 
 ## Configuring the Azure DevOps Audit Streams
 
