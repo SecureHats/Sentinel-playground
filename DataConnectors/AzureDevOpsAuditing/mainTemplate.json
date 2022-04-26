@@ -23,7 +23,7 @@
       }
     },
     "workspace": {
-      "defaultValue": "<Enter Log Analytics Workspace>",
+      "defaultValue": "",
       "type": "string",
       "minLength": 1,
       "metadata": {
