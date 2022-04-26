@@ -37,3 +37,13 @@ After the deployment of de data connector has completed, the Managed Identity ca
 During the deployment of the ARM template, a degployment script will be created.
 This deploymentscript has the logic for creating and coniguring streams within Azure DevOps.
 
+## Validate Stream
+
+After configuring the Audit Streams in Azure DevOps the audit connectivity should be visible in the Microsoft Sentinel Portal
+
+![image](https://user-images.githubusercontent.com/40334679/165304433-cd3a5a65-66cf-463e-8e2c-bc5d175d808e.png)
+
+## Detection Rules
+
+Microsoft already has some build-in detection and hunting rules for Azure DevOps which can be found in the [Microsoft Sentinel GitHub](https://github.com/Azure/Azure-Sentinel/tree/master/Detections/AzureDevOpsAuditing) repository.
+
