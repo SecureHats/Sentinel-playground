@@ -1,0 +1,16 @@
+name: SendLogs
+on: workflow_dispatch
+
+jobs:
+  upload-data:
+    name: Send Custom Logs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Process Files
+        uses: SecureHats/custom-logs@v0.1.0-alpha
+        with:
+          filesPath: samples/okta
+          
