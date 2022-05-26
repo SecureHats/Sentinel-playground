@@ -10,7 +10,9 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Process Files
-        uses: SecureHats/custom-logs@v0.0.1-alpha
+        uses: SecureHats/custom-logs@v0.0.2-alpha
         with:
           filesPath: samples/okta
+          workspaceid: ${{ secrets.WORKSPACEID }}
+          workspacekey: ${{ secrets.WORKSPACEKEY }}
           
