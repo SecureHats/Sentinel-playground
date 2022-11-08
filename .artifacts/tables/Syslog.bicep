@@ -12,7 +12,7 @@ param location string = resourceGroup().location
 param dataCollectionEndpointName string
 
 @description('Specifies the name of the Custom Log Table for data ingestion')
-param customLogTable string = 'Syslog_CL'
+param customLogTable string
 
 resource workspace 'Microsoft.OperationalInsights/workspaces@2021-12-01-preview' existing = {
   name: workspaceName
