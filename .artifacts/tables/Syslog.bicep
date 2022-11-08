@@ -1,6 +1,6 @@
 // Parameters
 @description('Specifies the name of the Data Collection Rule to create.')
-param dataCollectionRuleName string
+param dataCollectionRuleName string = 'Syslog'
 
 @description('Name of the Log Analytics workspace.')
 param workspaceName string
@@ -9,10 +9,10 @@ param workspaceName string
 param location string = resourceGroup().location
 
 @description('Specifies the name of the Data Collection Endpoint to create')
-param dataCollectionEndpointName string
+param dataCollectionEndpointName string = 'Syslog'
 
 @description('Specifies the name of the Custom Log Table for data ingestion')
-param customLogTable string
+param customLogTable string = 'Syslog_CL'
 
 resource workspace 'Microsoft.OperationalInsights/workspaces@2021-12-01-preview' existing = {
   name: workspaceName
@@ -35,6 +35,9 @@ resource dce 'Microsoft.Insights/dataCollectionEndpoints@2021-04-01' = {
 resource dcr 'Microsoft.Insights/dataCollectionRules@2021-09-01-preview' = {
   name: dataCollectionRuleName
   location: location
+  dependsOn: [
+    table
+  ]
   properties: {
     dataCollectionEndpointId: dce.id
     destinations: {
