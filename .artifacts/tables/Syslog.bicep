@@ -67,55 +67,55 @@ resource table 'Microsoft.OperationalInsights/workspaces/tables@2021-12-01-previ
       name: customLogTable
       columns: [
                 {
-                    name: 'SourceSystem', 
+                    name: 'SourceSystem' 
                     type: 'string'
-                },
+                }
                 {
-                    name: 'TimeGenerated', 
+                    name: 'TimeGenerated' 
                     type: 'datetime'
-                },
+                }
                 {
-                    name: 'Computer', 
+                    name: 'Computer' 
                     type: 'string'
-                },
+                }
                 {
-                    name: 'EventTime', 
+                    name: 'EventTime' 
                     type: 'datetime'
-                },
+                }
                 {
-                    name: 'Facility', 
+                    name: 'Facility' 
                     type: 'string'
-                },
+                }
                 {
-                    name: 'HostName', 
+                    name: 'HostName' 
                     type: 'string'
-                },
+                }
                 {
-                    name: 'SeverityLevel', 
+                    name: 'SeverityLevel' 
                     type: 'string'
-                },
+                }
                 {
-                    name: 'SyslogMessage', 
+                    name: 'SyslogMessage' 
                     type: 'string'
-                },
+                }
                 {
-                    name: 'ProcessID', 
+                    name: 'ProcessID' 
                     type: 'int'
-                },
+                }
                 {
-                    name: 'HostIP', 
+                    name: 'HostIP' 
                     type: 'string'
-                },
+                }
                 {
-                    name: 'ProcessName', 
+                    name: 'ProcessName' 
                     type: 'string'
-                },
+                }
                 {
-                    name: 'MG', 
+                    name: 'MG' 
                     type: 'string'
-                },
+                }
                 {
-                    name: '_ResourceId', 
+                    name: '_ResourceId' 
                     type: 'string'
                 }
       ]
