@@ -67,56 +67,56 @@ resource table 'Microsoft.OperationalInsights/workspaces/tables@2021-12-01-previ
       name: customLogTable
       columns: [
                 {
-                    "name": 'SourceSystem', 
-                    "type": 'string"
+                    name: 'SourceSystem', 
+                    type: 'string'
                 },
                 {
-                    "name": 'TimeGenerated', 
-                    "type": 'datetime"
+                    name: 'TimeGenerated', 
+                    type: 'datetime'
                 },
                 {
-                    "name": 'Computer', 
-                    "type": 'string"
+                    name: 'Computer', 
+                    type: 'string'
                 },
                 {
-                    "name": 'EventTime', 
-                    "type": 'datetime"
+                    name: 'EventTime', 
+                    type: 'datetime'
                 },
                 {
-                    "name": 'Facility', 
-                    "type": 'string"
+                    name: 'Facility', 
+                    type: 'string'
                 },
                 {
-                    "name": 'HostName', 
-                    "type": 'string"
+                    name: 'HostName', 
+                    type: 'string'
                 },
                 {
-                    "name": 'SeverityLevel', 
-                    "type": 'string"
+                    name: 'SeverityLevel', 
+                    type: 'string'
                 },
                 {
-                    "name": 'SyslogMessage', 
-                    "type": 'string"
+                    name: 'SyslogMessage', 
+                    type: 'string'
                 },
                 {
-                    "name": 'ProcessID', 
-                    "type": 'int"
+                    name: 'ProcessID', 
+                    type: 'int'
                 },
                 {
-                    "name": 'HostIP', 
-                    "type": 'string"
+                    name: 'HostIP', 
+                    type: 'string'
                 },
                 {
-                    "name": 'ProcessName', 
-                    "type": 'string"
+                    name: 'ProcessName', 
+                    type: 'string'
                 },
                 {
-                    "name": 'MG', 
-                    "type": 'string"
+                    name: 'MG', 
+                    type: 'string'
                 },
                 {
-                    "name": '_ResourceId', 
-                    "type": 'string"
+                    name: '_ResourceId', 
+                    type: 'string'
                 }
       ]
     }
