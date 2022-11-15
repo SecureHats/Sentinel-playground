@@ -338,6 +338,10 @@ resource table 'Microsoft.OperationalInsights/workspaces/tables@2021-12-01-previ
           name: 'AutonomousSystemNumber'
           type: 'string'
         }
+        {
+          name: 'Type' 
+          type: 'string'
+      }
       ]
     }
   }

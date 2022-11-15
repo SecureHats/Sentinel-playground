@@ -1,4 +1,3 @@
-// Parameters
 @description('Specifies the name of the Data Collection Rule to create.')
 param dataCollectionRuleName string = 'Syslog'
 
@@ -12,21 +11,19 @@ param location string = resourceGroup().location
 param dataCollectionEndpointName string = 'Syslog'
 
 @description('Specifies the name of the Custom Log Table for data ingestion')
-param customLogTable string = 'Syslog_CL'
+param customLogTable string = 'Syslog'
+
+var customTable = 'Custom-${customLogTable}'
 
 resource workspace 'Microsoft.OperationalInsights/workspaces@2021-12-01-preview' existing = {
   name: workspaceName
 }
 
-//  Variables
-var customTable = 'Custom-${customLogTable}'
-
-// Resources
 resource dce 'Microsoft.Insights/dataCollectionEndpoints@2021-04-01' = {
   name: dataCollectionEndpointName
   location: location
-  properties:{
-    networkAcls:{
+  properties: {
+    networkAcls: {
       publicNetworkAccess: 'Enabled'
     }
   }
@@ -35,41 +32,12 @@ resource dce 'Microsoft.Insights/dataCollectionEndpoints@2021-04-01' = {
 resource dcr 'Microsoft.Insights/dataCollectionRules@2021-09-01-preview' = {
   name: dataCollectionRuleName
   location: location
-  dependsOn: [
-    table
-  ]
   properties: {
     dataCollectionEndpointId: dce.id
-    destinations: {
-      logAnalytics: [
-        {
-          workspaceResourceId: workspace.id
-          name: workspace.name
-        }
-      ]
-    }
-    dataFlows: [
-      {
-        streams: [
-          customTable
-        ]
-        destinations: [
-          workspace.name
-        ]
-      outputStream: customTable
-      transformKql: 'source | extend TimeGenerated = now()'
-      }
-    ]
-  }
-}
-
-resource table 'Microsoft.OperationalInsights/workspaces/tables@2021-12-01-preview' = {
-  name: '${workspaceName}/${customLogTable}'
-  properties: {
-    schema: {
-      name: customLogTable
-      columns: [
-        {
+    streamDeclarations: {
+      '${customTable}': {
+        columns: [
+          {
             name: 'SourceSystem' 
             type: 'string'
         }
@@ -114,19 +82,36 @@ resource table 'Microsoft.OperationalInsights/workspaces/tables@2021-12-01-previ
             type: 'string'
         }
         {
-            name: 'MG' 
+            name: 'Type' 
             type: 'string'
         }
+        ]
+      }
+    }
+    destinations: {
+      logAnalytics: [
         {
-            name: '_ResourceId' 
-            type: 'string'
+          workspaceResourceId: workspace.id
+          name: workspace.name
         }
       ]
     }
+    dataFlows: [
+      {
+        streams: [
+          customTable
+        ]
+        destinations: [
+          workspace.name
+        ]
+        outputStream: 'Microsoft-Syslog'
+        transformKql: 'source'
+        // | extend TimeGenerated = now()
+      }
+    ]
   }
 }
 
-// Outputs
 output dataCollectionEndpoint string = dce.properties.logsIngestion.endpoint
 output immutableId string = dce.properties.immutableId
 output endpointUri string = '${dce.properties.logsIngestion.endpoint}/dataCollectionRules/${dcr.properties.immutableId}/streams/${customTable}?api-version=2021-11-01-preview'
