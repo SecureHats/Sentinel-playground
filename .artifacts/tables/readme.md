@@ -103,6 +103,13 @@ function Get-GraphToken {
         }
     }
 }
+
+$global:aadRequestHeader = @{
+            "Token"          = ($_graphToken.access_token | ConvertTo-SecureString -AsPlainText -Force)
+            "Authentication" = 'OAuth'
+            "Method"         = 'POST'
+            "ContentType"   = 'application/json'
+        }
 ```
 ### Header
 
