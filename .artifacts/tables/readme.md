@@ -90,7 +90,7 @@ function Get-GraphToken {
         catch {
             $details = $_.ErrorDetails.Message | ConvertFrom-Json
             $continue = $details.error -eq "authorization_pending"
-            Write-Output "Waiting for approval: $($continue)
+            Write-Output "Waiting for approval: $($continue)"
 
             if (!$continue) {
                 Write-Error $details.error_description
