@@ -602,7 +602,7 @@ resource dcr 'Microsoft.Insights/dataCollectionRules@2021-09-01-preview' = {
             name: 'ThreatDescription'
           }
           {
-            type: 'string'
+            type: 'int'
             name: 'ThreatConfidence'
           }
           {
