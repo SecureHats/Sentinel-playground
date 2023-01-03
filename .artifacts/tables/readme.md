@@ -25,7 +25,8 @@ function Get-GraphToken {
     # Login Process
     $body = @{
                 "client_id" = "d3590ed6-52b3-4102-aeff-aad2292ab01c"
-                "resource"  = "https://management.core.windows.net"
+                "resource"  = "https://monitor.azure.com/"
+                "scope" = [System.Web.HttpUtility]::UrlEncode("https://monitor.azure.com//.default")
             }
     
     $authResponse = Invoke-RestMethod `
