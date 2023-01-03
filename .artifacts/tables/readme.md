@@ -22,18 +22,6 @@ Invoke-RestMethod `
 
 ```powershell
 function Get-GraphToken {
-    [cmdletbinding()]
-    Param(
-        [Parameter(Mandatory = $True)]
-        [String[]]
-        [ValidateSet("MSGraph", "Azure", "Monitor")]
-        $Client,    
-        [Parameter(Mandatory = $False)]
-        [String]
-        $Resource = "https://graph.microsoft.com"
-        
-    )
-
     # Login Process
     $body = @{
                 "client_id" = "d3590ed6-52b3-4102-aeff-aad2292ab01c"
