@@ -10,7 +10,7 @@ Invoke-RestMethod `
     @requestHeader
 ```
 
-### CSV example
+### JSON example
 ```powershell
 Invoke-RestMethod `
     -Uri "https://syslog-1dhn.westeurope-1.ingest.monitor.azure.com/dataCollectionRules/dcr-78aa2a5fe1224524b55df2f4b8152315/streams/Custom-Syslog_CL?api-version=2021-11-01-preview" `
