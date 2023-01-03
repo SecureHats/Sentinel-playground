@@ -7,7 +7,7 @@ Invoke-RestMethod `
     -Body (Get-Content -Raw 'C:\Downloads\data\syslog.csv' `
     | ConvertFrom-CSV `
     | ConvertTo-Json -AsArray) `
-    @aadRequestHeader
+    @requestHeader
 ```
 
 ### CSV example
@@ -15,7 +15,7 @@ Invoke-RestMethod `
 Invoke-RestMethod `
     -Uri "https://syslog-1dhn.westeurope-1.ingest.monitor.azure.com/dataCollectionRules/dcr-78aa2a5fe1224524b55df2f4b8152315/streams/Custom-Syslog_CL?api-version=2021-11-01-preview" `
     -Body (Get-Content -Raw 'C:\Downloads\data\syslog.json') `
-    @aadRequestHeader
+    @requestHeader
 ```
 
 ### AccessToken Script
@@ -51,14 +51,13 @@ function Get-GraphToken {
             return
         }          
         try {
-            $global:_graphToken = Invoke-RestMethod `
+            $script:_graphToken = Invoke-RestMethod `
                 -UseBasicParsing `
                 -Method Post `
                 -Uri "https://login.microsoftonline.com/Common/oauth2/token?api-version=1.0 " `
                 -Body $body `
                 -ErrorAction SilentlyContinue
-        }
-        catch {
+        } catch {
             $details = $_.ErrorDetails.Message | ConvertFrom-Json
             $continue = $details.error -eq "authorization_pending"
             Write-Output "Waiting for approval: $($continue)"
@@ -70,24 +69,14 @@ function Get-GraphToken {
         }
         if($_graphToken)
         {
-            $global:aadRequestHeader = @{
+            $global:requestHeader = @{
             "Token"          = ($_graphToken.access_token | ConvertTo-SecureString -AsPlainText -Force)
             "Authentication" = 'OAuth'
             "Method"         = 'POST'
-            "ContentType"   = 'application/json'
+            "ContentType"    = 'application/json'
         }
             break
         }
     }
 }
-```
-### Header
-
-```powershell
-$aadRequestHeader = @{
-            "Token"          = ($_graphToken.access_token | ConvertTo-SecureString -AsPlainText -Force)
-            "Authentication" = 'OAuth'
-            "Method"         = 'POST'
-            "ContentType"   = 'application/json'
-        }
 ```
