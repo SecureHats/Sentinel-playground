@@ -33,30 +33,13 @@ function Get-GraphToken {
         $Resource = "https://graph.microsoft.com"
         
     )
-    
-    switch ($Client) {
-        "MSGraph" {
-            $body = @{
-                "client_id" = "d3590ed6-52b3-4102-aeff-aad2292ab01c"
-                "resource"  = "https://graph.microsoft.com"
-            }
-        }
-        "Azure" {
-            $body = @{
+
+    # Login Process
+    $body = @{
                 "client_id" = "d3590ed6-52b3-4102-aeff-aad2292ab01c"
                 "resource"  = "https://management.core.windows.net"
             }
-        }
-        "Monitor" {
-            $body = @{
-                "client_id" = "d3590ed6-52b3-4102-aeff-aad2292ab01c"
-                "resource"  = "https://monitor.azure.com/"
-                "scope" = [System.Web.HttpUtility]::UrlEncode("https://monitor.azure.com//.default")
-            }
-        }
-    }
-
-    # Login Process
+    
     $authResponse = Invoke-RestMethod `
         -UseBasicParsing `
         -Method Post `
