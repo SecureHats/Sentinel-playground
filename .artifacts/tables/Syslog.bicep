@@ -11,7 +11,7 @@ param location string = resourceGroup().location
 param dataCollectionEndpointName string = 'Syslog'
 
 @description('Specifies the name of the Custom Log Table for data ingestion')
-param customLogTable string = 'Syslog'
+param customLogTable string = 'LogCollection'
 
 var customTable = 'Custom-${customLogTable}'
 
@@ -105,8 +105,7 @@ resource dcr 'Microsoft.Insights/dataCollectionRules@2021-09-01-preview' = {
           workspace.name
         ]
         outputStream: 'Microsoft-Syslog'
-        transformKql: 'source'
-        // | extend TimeGenerated = now()
+        transformKql: 'source | extend TimeGenerated = now()'
       }
     ]
   }
