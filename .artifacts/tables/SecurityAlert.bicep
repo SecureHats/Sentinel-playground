@@ -1,4 +1,3 @@
-// Parameters
 @description('Specifies the name of the Data Collection Rule to create.')
 param dataCollectionRuleName string = 'SecurityAlert'
 
@@ -96,11 +95,11 @@ resource dcr 'Microsoft.Insights/dataCollectionRules@2021-09-01-preview' = {
           }
           {
             name: 'ConfidenceScore'
-            type: 'double'
+            type: 'long'
           }
           {
             name: 'IsIncident'
-            type: 'book'
+            type: 'boolean'
           }
           {
             name: 'StartTime'
@@ -170,6 +169,10 @@ resource dcr 'Microsoft.Insights/dataCollectionRules@2021-09-01-preview' = {
             name: 'Techniques'
             type: 'string'
           }
+          {
+            name: 'Type'
+            type: 'string'
+          }
         ]
       }
     }
@@ -189,7 +192,7 @@ resource dcr 'Microsoft.Insights/dataCollectionRules@2021-09-01-preview' = {
         destinations: [
           workspace.name
         ]
-        outputStream: 'Microsoft-SecurityAlert'
+        outputStream: 'Microsoft-SecurityLog'
         transformKql: 'source | extend TimeGenerated = now()'
       }
     ]
