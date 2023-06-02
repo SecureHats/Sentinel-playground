@@ -171,7 +171,7 @@ resource dcr 'Microsoft.Insights/dataCollectionRules@2021-09-01-preview' = {
     dataFlows: [
       {
         streams: [
-          customTable
+          'Microsoft-AuditLogs'
         ]
         destinations: [
           workspace.name
