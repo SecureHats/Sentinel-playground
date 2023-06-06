@@ -1,5 +1,5 @@
 @description('Specifies the name of the Data Collection Rule to create.')
-param dataCollectionRuleName string
+param dataCollectionRuleName string = 'CommonSecurityLog'
 
 @description('Name of the Log Analytics workspace.')
 param workspaceName string
@@ -8,7 +8,7 @@ param workspaceName string
 param location string = resourceGroup().location
 
 @description('Specifies the name of the Data Collection Endpoint to create')
-param dataCollectionEndpointName string
+param dataCollectionEndpointName string = 'CommonSecurityLog'
 
 @description('Specifies the name of the Custom Log Table for data ingestion')
 param customLogTable string = 'LogCollection'
