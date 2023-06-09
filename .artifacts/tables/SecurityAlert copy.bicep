@@ -1,3 +1,4 @@
+// Parameters
 @description('Specifies the name of the Data Collection Rule to create.')
 param dataCollectionRuleName string = 'SecurityAlert'
 
@@ -11,7 +12,7 @@ param location string = resourceGroup().location
 param dataCollectionEndpointName string = 'SecurityAlert'
 
 @description('Specifies the name of the Custom Log Table for data ingestion')
-param customLogTable string = 'LogCollection'
+param customLogTable string = 'SecurityAlert'
 
 var customTable = 'Custom-${customLogTable}'
 
@@ -199,7 +200,7 @@ resource dcr 'Microsoft.Insights/dataCollectionRules@2021-09-01-preview' = {
           workspace.name
         ]
         outputStream: 'Microsoft-SecurityAlert'
-        // transformKql: 'source | extend TimeGenerated = now()'
+        transformKql: 'source | extend TimeGenerated = now()'
       }
     ]
   }

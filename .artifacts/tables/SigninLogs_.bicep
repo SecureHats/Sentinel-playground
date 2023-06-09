@@ -8,10 +8,10 @@ param workspaceName string
 param location string = resourceGroup().location
 
 @description('Specifies the name of the Data Collection Endpoint to create')
-param dataCollectionEndpointName string = 'SigninLogs'
+param dataCollectionEndpointName string = 'SecurityAlert'
 
 @description('Specifies the name of the Custom Log Table for data ingestion')
-param customLogTable string = 'SigninLogs'
+param customLogTable string = 'SecurityAlert'
 
 var customTable = 'Custom-${customLogTable}'
 
@@ -327,12 +327,12 @@ resource dcr 'Microsoft.Insights/dataCollectionRules@2021-09-01-preview' = {
     dataFlows: [
       {
         streams: [
-          customTable
+          'Microsoft-SecurityAlert'
         ]
         destinations: [
           workspace.name
         ]
-        outputStream: 'Microsoft-SigninLogs'
+        outputStream: 'Microsoft-SecurityAlert'
         transformKql: 'source'
       }
     ]
